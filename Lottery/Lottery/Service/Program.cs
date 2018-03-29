@@ -10,7 +10,7 @@ namespace Lottery
     {
         static void Main(string[] args)
         {
-            Scraper.CurrentGame = Game.Lotto;
+            Scraper.CurrentGame = Game.MegaMillion;
             Scraper.LoadData(new DateTime(2018, 4, 1), 2000, 2018);
         }
 

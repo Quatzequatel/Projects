@@ -118,8 +118,8 @@ namespace ConsoleApp1
             //Check rows.
             foreach (char[] row in grid)
             {
-                Debug.WriteLine(row.Print());
-                if (row.CharToInt().IsValid() == false) return false;
+                //Debug.WriteLine(row.Print());
+                if (IsValid(CharToInt(row)) == false) return false;
             }
 
             //Check columns.
@@ -131,7 +131,7 @@ namespace ConsoleApp1
                     column[r] = grid[r][c];
                 }
 
-                if (column.CharToInt().IsValid() == false) return false;
+                if (IsValid(CharToInt(column)) == false) return false;
             }
 
             //check panels
@@ -163,11 +163,40 @@ namespace ConsoleApp1
 
             for (int panel = 0; panel < 9; panel++)
             {
-                if (panels[panel].CharToInt().IsValid() == false) return false;
+                if (IsValid(CharToInt(panels[panel]))== false) return false;
             }
 
             return true;
         }
+
+        public static int[] CharToInt(char[] source)
+        {
+            int[] result = new int[source.Count()];
+            for (int i = 0; i < source.Count(); i++)
+            {
+                if (source[i] != '.' && source[i] != '-')
+                {
+                    result[i] = int.Parse(source[i].ToString());
+                }
+            }
+            return result;
+        }
+
+        public static bool IsValid(int[] values)
+        {
+            int flag = 0;
+            foreach (int value in values)
+            {
+                if (value != 0)
+                {
+                    int bit = 1 << value;
+                    if ((flag & bit) != 0) return false;
+                    flag |= bit;
+                }
+            }
+            return true;
+        }
+
     }
 
     public static class Extensions

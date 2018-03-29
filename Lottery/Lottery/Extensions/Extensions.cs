@@ -122,7 +122,7 @@ namespace Lottery
         {
             List<int> LastXList = new List<int>();
             int start = 0;
-            if(values.Count > take)
+            if (values.Count > take)
             {
                 start = values.Count - take;
             }
@@ -130,13 +130,36 @@ namespace Lottery
             {
                 take = values.Count;
             }
-            
+
             for (int i = start; i < start + take; i++)
             {
                 LastXList.Add(values[i]);
             }
             return LastXList;
         }
+
+
+        public static int LunaPhase(this DateTime date)
+        {
+            double period = 27.3215;
+            DateTime new_moon = new DateTime(1998, 2, 11);
+            if (date < new_moon) return -1;
+            int days = date.Subtract(new_moon).Days;
+
+            return Convert.ToInt16((days / period - Math.Floor(days / period)) * 27);
+
+        }
+
+        public static string BasicInfo(this GameBalls ball)
+        {
+            return $"{ball.DrawingDateDate.ToShortDateString()},{ball.DrawingDateDate.DayOfWeek},{String.Join(",", ball.BallNumbers)},{ball.BallsToString()},{ball.Winners},{ball.PrizeAmount.ToString()}";
+        }
+
+        public static string BallsToString(this GameBalls ball)
+        {
+            return String.Join("-", ball.BallNumbers.Select(i => i.ToString("D2")).ToArray());
+        }
+        //public static Variance TrendValueSum(this Variance)
     }
 
 }

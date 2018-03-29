@@ -10,11 +10,15 @@ namespace Lottery
     public class Slots: IEnumerable
     {
         private Dictionary<int, Slot> slotList = new Dictionary<int, Slot>();
+        public Slots()
+        {
+
+        }
         public Slots(int size, int highestNumber)
         {
             for (int i = 0; i < size; i++)
             {
-                slotList.Add(i, new Slot(highestNumber));
+                slotList.Add(i, new Slot(i));
             }
         }
 
@@ -63,7 +67,7 @@ namespace Lottery
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine(slotList[0].Header());
+            sb.AppendLine(slotList.First().Value.Header());
             foreach (var slot in slotList)
             {
                 sb.Append(slot.Value.Report());

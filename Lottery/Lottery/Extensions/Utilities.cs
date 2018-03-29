@@ -38,7 +38,7 @@ namespace Lottery
             switch (Scraper.CurrentGame)
             {
                 case Game.Lotto: return 49;
-                case Game.MegaMillion: return 69;
+                case Game.MegaMillion: return 75;
                 case Game.Powerball: return 79;
                 case Game.Hit5: return 39;
                 default: return -1;

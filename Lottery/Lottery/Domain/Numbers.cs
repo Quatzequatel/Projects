@@ -11,11 +11,11 @@ namespace Lottery
     {
         private Dictionary<int, Number> numberItems = new Dictionary<int, Number>();
 
-        public Numbers(int highestNumber)
+        public Numbers(int highestNumber, int slotId)
         {
             for (int i = 1; i <= highestNumber; i++)
             {
-                numberItems.Add(i, new Number(i));
+                numberItems.Add(i, new Number(i, slotId));
             }
         }
 

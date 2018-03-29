@@ -11,11 +11,11 @@ namespace Lottery
         int Id { get; set; }
         private int HighestBall { get; set; }
         public  Numbers Balls { get; private set; }
-        public Slot(int id)
+        public Slot(int slotid)
         {
-            Id = id;
+            Id = slotid;
             HighestBall = Utilities.HighBallNumber();
-            Balls = new Numbers(HighestBall);
+            Balls = new Numbers(HighestBall, slotid);
         }
 
         List<DateTime> DrawingDates { get; set; }

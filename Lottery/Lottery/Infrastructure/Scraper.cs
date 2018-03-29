@@ -12,7 +12,7 @@ namespace Lottery
     public class Scraper
     {
         public static Game CurrentGame { get; set; }
-        public static DateTime NextDrawingDate { get => new DateTime(2018, 3, 23); }
+        public static DateTime NextDrawingDate { get => new DateTime(2018, 3, 30); }
 
         public static void LoadData(DateTime nextDrawing, int startYear, int endYear)
         {
@@ -21,6 +21,8 @@ namespace Lottery
             var drawings = SaveLoad(nextDrawing, links);
             var slots = new Slots(Utilities.GetBallCount(), Utilities.HighBallNumber());
             slots.AddDrawing(drawings);
+
+            SaveBaseBallData(drawings);
 
             SaveReport(slots);
 
@@ -37,6 +39,23 @@ namespace Lottery
             //SaveAllPossibeNumbers(GetAllPossibleNumbers(), drawings);
         }
 
+        public static void SaveBaseBallData(List<GameBalls> data)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<string> ballLabels = new List<string>();
+            for (int i = 0; i < data.First().BallNumbers.Count(); i++)
+            {
+                ballLabels.Add($"Ball{i}");
+            }
+            sb.AppendLine($"DrawingDate, WeekDay, {String.Join(",", ballLabels)}, numbers, Winners, PrizeValue");
+            foreach (var item in data)
+            {
+                sb.AppendLine(item.BasicInfo());
+            }
+            string filename = $"{Utilities.Path}{Utilities.GetGameName()}-BaseData.csv";
+            System.IO.File.WriteAllText($"{filename}", sb.ToString());
+        }
+
         public static void SaveReport(Slots data)
         {
             string filename = $"{Utilities.Path}{Utilities.GetGameName()}{NextDrawingDate.Year}.{NextDrawingDate.Month}.{NextDrawingDate.Day}.csv";
@@ -49,11 +68,15 @@ namespace Lottery
 
         public static void SaveAllReport(Slot mergedSlot)
         {
+
+            Slots slots = new Slots();
+            slots[7] = mergedSlot;
+
             string filename = $"{Utilities.Path}{Utilities.GetGameName()}-SingleSlot-{NextDrawingDate.Year}.{NextDrawingDate.Month}.{NextDrawingDate.Day}.csv";
-            System.IO.File.WriteAllText($"{filename}", mergedSlot.Report());
+            System.IO.File.WriteAllText($"{filename}", slots.Report());
 
             string varianceReport = $"{Utilities.Path}{Utilities.GetGameName()}-SingleSlot-VarianceReport.csv";
-            System.IO.File.WriteAllText($"{varianceReport}", mergedSlot.VarianceReport());
+            System.IO.File.WriteAllText($"{varianceReport}", slots.VarianceReport());
         }
 
         //public static void SaveAllPossibeNumbers(Dictionary<int, PossibleNumbers> numbers, List<GameBalls> drawings)
@@ -168,12 +191,9 @@ namespace Lottery
             {
 
                 var doc = web.Load(link);
-                string[] classes = new string[] { "table-viewport-large" };
-                var drawingTable = doc.DocumentNode.SelectNodes($"//table[@class='table-viewport-large']");
-                //var drawingDate = drawingTable.Descendants().Where(i => i.Name == "h2" && i.InnerText.CleanInnerText() != null).First();
-                //var drawingBalls = drawingTable.Descendants().Where(i => i.Name == "li" && i.InnerText.CleanInnerText() != null);
-
-                //var drawingPowerBall = drawingTable.Descendants()
+                var xpath = @"//table[@class='table-viewport-large']";
+                var drawingTable = doc.DocumentNode.SelectNodes(xpath);
+                if (drawingTable == null) continue;
                 foreach (var drawing in drawingTable)
                 {
                     GameBalls balls = new GameBalls()
