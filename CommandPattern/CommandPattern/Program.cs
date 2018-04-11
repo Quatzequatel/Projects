@@ -4,17 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lottery
+namespace CommandPattern
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Scraper.CurrentGame = Game.MegaMillion;
-            Scraper.LoadData(new DateTime(2018, 3, 29), 2000, 2018);
         }
-
-
-            
     }
 }

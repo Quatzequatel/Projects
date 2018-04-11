@@ -28,9 +28,6 @@ namespace Lottery
 
         public int IntervalDaysTotal => IntervalDays.Sum();
 
-        public double LunaMean => LunaPhases.Mean();
-        public double LunaSTD => LunaPhases.StandardDeviation();
-        public double LunaVariance => LunaPhases.Variance();
 
         public int DrawingsCount => DrawingDates.Count();
 
@@ -112,9 +109,7 @@ namespace Lottery
                 "IsDueCount",
                 "PickValue",
                 "DrawingChancePi",
-                "LunaMean",
-                "LunaSTD",
-                "LunaVariance"
+
             };
             return result;
         }
@@ -138,9 +133,7 @@ namespace Lottery
                 $"{IsDueCount}",
                 $"{PickValue}",
                 $"{DrawingChancePi}",
-                $"{LunaMean}",
-                $"{LunaSTD}",
-                $"{LunaVariance}"
+
             };
             return String.Join(",", result);
 

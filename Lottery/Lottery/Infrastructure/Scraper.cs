@@ -20,7 +20,7 @@ namespace Lottery
             List<string> links = GetLinks(startYear, endYear);
             var drawings = SaveLoad(nextDrawing, links);
             var slots = new Slots(Utilities.GetBallCount(), Utilities.HighBallNumber());
-            slots.AddDrawing(drawings);
+            slots.AddDrawing(drawings.Where(i=> i.DrawingDateDate.Year >= startYear).ToList());
 
             SaveBaseBallData(drawings);
 
