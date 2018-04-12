@@ -10,7 +10,7 @@ namespace LotteryV2
     {
         static void Main(string[] args)
         {
-            CommandContext context = new CommandContext(Domain.Game.Lotto, new DateTime(2018, 4, 4));
+            CommandContext context = new CommandContext(Domain.Game.Lotto, new DateTime(2018, 4, 12));
             var commands = (new CommandFactory().CreateCommands(context));
             (new CommandExecutor<CommandContext>()).Execute(context, commands);
         }

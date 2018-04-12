@@ -1,4 +1,5 @@
 ﻿using LotteryV2.Domain;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -84,12 +85,15 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
-        public List<string> GetLinks()
+        public List<string> GetLinks(bool updateOnly = false)
         {
             string page = "http://www.walottery.com/WinningNumbers/PastDrawings.aspx";
             string gameParameter = GetGameName();
             List<String> links = new List<string>();
-            for (int i = FirstYear(); i <= DateTime.Now.Year ; i++)
+            int startYear = updateOnly && Drawings.Count > 10 
+                ? Drawings.Last().DrawingDate.Year 
+                : FirstYear();
+            for (int i = startYear; i <= DateTime.Now.Year ; i++)
             {
                 links.Add($"{page}?gamename={gameParameter}&unittype=year&unitcount={i}");
             }
@@ -155,6 +159,12 @@ namespace LotteryV2.Domain.Commands
         {
             if (Drawings != null) throw new AccessViolationException("Drawings has already been set.");
             Drawings = drawings;
+        }
+
+        public void ReplaceDrawings(List<Drawing> drawings)
+        {
+            if (Drawings != null) Drawings.Clear();
+            Drawings.AddRange(drawings);
         }
 
     }

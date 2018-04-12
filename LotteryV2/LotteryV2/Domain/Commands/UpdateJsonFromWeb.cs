@@ -8,35 +8,22 @@ using Newtonsoft.Json;
 
 namespace LotteryV2.Domain.Commands
 {
-    internal class SaveToJsonCommand : Command<CommandContext>
+    public class UpdateJsonFromWeb : Command<CommandContext>
     {
-        private string _Filename;
-
-
         public override bool ShouldExecute(CommandContext context)
         {
-            _Filename = $"{context.FilePath}{context.GetGameName()}.json";
-            return !System.IO.File.Exists(_Filename);
+            return context?.Drawings?.Last<Drawing>()?.DrawingDate < context?.NextDrawingDate;
         }
-
         public override void Execute(CommandContext context)
         {
             ScrapeDrawings(context);
-            SaveToJSON(context);
         }
-
-        private void SaveToJSON(CommandContext context)
-        {
-            System.IO.File.WriteAllText(_Filename, JsonConvert.SerializeObject(context.Drawings.OrderBy(b => b.DrawingDate), Formatting.Indented));
-        }
-
-
         private void ScrapeDrawings(CommandContext context)
         {
             var web = new HtmlWeb();
-            var results = new List<Drawing>();
+            var results = context.Drawings;
 
-            foreach (var link in context.GetLinks())
+            foreach (var link in context.GetLinks(true))
             {
 
                 var doc = web.Load(link);
@@ -49,7 +36,7 @@ namespace LotteryV2.Domain.Commands
                         (
                        drawing.Descendants().Where(i => i.Name == "h2"
                         && i.InnerText.CleanInnerText() != null).First().InnerText.CleanInnerText()
-                    );
+                    );//.SetContext(context);
 
                     var gameballsNodes = drawing.Descendants().Where(i => i.Name == "tbody")
                         .First<HtmlNode>().Descendants().Where(i => i.Name == "li");
@@ -72,10 +59,14 @@ namespace LotteryV2.Domain.Commands
                         }
                     }
 
-                    results.Add(balls);
+                    if(results.FirstOrDefault(i=>i.DrawingDate == balls.DrawingDate) == null)
+                    {
+                        results.Add(balls);
+                    }
+                    
                 }
             }
-            context.SetDrawings(results);
+            context.ReplaceDrawings(results);
         }
     }
 }

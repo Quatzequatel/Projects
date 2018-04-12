@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace LotteryV2.Domain
 {
@@ -10,13 +11,23 @@ namespace LotteryV2.Domain
     {
         private int[] balls = new int[6];
         private string drawingDate = string.Empty;
-        public int[] Numbers { get => balls; }
-        public DateTime DrawingDate { get; private set; }
+
+        [JsonIgnore]
+        public Commands.CommandContext Context { get; private set; }
+
+        public Game Game { get; set; }
+
+        public int[] Numbers { get => balls; set => balls = value; }
+        public DateTime DrawingDate { get; set; }
         public Drawing SetDrawingDate(string date) { DrawingDate = DateTime.Parse(date); return this; }
-        public Decimal PrizeAmount { get; private set; }
+        public Decimal PrizeAmount { get; set; }
         public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
-        public int Winners { get; private set; }
+        public int Winners { get; set; }
         public Drawing SetWinners(int winners) { Winners = winners; return this; }
+        public Drawing SetContext(Commands.CommandContext context)
+        {
+            Context = context; Game = context.CurrentGame; return this;
+        }
 
         public void AddBall(int value)
         {
@@ -28,8 +39,29 @@ namespace LotteryV2.Domain
 
         public void AddBall(string value) => AddBall(Convert.ToInt32(value));
 
-        public string ToCSVString => $"{DrawingDate.ToShortDateString()},{Numbers[0]},{Numbers[1]},{Numbers[2]},{Numbers[3]},{Numbers[4]},{Numbers[5]}";
-        public string CSVHeading => "DrawingDate.ToShortDateString(),Numbers[0],Numbers[1],Numbers[2],Numbers[3],Numbers[4],Numbers[5]";
+        public string ToCSVString => String.Join(",", new string[]
+        {
+            $"{Game.ToString()}",
+            $"{DrawingDate.ToShortDateString()}",
+            $"{Numbers[0]}",
+            $"{Numbers[1]}",
+            $"{Numbers[2]}",
+            $"{Numbers[3]}",
+            $"{Numbers[4]}",
+            $"{Numbers[5]}"
+        });
+        public string CSVHeading =>
+            String.Join(",", new string[]
+            {
+                "Game",
+                "Drawing Date",
+                "Ball-1",
+                "Ball-2",
+                "Ball-3",
+                "Ball-4",
+                "Ball-5",
+                "Ball-Power"
+            });
 
     }
 }
