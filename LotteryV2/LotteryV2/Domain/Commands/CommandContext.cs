@@ -163,8 +163,7 @@ namespace LotteryV2.Domain.Commands
 
         public void ReplaceDrawings(List<Drawing> drawings)
         {
-            if (Drawings != null) Drawings.Clear();
-            Drawings.AddRange(drawings);
+            Drawings = drawings;
         }
 
     }

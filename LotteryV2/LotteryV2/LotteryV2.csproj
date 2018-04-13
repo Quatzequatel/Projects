@@ -64,14 +64,18 @@
     <Compile Include="Domain\Commands\CommandFactory.cs" />
     <Compile Include="Domain\Commands\CreatNumbersModelCommand.cs" />
     <Compile Include="Domain\Commands\LoadFromFile.cs" />
+    <Compile Include="Domain\Commands\SaveBaseCSVCommand.cs" />
     <Compile Include="Domain\Commands\SaveJsonToFileCommand.cs" />
     <Compile Include="Domain\Commands\ScrapeFromWeb.cs" />
+    <Compile Include="Domain\Commands\SlotNumberAnalysis2CSVCommand.cs" />
     <Compile Include="Domain\Commands\UpdateJsonFromWeb.cs" />
     <Compile Include="Domain\Drawing.cs" />
     <Compile Include="Domain\Enums.cs" />
+    <Compile Include="Domain\Extensions.cs" />
     <Compile Include="Domain\Number.cs" />
     <Compile Include="Domain\Commands\Command.cs" />
     <Compile Include="Domain\Slot.cs" />
+    <Compile Include="Domain\SlotNumberAnalysis.cs" />
     <Compile Include="Service\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

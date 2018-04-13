@@ -28,12 +28,22 @@ namespace LotteryV2.Domain
         {
             Context = context; Game = context.CurrentGame; return this;
         }
-
+        public Drawing()
+        {
+            for (int i = 0; i < balls.Length; i++)
+            {
+                balls[i] = int.MaxValue;
+            }
+        }
         public void AddBall(int value)
         {
             for (int i = 0; i < balls.Length; i++)
             {
-                if (balls[i] == 0) { balls[i] = value; break; }
+                if (balls[i] == int.MaxValue) { balls[i] = value; break; }
+            }
+            if (balls[balls.Length-1] != int.MaxValue)
+            {
+                balls = balls.OrderBy(i => i).ToArray();
             }
         }
 

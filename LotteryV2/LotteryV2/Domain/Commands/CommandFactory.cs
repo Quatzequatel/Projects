@@ -30,7 +30,8 @@ namespace LotteryV2.Domain.Commands
             typeof(ScrapeFromWeb), //if no json file scrape from web and save.
             typeof(UpdateJsonFromWeb), // update json file by appending drawings.
             typeof(SaveJsonToFileCommand), //save to file.
-            //typeof(CreatNumbersModelCommand)
+            typeof(SaveBaseCSVCommand), //save to CSV file.
+            typeof(SlotNumberAnalysis2CSVCommand)
         };
 
         private static IEnumerable<Type> AlternateCommands()
