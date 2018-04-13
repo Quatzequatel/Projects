@@ -13,7 +13,7 @@ namespace LotteryV2.Domain
         private string drawingDate = string.Empty;
 
         [JsonIgnore]
-        public Commands.CommandContext Context { get; private set; }
+        public Commands.DrawingContext Context { get; private set; }
 
         public Game Game { get; set; }
 
@@ -24,7 +24,7 @@ namespace LotteryV2.Domain
         public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
         public int Winners { get; set; }
         public Drawing SetWinners(int winners) { Winners = winners; return this; }
-        public Drawing SetContext(Commands.CommandContext context)
+        public Drawing SetContext(Commands.DrawingContext context)
         {
             Context = context; Game = context.CurrentGame; return this;
         }

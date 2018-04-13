@@ -14,7 +14,7 @@ namespace LotteryV2.Domain
         public int MaxNumber { get; private set; }
         public List<Number> Numbers { get; private set; }
 
-        public Slot(CommandContext context, int slotid)
+        public Slot(DrawingContext context, int slotid)
         {
             MaxNumber = context.HighestBall;
             Numbers = new List<Number>();

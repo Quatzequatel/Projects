@@ -6,39 +6,40 @@ using System.Threading.Tasks;
 
 namespace LotteryV2.Domain.Commands
 {
-    internal class CreatNumbersModelCommand : Command<CommandContext>
+    internal class CreatNumbersModelCommand : Command<DrawingContext>
     {
 
-        public override void Execute(CommandContext context, IEnumerable<string> additionalMetaData)
+        public override void Execute(DrawingContext context, IEnumerable<string> additionalMetaData)
         {
             Execute(context);
         }
-        public override void Execute(CommandContext context)
+        public override void Execute(DrawingContext context)
         {
             throw new NotImplementedException();
         }
 
     }
 
-    public class NumberModelContext
+    public class AnalysisContext
     {
-        public NumberModelContext(CommandContext parentContext)
+        public AnalysisContext(DrawingContext drawingContext)
         {
-            NextDrawingDate = parentContext.NextDrawingDate;
-            Drawings = parentContext.Drawings;
+            NextDrawingDate = drawingContext.NextDrawingDate;
+            DrawingContext = drawingContext;
         }
         public readonly DateTime NextDrawingDate;
-        public List<Drawing> Drawings { get; private set; }
+        public readonly DrawingContext DrawingContext;
+        
     }
 
-    public class NumberModelCommandFactory : ICommandFactory<NumberModelContext>
+    public class NumberModelCommandFactory : ICommandFactory<AnalysisContext>
     {
-        public LinkedList<Command<NumberModelContext>> CreateAlternateCommands(NumberModelContext context)
+        public LinkedList<Command<AnalysisContext>> CreateAlternateCommands(AnalysisContext context)
         {
             throw new NotImplementedException();
         }
 
-        public LinkedList<Command<NumberModelContext>> CreateCommands(NumberModelContext context)
+        public LinkedList<Command<AnalysisContext>> CreateCommands(AnalysisContext context)
         {
             throw new NotImplementedException();
         }

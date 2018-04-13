@@ -4,24 +4,24 @@ using System.Linq;
 
 namespace LotteryV2.Domain.Commands
 {
-    public class CommandFactory : ICommandFactory<CommandContext>
+    public class CommandFactory : ICommandFactory<DrawingContext>
     {
-        public LinkedList<Command<CommandContext>> CreateAlternateCommands(CommandContext context)
+        public LinkedList<Command<DrawingContext>> CreateAlternateCommands(DrawingContext context)
         {
             return Resolve(AlternateCommands().ToList());
         }
 
-        public LinkedList<Command<CommandContext>> CreateCommands(CommandContext context)
+        public LinkedList<Command<DrawingContext>> CreateCommands(DrawingContext context)
         {
             return Resolve(GetCommandTypes(context).ToList());
         }
 
-        private static IEnumerable<Type> GetCommandTypes(CommandContext context) =>
+        private static IEnumerable<Type> GetCommandTypes(DrawingContext context) =>
             context.IsAlternateContext ? AlternateCommands() : DefaultCommands;
 
-        public LinkedList<Command<CommandContext>> Resolve(List<Type> types)
+        public LinkedList<Command<DrawingContext>> Resolve(List<Type> types)
         {
-            return new LinkedList<Command<CommandContext>>(types.Select(t => (Command<CommandContext>)t));
+            return new LinkedList<Command<DrawingContext>>(types.Select(t => (Command<DrawingContext>)t));
         }
 
         private static IEnumerable<Type> DefaultCommands => new List<Type>
@@ -31,7 +31,8 @@ namespace LotteryV2.Domain.Commands
             typeof(UpdateJsonFromWeb), // update json file by appending drawings.
             typeof(SaveJsonToFileCommand), //save to file.
             typeof(SaveBaseCSVCommand), //save to CSV file.
-            typeof(SlotNumberAnalysis2CSVCommand)
+            typeof(SlotNumberAnalysis2CSVCommand),
+            typeof(SlotNumberAnalysisRanged2CSVCommand)
         };
 
         private static IEnumerable<Type> AlternateCommands()

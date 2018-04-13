@@ -8,17 +8,17 @@ using Newtonsoft.Json;
 
 namespace LotteryV2.Domain.Commands
 {
-    public class UpdateJsonFromWeb : Command<CommandContext>
+    public class UpdateJsonFromWeb : Command<DrawingContext>
     {
-        public override bool ShouldExecute(CommandContext context)
+        public override bool ShouldExecute(DrawingContext context)
         {
             return context?.Drawings?.Last<Drawing>()?.DrawingDate < context?.NextDrawingDate;
         }
-        public override void Execute(CommandContext context)
+        public override void Execute(DrawingContext context)
         {
             ScrapeDrawings(context);
         }
-        private void ScrapeDrawings(CommandContext context)
+        private void ScrapeDrawings(DrawingContext context)
         {
             var web = new HtmlWeb();
             var results = context.Drawings;

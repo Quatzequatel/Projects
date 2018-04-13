@@ -21,7 +21,7 @@ namespace LotteryV2.Domain.Commands
                 catch (Exception ex)
                 {
                     HandleRollback(context, command);
-                    throw;
+                    throw ex;
                 }
             }
         }

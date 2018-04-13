@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LotteryV2.Domain.Commands
 {
-    public class CommandContext
+    public class DrawingContext
     {
         public bool IsAlternateContext { get; set; } = false;
 
@@ -14,7 +14,7 @@ namespace LotteryV2.Domain.Commands
         public int HighestBall { get => HighBallNumber(); }
         public readonly DateTime NextDrawingDate;
         public List<Drawing> Drawings { get; private set; }
-        public CommandContext(Game currentGame, DateTime nextDrawing)
+        public DrawingContext(Game currentGame, DateTime nextDrawing)
         {
             CurrentGame = currentGame;
             NextDrawingDate = nextDrawing;

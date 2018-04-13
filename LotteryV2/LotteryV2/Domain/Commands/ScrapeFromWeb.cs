@@ -8,30 +8,30 @@ using Newtonsoft.Json;
 
 namespace LotteryV2.Domain.Commands
 {
-    internal class ScrapeFromWeb : Command<CommandContext>
+    internal class ScrapeFromWeb : Command<DrawingContext>
     {
         private string _Filename;
 
 
-        public override bool ShouldExecute(CommandContext context)
+        public override bool ShouldExecute(DrawingContext context)
         {
             _Filename = $"{context.FilePath}{context.GetGameName()}.json";
             return !System.IO.File.Exists(_Filename);
         }
 
-        public override void Execute(CommandContext context)
+        public override void Execute(DrawingContext context)
         {
             ScrapeDrawings(context);
             SaveToJSON(context);
         }
 
-        private void SaveToJSON(CommandContext context)
+        private void SaveToJSON(DrawingContext context)
         {
             System.IO.File.WriteAllText(_Filename, JsonConvert.SerializeObject(context.Drawings.OrderBy(b => b.DrawingDate), Formatting.Indented));
         }
 
 
-        private void ScrapeDrawings(CommandContext context)
+        private void ScrapeDrawings(DrawingContext context)
         {
             var web = new HtmlWeb();
             var results = new List<Drawing>();

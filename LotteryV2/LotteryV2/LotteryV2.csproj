@@ -68,6 +68,7 @@
     <Compile Include="Domain\Commands\SaveJsonToFileCommand.cs" />
     <Compile Include="Domain\Commands\ScrapeFromWeb.cs" />
     <Compile Include="Domain\Commands\SlotNumberAnalysis2CSVCommand.cs" />
+    <Compile Include="Domain\Commands\SlotNumberAnalysisRanged2CSVCommand.cs" />
     <Compile Include="Domain\Commands\UpdateJsonFromWeb.cs" />
     <Compile Include="Domain\Drawing.cs" />
     <Compile Include="Domain\Enums.cs" />

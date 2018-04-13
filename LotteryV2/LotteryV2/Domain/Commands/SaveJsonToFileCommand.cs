@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace LotteryV2.Domain.Commands
 {
-    public class SaveJsonToFileCommand : Command<CommandContext>
+    public class SaveJsonToFileCommand : Command<DrawingContext>
     {
         private string _Filename;
 
 
-        public override bool ShouldExecute(CommandContext context)
+        public override bool ShouldExecute(DrawingContext context)
         {
             _Filename = $"{context.FilePath}{context.GetGameName()}.json";
             return context.Drawings.Count() > 10;
         }
 
-        public override void Execute(CommandContext context)
+        public override void Execute(DrawingContext context)
         {
             SaveToJSON(context);
         }
 
-        private void SaveToJSON(CommandContext context)
+        private void SaveToJSON(DrawingContext context)
         {
             System.IO.File.WriteAllText(_Filename, JsonConvert.SerializeObject(context.Drawings.OrderBy(b => b.DrawingDate), Formatting.Indented));
         }

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace LotteryV2.Domain.Commands
 {
-    public class SlotNumberAnalysis2CSVCommand : Command<DrawingContext>
+    public class SlotNumberAnalysisRanged2CSVCommand : Command<DrawingContext>
     {
         private string _Filename;
         private List<SlotNumberAnalysis> numbers = new List<SlotNumberAnalysis>();
 
         public override void Execute(DrawingContext context)
         {
-            _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
+            _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
             LoadModel(context);
             SaveToCSV(context);
         }
@@ -25,7 +25,7 @@ namespace LotteryV2.Domain.Commands
                 for (int number = 1; number <= context.HighestBall; number++)
                 {
                     var element = new SlotNumberAnalysis(number, slot, context.CurrentGame);
-                    element.LoadDrawings(context.Drawings);
+                    element.LoadLastNumberOfDrawings(context.Drawings,5);
                     numbers.Add(element);
                 }
             }
