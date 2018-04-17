@@ -13,9 +13,11 @@ namespace LotteryV2.Domain
         {
             LoadDrawings(drawings.Where(i => i.DrawingDate >= start && i.DrawingDate <= end).ToList());
         }
-        public void LoadLastNumberOfDrawings(List<Drawing> drawings, int PreviousDrawingsCount)
+        public void LoadLastNumberOfDrawingsAndLeave(List<Drawing> drawings, int PreviousDrawingsCount, int LeaveDrawingCount)
         {
-            LoadDrawings(drawings.OrderByDescending(i => i.DrawingDate).Take(PreviousDrawingsCount).ToList());
+            int TakeCount = (PreviousDrawingsCount + LeaveDrawingCount) > drawings.Count? drawings.Count - LeaveDrawingCount : PreviousDrawingsCount;
+            
+            LoadDrawings(drawings.OrderByDescending(i => i.DrawingDate).Take(TakeCount + LeaveDrawingCount).Skip(LeaveDrawingCount).ToList());
         }
         public void LoadDrawings(List<Drawing> drawings)
         {
@@ -29,10 +31,12 @@ namespace LotteryV2.Domain
         public int TimesChosen => DrawingDates.Count;
         public double PercentChosen => ((double)TimesChosen / DrawingsCount) * 100;
 
+        public decimal TrendlineYvalue { get; set; }
+
         public int DrawingsCount { get; private set; }
         public void SetDrawingsCount(int value) => DrawingsCount = value;
 
-        public string CSVHeading => new string[] {"Game", "Slot", "Number", "Times Chosen", "Chosen %" }.CSV();
+        public string CSVHeading => new string[] {"Game", "Slot", "Number", "Times Chosen", "Chosen %", "TrendlineYvalue" }.CSV();
         public string CSVLine => new string[]
         {
             $"{Game}",
@@ -40,6 +44,7 @@ namespace LotteryV2.Domain
             $"{Id}",
             $"{TimesChosen}",
             $"{PercentChosen}",
+            $"{TrendlineYvalue}",
         }.CSV();
     }
 }

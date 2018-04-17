@@ -10,6 +10,9 @@ namespace LotteryV2.Domain.Commands
     {
         private string _Filename;
         private List<SlotNumberAnalysis> numbers = new List<SlotNumberAnalysis>();
+        private int _TakeDrawwings = 1000;
+        private int _LeaveDrawings = 10;
+        private List<Tuple<int, double>> dataBag = new List<Tuple<int, double>>();
 
         public override void Execute(DrawingContext context)
         {
@@ -25,9 +28,14 @@ namespace LotteryV2.Domain.Commands
                 for (int number = 1; number <= context.HighestBall; number++)
                 {
                     var element = new SlotNumberAnalysis(number, slot, context.CurrentGame);
-                    element.LoadLastNumberOfDrawings(context.Drawings,5);
+                    element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, _TakeDrawwings, _LeaveDrawings);
                     numbers.Add(element);
                 }
+
+                //dataBag.Add(
+                //    new Tuple<int, double>(slot,
+                //    numbers.Where(i => i.SlotId == slot).Select(i => i.TimesChosen).ToList<int>().StandardDeviation())
+                //    );
             }
 
             for (int number = 1; number <= context.HighestBall; number++)
@@ -46,7 +54,12 @@ namespace LotteryV2.Domain.Commands
         private void SaveToCSV(DrawingContext context)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(numbers[0].CSVHeading);
+            sb.AppendLine("Next Numbers");
+            for (int i = 1; i < _LeaveDrawings; i++)
+            {
+                sb.AppendLine(context.Drawings[context.Drawings.Count - i].ToString());
+            }
+            sb.AppendLine().AppendLine().AppendLine(numbers[0].CSVHeading);
             foreach (var item in numbers)
             {
                 sb.AppendLine(item.CSVLine);

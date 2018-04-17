@@ -11,18 +11,18 @@ namespace LotteryV2.Domain.Commands
 
             while (command != null)
             {
-                try
-                {
+                //try
+                //{
                     if (command.Value.ShouldExecute(context))
                         command.Value.Execute(context);
                     command = command.Next;
 
-                }
-                catch (Exception ex)
-                {
-                    HandleRollback(context, command);
-                    throw ex;
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    HandleRollback(context, command);
+                //    throw;
+                //}
             }
         }
 

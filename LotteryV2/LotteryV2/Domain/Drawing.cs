@@ -49,6 +49,13 @@ namespace LotteryV2.Domain
 
         public void AddBall(string value) => AddBall(Convert.ToInt32(value));
 
+        public override string ToString()
+        {
+            return $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}-{Numbers[5]}";
+        }
+
+        public string KeyString => string.Join("-", Numbers);
+
         public string ToCSVString => String.Join(",", new string[]
         {
             $"{Game.ToString()}",
