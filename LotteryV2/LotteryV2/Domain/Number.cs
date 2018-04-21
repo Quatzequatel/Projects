@@ -15,6 +15,8 @@ namespace LotteryV2.Domain
 
         private readonly List<DateTime> drawingDates = new List<DateTime>();
         public List<DateTime> DrawingDates { get => drawingDates; }
+
+
         public void AddDrawingDate(DateTime date) => drawingDates.Add(date);
         public void AddDrawingDates(IEnumerable<DateTime> dates) => drawingDates.AddRange(dates);
 

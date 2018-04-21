@@ -13,4 +13,15 @@ namespace LotteryV2.Domain
         Powerball,
         Hit5
     }
+
+
+    public enum GroupType
+    {
+        Zero,
+        Low,
+        MidLow,
+        Mid,
+        MidHigh,
+        High
+    }
 }

@@ -18,6 +18,7 @@ namespace LotteryV2.Domain
         public Game Game { get; set; }
 
         public int[] Numbers { get => balls; set => balls = value; }
+        public int Sum => balls.Sum();
         public DateTime DrawingDate { get; set; }
         public Drawing SetDrawingDate(string date) { DrawingDate = DateTime.Parse(date); return this; }
         public Decimal PrizeAmount { get; set; }
@@ -65,7 +66,8 @@ namespace LotteryV2.Domain
             $"{Numbers[2]}",
             $"{Numbers[3]}",
             $"{Numbers[4]}",
-            $"{Numbers[5]}"
+            $"{Numbers[5]}",
+            $"{Sum}"
         });
         public string CSVHeading =>
             String.Join(",", new string[]
@@ -77,7 +79,8 @@ namespace LotteryV2.Domain
                 "Ball-3",
                 "Ball-4",
                 "Ball-5",
-                "Ball-Power"
+                "Ball-Power",
+                "Sum"
             });
 
     }

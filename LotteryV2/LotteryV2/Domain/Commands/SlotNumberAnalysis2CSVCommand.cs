@@ -9,47 +9,24 @@ namespace LotteryV2.Domain.Commands
     public class SlotNumberAnalysis2CSVCommand : Command<DrawingContext>
     {
         private string _Filename;
-        private List<SlotNumberAnalysis> numbers = new List<SlotNumberAnalysis>();
+        private List<NumberModel> numbers = new List<NumberModel>();
+        Dictionary<int, SlotGroup> groups = new Dictionary<int, SlotGroup>();
 
         public override void Execute(DrawingContext context)
         {
             _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
-            LoadModel(context);
+            numbers = Groups.LoadSlotModel(context);
+            groups = Groups.DefineGroups(context, numbers);
             SaveToCSV(context);
-        }
-
-        private void LoadModel(DrawingContext context)
-        {
-            for (int slot = 1; slot <= context.SlotCount; slot++)
-            {
-                for (int number = 1; number <= context.HighestBall; number++)
-                {
-                    var element = new SlotNumberAnalysis(number, slot, context.CurrentGame);
-                    element.LoadDrawings(context.Drawings);
-                    numbers.Add(element);
-                }
-            }
-
-            for (int number = 1; number <= context.HighestBall; number++)
-            {
-                var element = new SlotNumberAnalysis(number, 0, context.CurrentGame);
-
-                foreach (var item in numbers.Where(num => num.Id == number).ToArray())
-                {
-                    if (element.DrawingsCount == 0) element.SetDrawingsCount(item.DrawingsCount);
-                    element.AddDrawingDates(item.DrawingDates);
-                }
-                numbers.Add(element);
-            }
         }
 
         private void SaveToCSV(DrawingContext context)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(numbers[0].CSVHeading);
+            sb.AppendLine(numbers[0].CSVHeading + ",GroupType");
             foreach (var item in numbers)
             {
-                sb.AppendLine(item.CSVLine);
+                sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.Id)}");
             }
 
             System.IO.File.WriteAllText(_Filename, sb.ToString());

@@ -20,13 +20,20 @@ namespace LotteryV2.Domain.Commands
             SaveToCSV(context);
         }
 
+
         private void SaveToCSV(DrawingContext context)
         {
+            Dictionary<int, SlotGroup> groups = Groups.DefineGroups(context);
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(context.Drawings[0].CSVHeading);
+            sb.AppendLine(context.Drawings[0].CSVHeading + ", Group");
             foreach (var item in context.Drawings)
             {
-                sb.AppendLine(item.ToCSVString);
+                sb.Append(item.ToCSVString);
+                for (int i = 0; i < context.SlotCount; i++)
+                {
+                    sb.Append($",{groups[i+1].FindGroupTypes(item.Numbers[i])}");
+                }
+                sb.AppendLine();
             }
 
             System.IO.File.WriteAllText(_Filename, sb.ToString());

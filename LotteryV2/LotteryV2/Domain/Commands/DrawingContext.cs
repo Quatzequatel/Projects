@@ -1,7 +1,7 @@
-﻿using LotteryV2.Domain;
-using System.Linq;
+﻿using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace LotteryV2.Domain.Commands
 {
@@ -14,10 +14,51 @@ namespace LotteryV2.Domain.Commands
         public int HighestBall { get => HighBallNumber(); }
         public readonly DateTime NextDrawingDate;
         public List<Drawing> Drawings { get; private set; }
+        public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
+        public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
+
         public DrawingContext(Game currentGame, DateTime nextDrawing)
         {
             CurrentGame = currentGame;
             NextDrawingDate = nextDrawing;
+        }
+
+        public void DefineGroups()
+        {
+            GroupsDictionary = Groups.DefineGroups(HighestBall, SlotCount, CurrentGame, Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList());
+        }
+
+        public void AddToPickedList(LotoNumber number)
+        {
+            if (PickedNumbers == null) PickedNumbers = new Dictionary<string, LotoNumber>();
+            if (Drawings.FirstOrDefault(i => i.KeyString == number.ToString()) == null)
+                PickedNumbers[number.ToString()] = number;
+        }
+
+        public void AddToPickedList(Dictionary<string, LotoNumber> numbers)
+        {
+            if (PickedNumbers == null) PickedNumbers = new Dictionary<string, LotoNumber>();
+            List<Drawing> cached = Drawings.OrderBy(i => i.KeyString).ToList();
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in numbers.Where(i => i.Value.Sum >= 121 && i.Value.Sum <= 174))
+            {
+                //rule 1 goldie-lock sum is between 121 & 174.
+
+                //rule 2 so far no number has been chosen twice.
+                if (cached.Where(i => i.KeyString == item.Key).Count() == 0)
+                {
+                    PickedNumbers[item.Key] = item.Value;
+                }
+                else
+                {
+                    sb.AppendLine($"Already a winner, {item.Key}");
+                }
+            }
+
+            string _Filename = $"{this.FilePath}{this.GetGameName()}_previousWinners.csv";
+            System.IO.File.WriteAllText(_Filename, sb.ToString());
+
         }
 
         public string GetGameName()
@@ -90,10 +131,10 @@ namespace LotteryV2.Domain.Commands
             string page = "http://www.walottery.com/WinningNumbers/PastDrawings.aspx";
             string gameParameter = GetGameName();
             List<String> links = new List<string>();
-            int startYear = updateOnly && Drawings.Count > 10 
-                ? Drawings.Last().DrawingDate.Year 
+            int startYear = updateOnly && Drawings.Count > 10
+                ? Drawings.Last().DrawingDate.Year
                 : FirstYear();
-            for (int i = startYear; i <= DateTime.Now.Year ; i++)
+            for (int i = startYear; i <= DateTime.Now.Year; i++)
             {
                 links.Add($"{page}?gamename={gameParameter}&unittype=year&unitcount={i}");
             }

@@ -9,7 +9,7 @@ namespace LotteryV2.Domain.Commands
     public class SlotNumberAnalysisRanged2CSVCommand : Command<DrawingContext>
     {
         private string _Filename;
-        private List<SlotNumberAnalysis> numbers = new List<SlotNumberAnalysis>();
+        private List<NumberModel> numbers = new List<NumberModel>();
         private int _TakeDrawwings = 1000;
         private int _LeaveDrawings = 10;
         private List<Tuple<int, double>> dataBag = new List<Tuple<int, double>>();
@@ -27,20 +27,16 @@ namespace LotteryV2.Domain.Commands
             {
                 for (int number = 1; number <= context.HighestBall; number++)
                 {
-                    var element = new SlotNumberAnalysis(number, slot, context.CurrentGame);
+                    var element = new NumberModel(number, slot, context.CurrentGame);
                     element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, _TakeDrawwings, _LeaveDrawings);
                     numbers.Add(element);
                 }
 
-                //dataBag.Add(
-                //    new Tuple<int, double>(slot,
-                //    numbers.Where(i => i.SlotId == slot).Select(i => i.TimesChosen).ToList<int>().StandardDeviation())
-                //    );
             }
 
             for (int number = 1; number <= context.HighestBall; number++)
             {
-                var element = new SlotNumberAnalysis(number, 0, context.CurrentGame);
+                var element = new NumberModel(number, 0, context.CurrentGame);
 
                 foreach (var item in numbers.Where(num => num.Id == number).ToArray())
                 {
