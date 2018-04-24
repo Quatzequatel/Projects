@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LotteryV3.Domain
+namespace LotteryV3.Domain.Extensions
 {
-    public static class Extensions
+    public static class StatisticalExtensions
     {
-        public static string CSV(this string[] values)
-        {
-            return string.Join(",", values);
-        }
-
         public static double Mean(this List<double> values)
         {
             return values.Count == 0 ? 0 : values.Mean(0, values.Count);
@@ -123,24 +115,5 @@ namespace LotteryV3.Domain
             return Math.Sqrt(variance);
         }
 
-        public static List<int> LastItems(this List<int> values, int take)
-        {
-            List<int> LastXList = new List<int>();
-            int start = 0;
-            if (values.Count > take)
-            {
-                start = values.Count - take;
-            }
-            else
-            {
-                take = values.Count;
-            }
-
-            for (int i = start; i < start + take; i++)
-            {
-                LastXList.Add(values[i]);
-            }
-            return LastXList;
-        }
     }
 }

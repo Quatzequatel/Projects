@@ -13,7 +13,12 @@ namespace LotteryV2.Domain.Commands
         public int SlotCount { get => GetBallCount(); }
         public int HighestBall { get => HighBallNumber(); }
         public readonly DateTime NextDrawingDate;
-        public List<Drawing> Drawings { get; private set; }
+        private List<Drawing> _Drawings;
+        public List<Drawing> Drawings
+        {
+            get => _Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList();
+            private set => _Drawings = value;
+        }
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
 
@@ -25,7 +30,7 @@ namespace LotteryV2.Domain.Commands
 
         public void DefineGroups()
         {
-            GroupsDictionary = Groups.DefineGroups(HighestBall, SlotCount, CurrentGame, Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList());
+            GroupsDictionary = Groups.DefineGroups(this);
         }
 
         public void AddToPickedList(LotoNumber number)

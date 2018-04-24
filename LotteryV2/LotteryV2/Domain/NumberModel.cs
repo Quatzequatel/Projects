@@ -14,6 +14,7 @@ namespace LotteryV2.Domain
         {
             LoadDrawings(drawings.Where(i => i.DrawingDate >= start && i.DrawingDate <= end).ToList());
         }
+
         public void LoadLastNumberOfDrawingsAndLeave(List<Drawing> drawings, int PreviousDrawingsCount, int LeaveDrawingCount)
         {
             int TakeCount = (PreviousDrawingsCount + LeaveDrawingCount) > drawings.Count ? drawings.Count - LeaveDrawingCount : PreviousDrawingsCount;

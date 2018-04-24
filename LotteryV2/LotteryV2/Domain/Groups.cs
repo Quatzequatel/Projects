@@ -14,14 +14,15 @@ namespace LotteryV2.Domain
                     context.Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList())
                 );
         }
-        public static Dictionary<int, SlotGroup> DefineGroups(DrawingContext context, List<NumberModel> numbers)
-        {
-            return DefineGroups(context.SlotCount, context.CurrentGame, numbers);
-        }
-        public static Dictionary<int, SlotGroup> DefineGroups(int highestBall, int slotCount, Game game, List<Drawing> drawings)
-        {
-            return DefineGroups(slotCount, game, LoadSlotModel(highestBall, slotCount, game, drawings));
-        }
+        // until these are nessisary leave out. #over-engineering.
+        //public static Dictionary<int, SlotGroup> DefineGroups(DrawingContext context, List<NumberModel> numbers)
+        //{
+        //    return DefineGroups(context.SlotCount, context.CurrentGame, numbers);
+        //}
+        //public static Dictionary<int, SlotGroup> DefineGroups(int highestBall, int slotCount, Game game, List<Drawing> drawings)
+        //{
+        //    return DefineGroups(slotCount, game, LoadSlotModel(highestBall, slotCount, game, drawings));
+        //}
         public static Dictionary<int, SlotGroup> DefineGroups(int slotCount, Game game, List<NumberModel> numbers)
         {
             Dictionary<int, SlotGroup> groups = new Dictionary<int, SlotGroup>();
