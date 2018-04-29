@@ -11,19 +11,19 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
-            Dictionary<int, SlotGroup> groups = Groups.DefineGroups(context);
+            Dictionary<int, SlotGroup> groups = context.GroupsDictionary;
             List<int> input = new List<int>();
             //for (int i = 1; i < context.SlotCount; i++)
             //{
             //    input.AddRange(groups[i].Numbers(GroupType.High).Select(num => num.Id).ToList());
             //}
 
-            input.AddRange(groups[1].Numbers(GroupType.High).Select(num => num.Id).ToList());
-            input.AddRange(groups[2].Numbers(GroupType.MidHigh).Select(num => num.Id).ToList());
-            input.AddRange(groups[3].Numbers(GroupType.MidHigh).Select(num => num.Id).ToList());
-            input.AddRange(groups[4].Numbers(GroupType.High).Select(num => num.Id).ToList());
-            input.AddRange(groups[5].Numbers(GroupType.High).Select(num => num.Id).ToList());
-            if(context.SlotCount > 5)input.AddRange(groups[6].Numbers(GroupType.High).Select(num => num.Id).ToList());
+            input.AddRange(groups[1].Numbers(SubSets.High).Select(num => num.Id).ToList());
+            input.AddRange(groups[2].Numbers(SubSets.MidHigh).Select(num => num.Id).ToList());
+            input.AddRange(groups[3].Numbers(SubSets.MidHigh).Select(num => num.Id).ToList());
+            input.AddRange(groups[4].Numbers(SubSets.High).Select(num => num.Id).ToList());
+            input.AddRange(groups[5].Numbers(SubSets.High).Select(num => num.Id).ToList());
+            if(context.SlotCount > 5)input.AddRange(groups[6].Numbers(SubSets.High).Select(num => num.Id).ToList());
 
             context.AddToPickedList(Groups.GenerateLotoNumbersFromInputArray(input.ToArray(), 6));
 

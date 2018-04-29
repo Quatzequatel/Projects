@@ -26,12 +26,14 @@ namespace LotteryV2.Domain.Commands
 
         private static IEnumerable<Type> DefaultCommands => new List<Type>
         {
-            typeof(LoadFromFile), //load drawings from json file; if exists
+            typeof(ModifyDrawingContext), //define context TBD.
+            typeof(LoadDrawingsFromFile), //load drawings from json file; if exists
             typeof(ScrapeFromWeb), //if no json file scrape from web and save.
             typeof(UpdateJsonFromWeb), // update json file by appending drawings.
-            typeof(PurmutateNumbers),
             typeof(DefineGroupsCommand),
+            typeof(SetTemplateFingerPrintCommand),
             typeof(SaveGroups2JsonCommand),
+            //typeof(PurmutateNumbers),
             //typeof(NumberGeneratorCommand),
             typeof(SaveJsonToFileCommand), //save to file.
             typeof(SaveBaseCSVCommand), //save to CSV file.

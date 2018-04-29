@@ -10,9 +10,14 @@ namespace LotteryV2.Domain.Commands
 {
     public class UpdateJsonFromWeb : Command<DrawingContext>
     {
+        /// <summary>
+        /// only executes when context.NextDrawingDate is greater than last drawing date.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override bool ShouldExecute(DrawingContext context)
         {
-            return context?.Drawings?.Last<Drawing>()?.DrawingDate < context?.NextDrawingDate;
+            return (context.LastDrawingDate.Value < context?.NextDrawingDate);
         }
         public override void Execute(DrawingContext context)
         {
@@ -32,7 +37,7 @@ namespace LotteryV2.Domain.Commands
                 if (drawingTable == null) continue;
                 foreach (var drawing in drawingTable)
                 {
-                    Drawing balls = new Drawing().SetDrawingDate
+                    Drawing balls = new Drawing(context).SetDrawingDate
                         (
                        drawing.Descendants().Where(i => i.Name == "h2"
                         && i.InnerText.CleanInnerText() != null).First().InnerText.CleanInnerText()
@@ -59,6 +64,7 @@ namespace LotteryV2.Domain.Commands
                         }
                     }
 
+                    ///if ball is not already in the list, add it.
                     if(results.FirstOrDefault(i=>i.DrawingDate == balls.DrawingDate) == null)
                     {
                         results.Add(balls);
@@ -66,6 +72,7 @@ namespace LotteryV2.Domain.Commands
                     
                 }
             }
+            //replace drawings with results.
             context.ReplaceDrawings(results);
         }
     }

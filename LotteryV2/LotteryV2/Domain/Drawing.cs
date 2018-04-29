@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using LotteryV2.Domain.Commands;
 
 namespace LotteryV2.Domain
 {
@@ -13,7 +14,7 @@ namespace LotteryV2.Domain
         private string drawingDate = string.Empty;
 
         [JsonIgnore]
-        public Commands.DrawingContext Context { get; private set; }
+        public DrawingContext Context { get; private set; }
 
         public Game Game { get; set; }
 
@@ -25,10 +26,21 @@ namespace LotteryV2.Domain
         public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
         public int Winners { get; set; }
         public Drawing SetWinners(int winners) { Winners = winners; return this; }
-        public Drawing SetContext(Commands.DrawingContext context)
+        public FingerPrint TemplateFingerPrint { get; private set; }
+
+        public Drawing(DrawingContext context)
+        {
+            Context = context; Game = context.CurrentGame;
+            for (int i = 0; i < balls.Length; i++)
+            {
+                balls[i] = int.MaxValue;
+            }
+        }
+        public Drawing SetContext(DrawingContext context)
         {
             Context = context; Game = context.CurrentGame; return this;
         }
+
         public Drawing()
         {
             for (int i = 0; i < balls.Length; i++)
@@ -42,13 +54,27 @@ namespace LotteryV2.Domain
             {
                 if (balls[i] == int.MaxValue) { balls[i] = value; break; }
             }
-            if (balls[balls.Length-1] != int.MaxValue)
+            if (balls[balls.Length - 1] != int.MaxValue)
             {
                 balls = balls.OrderBy(i => i).ToArray();
             }
         }
 
         public void AddBall(string value) => AddBall(Convert.ToInt32(value));
+
+        /// <summary>
+        /// retun the fingerprint for the drawing.
+        /// </summary>
+        public FingerPrint GetTemplateFingerPrint()
+        {
+            if (TemplateFingerPrint != null) return TemplateFingerPrint;
+            else
+            {
+                TemplateFingerPrint = new FingerPrint(this);
+                return TemplateFingerPrint;
+            }
+
+        }
 
         public override string ToString()
         {
@@ -67,7 +93,9 @@ namespace LotteryV2.Domain
             $"{Numbers[3]}",
             $"{Numbers[4]}",
             $"{Numbers[5]}",
-            $"{Sum}"
+            $"{Sum}",
+            $"{TemplateFingerPrint}",
+            $"{TemplateFingerPrint.GetValue()}"
         });
         public string CSVHeading =>
             String.Join(",", new string[]
@@ -80,7 +108,9 @@ namespace LotteryV2.Domain
                 "Ball-4",
                 "Ball-5",
                 "Ball-Power",
-                "Sum"
+                "Sum",
+                "TemplateFingerPrint",
+                "TemplateFingerPrint.Value"
             });
 
     }

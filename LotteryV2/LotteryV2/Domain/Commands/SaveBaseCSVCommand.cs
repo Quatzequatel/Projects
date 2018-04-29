@@ -23,7 +23,7 @@ namespace LotteryV2.Domain.Commands
 
         private void SaveToCSV(DrawingContext context)
         {
-            Dictionary<int, SlotGroup> groups = Groups.DefineGroups(context);
+            Dictionary<int, SlotGroup> groups = context.GroupsDictionary;
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(context.Drawings[0].CSVHeading + ", Group");
             foreach (var item in context.Drawings)

@@ -8,6 +8,15 @@ namespace LotteryV2.Domain.Commands
         public override void Execute(DrawingContext context)
         {
             context.DefineGroups();
+            context.Drawings.ForEach(i => i.SetContext(context));
+        }
+    }
+
+    class SetTemplateFingerPrintCommand : Command<DrawingContext>
+    {
+        public override void Execute(DrawingContext context)
+        {
+            context.Drawings.ForEach(i => i.GetTemplateFingerPrint());
         }
     }
     class SaveGroups2JsonCommand : Command<DrawingContext>

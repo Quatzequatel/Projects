@@ -9,7 +9,7 @@ namespace LotteryV3.Domain.Entities
     public class TrendGroups
     {
         public GameType Game { get; set; }
-        private DrawingContext Context;
+        //private DrawingContext Context;
 
     }
 
@@ -28,6 +28,7 @@ namespace LotteryV3.Domain.Entities
             SlotId = slotId;
             Game = game;
             Propability = propability;
+            _NumberSet = new List<NumberInfo>();
         }
         public void AddNumbers(List<NumberInfo> values)
         {
@@ -64,10 +65,28 @@ namespace LotteryV3.Domain.Entities
         }
 
         public TrendValue(int slotId, int number, DateTime drawingDate, DateTime? previousDrawingDate, DateTime firstDrawingDate)
-            : this(slotId,
-                 number,
-                 (previousDrawingDate.HasValue ? drawingDate.Subtract(previousDrawingDate.Value).Days : drawingDate.Subtract(firstDrawingDate).Days),
-                 drawingDate)
-        { }
+            : this(slotId, number, -1, drawingDate)
+        {
+            Interval = previousDrawingDate.HasValue
+                ? drawingDate.Subtract(previousDrawingDate.Value).Days
+                : drawingDate.Subtract(firstDrawingDate).Days * -1;
+        }
+    }
+
+    public class TrendKey
+    {
+        public DateTime DrawingDate { get; set; }
+        public int SlotId { get; set; }
+        public TrendKey(int slotId, DateTime drawingDate)
+        {
+            DrawingDate = drawingDate;
+            SlotId = slotId;
+        }
+
+        public override string ToString()
+        {
+            return $"{DrawingDate.ToShortDateString()}-{SlotId}";
+        }
     }
 }
+

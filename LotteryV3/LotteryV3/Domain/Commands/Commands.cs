@@ -239,7 +239,7 @@ namespace LotteryV3.Domain.Commands
             sb.AppendLine(context.Drawings[0].CSVHeading);
             foreach (var item in context.Drawings)
             {
-                sb.Append(item.ToCSVString).Append(",").Append(item.GetDrawingPattern().Select(i=> i.ToString()).ToArray().CSV()).AppendLine();
+                sb.AppendLine(item.ToCSVString);
             }
 
             System.IO.File.WriteAllText(_Filename, sb.ToString());

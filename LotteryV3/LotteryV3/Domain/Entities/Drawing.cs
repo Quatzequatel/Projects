@@ -75,6 +75,13 @@ namespace LotteryV3.Domain.Entities
                 balls = balls.OrderBy(i => i).ToArray();
             }
         }
+
+        public TrendValue GetTrendValue(int slotId)
+        {
+            return Context.TrendDictionary.ContainsKey(new TrendKey(slotId, DrawingDate).ToString()) 
+                ? Context.TrendDictionary[new TrendKey(slotId, DrawingDate).ToString()]
+                : new TrendValue(slotId, -1, 0, DrawingDate);
+        }
         public override string ToString()
         {
             return $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}-{Numbers[5]}";
@@ -99,6 +106,12 @@ namespace LotteryV3.Domain.Entities
             $"{drawingPattern[3]}",
             $"{drawingPattern[4]}",
             $"{drawingPattern[5]}",
+            $"{GetTrendValue(0).Interval}",
+            $"{GetTrendValue(1).Interval}",
+            $"{GetTrendValue(2).Interval}",
+            $"{GetTrendValue(3).Interval}",
+            $"{GetTrendValue(4).Interval}",
+            $"{GetTrendValue(5).Interval}",
         });
         public string CSVHeading =>
             String.Join(",", new string[]
@@ -118,6 +131,12 @@ namespace LotteryV3.Domain.Entities
                 "Propability 4",
                 "Propability 5",
                 "Propability 6",
+                "TrendValue 1",
+                "TrendValue 2",
+                "TrendValue 3",
+                "TrendValue 4",
+                "TrendValue 5",
+                "TrendValue 6",
             });
     }
 
@@ -154,7 +173,7 @@ namespace LotteryV3.Domain.Entities
         public void AddDrawingIntervalDate(int slotId, int number, DateTime date)
         {
             int interval = drawingDates.Count > 0 ? date.Subtract(drawingDates.Last()).Days : date.Subtract(FirstDrawingDate).Days;
-            TrendDictionary[date] = new TrendValue(slotId, number, interval, date);
+            //TrendDictionary[date] = new TrendValue(slotId, number, interval, date);
             _DaysSincePreviousDrawing.Add(interval);
         }
 

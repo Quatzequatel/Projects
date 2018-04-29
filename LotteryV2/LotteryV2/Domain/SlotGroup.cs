@@ -10,7 +10,7 @@ namespace LotteryV2.Domain
     {
         private readonly int _SlotId;
         private readonly Game _Game;
-        private Dictionary<GroupType, List<NumberModel>> _Groups = new Dictionary<GroupType, List<NumberModel>>();
+        private Dictionary<SubSets, List<NumberModel>> _Groups = new Dictionary<SubSets, List<NumberModel>>();
 
         public SlotGroup(int slotId, Game game)
         {
@@ -19,7 +19,7 @@ namespace LotteryV2.Domain
             //_Group = group;
         }
 
-        public void AddNumber(GroupType group, NumberModel value) => _Groups[group].Add(value);
+        public void AddNumber(SubSets group, NumberModel value) => _Groups[group].Add(value);
 
         /// <summary>
         /// Parse values list of numbers into bell curve groups of GroupType.
@@ -34,26 +34,26 @@ namespace LotteryV2.Domain
             int zeroGroupCount = slotList.Where(i => i.PercentChosen <= 0.1).Count();
             int groupSize = zeroGroupCount == 0 ? fullGroupSize : fullGroupSize - zeroGroupCount;
             int subGroupSize = (int)Math.Floor(groupSize / 5.0);
-            foreach (GroupType group in (GroupType[])Enum.GetValues(typeof(GroupType)))
+            foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
                 switch (group)
                 {
-                    case GroupType.Zero:
+                    case SubSets.Zero:
                         _Groups[group] = new List<NumberModel>(values.Where(i => i.SlotId == _SlotId && i.PercentChosen <= 0.1).ToArray());
                         break;
-                    case GroupType.Low:
+                    case SubSets.Low:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 4).Take(subGroupSize));
                         break;
-                    case GroupType.MidLow:
+                    case SubSets.MidLow:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 3).Take(subGroupSize));
                         break;
-                    case GroupType.Mid:
+                    case SubSets.Mid:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 2).Take(subGroupSize));
                         break;
-                    case GroupType.MidHigh:
+                    case SubSets.MidHigh:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize).Take(subGroupSize));
                         break;
-                    case GroupType.High:
+                    case SubSets.High:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Take(subGroupSize));
                         break;
                     default:
@@ -67,22 +67,22 @@ namespace LotteryV2.Domain
         /// </summary>
         /// <param name="group"></param>
         /// <returns></returns>
-        public List<NumberModel> Numbers(GroupType group) => _Groups[group];
+        public List<NumberModel> Numbers(SubSets group) => _Groups[group];
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public GroupType FindGroupType(int number)
+        public SubSets FindGroupType(int number)
         {
             var results = new List<FindGroup>();
-            foreach (GroupType group in (GroupType[])Enum.GetValues(typeof(GroupType)))
+            foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
                 if (_Groups[group].Where(i => i.Id == number).Count() > 0) return group;
             }
 
-            return default(GroupType);
+            return default(SubSets);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace LotteryV2.Domain
         {
             var items = new List<FindGroup>();
 
-            foreach (GroupType group in (GroupType[])Enum.GetValues(typeof(GroupType)))
+            foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
                 var result =Numbers(group).Where(i => i.Id == number && i.SlotId == _SlotId)
                     .Select(j => new FindGroup { Id = j.Id, Group = group, PercentChosen = j.PercentChosen, TimesChosen = j.TimesChosen }).FirstOrDefault();
@@ -107,7 +107,7 @@ namespace LotteryV2.Domain
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var group in (GroupType[])Enum.GetValues(typeof(GroupType)))
+            foreach (var group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
                 sb.AppendLine($"{group},list:,{string.Join(",", Numbers(group).Select(i => i.Id).ToArray())}");
             }
@@ -118,7 +118,7 @@ namespace LotteryV2.Domain
     public struct FindGroup
     {
         public int Id;
-        public GroupType Group;
+        public SubSets Group;
         public double PercentChosen;
         public int TimesChosen;
     }

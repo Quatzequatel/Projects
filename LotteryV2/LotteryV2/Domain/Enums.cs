@@ -15,7 +15,7 @@ namespace LotteryV2.Domain
     }
 
 
-    public enum GroupType
+    public enum SubSets
     {
         Zero,
         Low,
@@ -23,5 +23,13 @@ namespace LotteryV2.Domain
         Mid,
         MidHigh,
         High
+    }
+
+    public enum TemplateSets
+    {
+        Blue,
+        Aqua,
+        Sunrise,
+        RedHot
     }
 }

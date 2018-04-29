@@ -64,8 +64,9 @@
     <Compile Include="Domain\Commands\CreatNumbersModelCommand.cs" />
     <Compile Include="Domain\Commands\DefineGroupsCommand.cs" />
     <Compile Include="Domain\Commands\DrawingContext.cs" />
-    <Compile Include="Domain\Commands\LoadFromFile.cs" />
+    <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\PurmutateNumbers.cs" />
+    <Compile Include="Domain\FingerPrint.cs" />
     <Compile Include="Domain\LotoNumber.cs" />
     <Compile Include="Domain\Commands\NumberGeneratorCommand.cs" />
     <Compile Include="Domain\Commands\SaveBaseCSVCommand.cs" />
@@ -84,7 +85,6 @@
     <Compile Include="Domain\NumberModel.cs" />
     <Compile Include="Domain\Slot.cs" />
     <Compile Include="Domain\SlotGroup.cs" />
-    <Compile Include="Domain\SlotNumberAnalysis.cs" />
     <Compile Include="Domain\Trendline.cs" />
     <Compile Include="Service\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,15 +12,18 @@ namespace LotteryV2.Domain.Commands
         public readonly Game CurrentGame;
         public int SlotCount { get => GetBallCount(); }
         public int HighestBall { get => HighBallNumber(); }
-        public readonly DateTime NextDrawingDate;
+        public DateTime NextDrawingDate { get; private set; }
+        public DrawingContext SetNextDrawingDate(DateTime value) {NextDrawingDate = value; return this;}
         private List<Drawing> _Drawings;
         public List<Drawing> Drawings
         {
-            get => _Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList();
+            get => _Drawings?.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList();
             private set => _Drawings = value;
         }
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
+
+        public DateTime? LastDrawingDate => Drawings?.Last<Drawing>().DrawingDate;
 
         public DrawingContext(Game currentGame, DateTime nextDrawing)
         {

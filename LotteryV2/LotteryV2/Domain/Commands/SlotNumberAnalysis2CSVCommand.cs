@@ -10,13 +10,13 @@ namespace LotteryV2.Domain.Commands
     {
         private string _Filename;
         private List<NumberModel> numbers = new List<NumberModel>();
-        Dictionary<int, SlotGroup> groups = new Dictionary<int, SlotGroup>();
+        Dictionary<int, SlotGroup> groups;
 
         public override void Execute(DrawingContext context)
         {
             _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
-            //numbers = Groups.LoadSlotModel(context);
-            groups = Groups.DefineGroups(context);
+            numbers = Groups.LoadSlotModel(context);
+            groups = context.GroupsDictionary;
             SaveToCSV(context);
         }
 

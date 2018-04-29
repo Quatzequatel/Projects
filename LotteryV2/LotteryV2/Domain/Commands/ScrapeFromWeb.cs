@@ -11,7 +11,11 @@ namespace LotteryV2.Domain.Commands
     {
         private string _Filename;
 
-
+        /// <summary>
+        /// Should only execute when there is no json file.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>true when no json file exists</returns>
         public override bool ShouldExecute(DrawingContext context)
         {
             _Filename = $"{context.FilePath}{context.GetGameName()}.json";
@@ -44,7 +48,7 @@ namespace LotteryV2.Domain.Commands
                 if (drawingTable == null) continue;
                 foreach (var drawing in drawingTable)
                 {
-                    Drawing balls = new Drawing().SetDrawingDate
+                    Drawing balls = new Drawing(context).SetDrawingDate
                         (
                        drawing.Descendants().Where(i => i.Name == "h2"
                         && i.InnerText.CleanInnerText() != null).First().InnerText.CleanInnerText()

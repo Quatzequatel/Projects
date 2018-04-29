@@ -14,7 +14,7 @@ namespace LotteryV3.Domain.Entities
         public readonly DateTime NextDrawingDate;
         public readonly DateTime FirstDrawingDate;
         public List<Drawing> Drawings { get; private set; }
-        private Dictionary<DateTime, TrendValue> TrendDictionary { get; set; } = new Dictionary<DateTime, TrendValue>();
+        public Dictionary<string, TrendValue> TrendDictionary { get; set; } = new Dictionary<string, TrendValue>();
 
         public string FilePath => "C:\\Users\\Steven\\Documents\\";
 
@@ -169,6 +169,7 @@ namespace LotteryV3.Domain.Entities
 
         public void SetContextOnDrawings()
         {
+            Drawings.ForEach(drawing => drawing.SetContext(this));
             for (int slotId = 0; slotId < this.GetBallCount(); slotId++)
             {
                 for (int id = 1; id < this.HighestBall; id++)
@@ -176,11 +177,10 @@ namespace LotteryV3.Domain.Entities
                     var list = Drawings.Where(drawing => drawing.Game == Game && drawing.Numbers[slotId] == id).ToArray();
                     for (int drawing = 0; drawing < list.Length; drawing++)
                     {
-                        TrendDictionary[list[drawing].DrawingDate] = new TrendValue(slotId, list[drawing].Numbers[slotId],
+                        TrendDictionary[new TrendKey(slotId, list[drawing].DrawingDate).ToString()] = new TrendValue(slotId, list[drawing].Numbers[slotId],
                             list[drawing].DrawingDate, drawing > 0 ? list[drawing - 1].DrawingDate : this.FirstDrawingDate, this.FirstDrawingDate);
                     }
                 }
-                
             }
         }
 
