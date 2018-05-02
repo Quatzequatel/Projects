@@ -11,25 +11,26 @@ namespace LotteryV2.Domain
         Lotto,
         MegaMillion,
         Powerball,
-        Hit5
+        Hit5,
+        Match4
     }
 
 
     public enum SubSets
     {
-        Zero,
-        Low,
-        MidLow,
-        Mid,
-        MidHigh,
-        High
+        Zero = 1,
+        Low = 2,
+        MidLow = 4,
+        Mid = 8,
+        MidHigh = 16,
+        High = 32
     }
 
     public enum TemplateSets
     {
-        Blue,
-        Aqua,
-        Sunrise,
-        RedHot
+        Black = 0,
+        Aqua = 2,
+        Sunrise = 7,
+        RedHot = 100
     }
 }

@@ -9,14 +9,16 @@ namespace LotteryV2.Domain
     {
         private List<SubSets> Template { get; set; } = new List<SubSets>();
         private int Value { get; set; }
-        public FingerPrint( Drawing drawing)
+        public int Count { get; set; }
+        public TemplateSets TemplateSet { get; set; }
+        public FingerPrint(Drawing drawing)
         {
-            
-            for (int SlotId = 1; SlotId < drawing.Numbers.Length; SlotId++)
+
+            for (int SlotId = 1; SlotId <= drawing.Numbers.Length; SlotId++)
             {
-                SubSets slotset = drawing.Context.GroupsDictionary[SlotId].FindGroupType(drawing.Numbers[SlotId]);
+                SubSets slotset = drawing.Context.GroupsDictionary[SlotId].FindGroupType(drawing.Numbers[SlotId - 1]);
                 Template.Add(slotset);
-                Value += ((SlotId * 10) + (int)slotset);
+                Value += ((int)slotset * (int)Math.Pow(10, SlotId));
             }
         }
         public int GetValue() => Value;

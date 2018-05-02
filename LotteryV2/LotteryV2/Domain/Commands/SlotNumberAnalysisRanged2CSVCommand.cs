@@ -27,7 +27,7 @@ namespace LotteryV2.Domain.Commands
             {
                 for (int number = 1; number <= context.HighestBall; number++)
                 {
-                    var element = new NumberModel(number, slot, context.CurrentGame);
+                    var element = new NumberModel(number, slot, context.GameType);
                     element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, _TakeDrawwings, _LeaveDrawings);
                     numbers.Add(element);
                 }
@@ -36,7 +36,7 @@ namespace LotteryV2.Domain.Commands
 
             for (int number = 1; number <= context.HighestBall; number++)
             {
-                var element = new NumberModel(number, 0, context.CurrentGame);
+                var element = new NumberModel(number, 0, context.GameType);
 
                 foreach (var item in numbers.Where(num => num.Id == number).ToArray())
                 {

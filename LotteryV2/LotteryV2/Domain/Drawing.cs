@@ -10,7 +10,7 @@ namespace LotteryV2.Domain
 {
     public class Drawing
     {
-        private int[] balls = new int[6];
+        private int[] balls;
         private string drawingDate = string.Empty;
 
         [JsonIgnore]
@@ -30,7 +30,8 @@ namespace LotteryV2.Domain
 
         public Drawing(DrawingContext context)
         {
-            Context = context; Game = context.CurrentGame;
+            balls = new int[context.SlotCount];
+            Context = context; Game = context.GameType;
             for (int i = 0; i < balls.Length; i++)
             {
                 balls[i] = int.MaxValue;
@@ -38,12 +39,14 @@ namespace LotteryV2.Domain
         }
         public Drawing SetContext(DrawingContext context)
         {
-            Context = context; Game = context.CurrentGame; return this;
+            Context = context; Game = context.GameType; return this;
         }
 
         public Drawing()
         {
-            for (int i = 0; i < balls.Length; i++)
+
+            balls = new int[new int[0].GetSlotCount()];
+            for (int i = 0; i < balls.GetSlotCount(); i++)
             {
                 balls[i] = int.MaxValue;
             }
@@ -78,27 +81,57 @@ namespace LotteryV2.Domain
 
         public override string ToString()
         {
-            return $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}-{Numbers[5]}";
+            return Context.SlotCount == 6 ? $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}-{Numbers[5]}"
+                : Context.SlotCount == 5 ? $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}"
+                : $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}";
         }
 
         public string KeyString => string.Join("-", Numbers);
 
-        public string ToCSVString => String.Join(",", new string[]
+        public string ToCSVString()
         {
-            $"{Game.ToString()}",
-            $"{DrawingDate.ToShortDateString()}",
-            $"{Numbers[0]}",
-            $"{Numbers[1]}",
-            $"{Numbers[2]}",
-            $"{Numbers[3]}",
-            $"{Numbers[4]}",
-            $"{Numbers[5]}",
-            $"{Sum}",
-            $"{TemplateFingerPrint}",
-            $"{TemplateFingerPrint.GetValue()}"
-        });
+            switch (Context.SlotCount)
+            {
+                case 4:
+                    return String.Join(",", new string[] {$"{Game.ToString()}",
+                            $"{DrawingDate.ToShortDateString()}",
+                            $"{Numbers[0]}",
+                            $"{Numbers[1]}",
+                            $"{Numbers[2]}",
+                            $"{Numbers[3]}",
+                            $"{Sum}",
+                            $"{TemplateFingerPrint}",
+                            $"{TemplateFingerPrint.GetValue()}" });
+                case 5:
+                    return String.Join(",", new string[] {$"{Game.ToString()}",
+                            $"{DrawingDate.ToShortDateString()}",
+                            $"{Numbers[0]}",
+                            $"{Numbers[1]}",
+                            $"{Numbers[2]}",
+                            $"{Numbers[3]}",
+                            $"{Numbers[4]}",
+                            $"{Sum}",
+                            $"{TemplateFingerPrint}",
+                            $"{TemplateFingerPrint.GetValue()}" });
+                case 6:
+                    return String.Join(",",new string[] {$"{Game.ToString()}",
+                            $"{DrawingDate.ToShortDateString()}",
+                            $"{Numbers[0]}",
+                            $"{Numbers[1]}",
+                            $"{Numbers[2]}",
+                            $"{Numbers[3]}",
+                            $"{Numbers[4]}",
+                            $"{Numbers[5]}",
+                            $"{Sum}",
+                            $"{TemplateFingerPrint}",
+                            $"{TemplateFingerPrint.GetValue()}" });
+                default:
+                    return "";
+            }
+        }
+
         public string CSVHeading =>
-            String.Join(",", new string[]
+            Context.SlotCount == 6 ? String.Join(",", new string[]
             {
                 "Game",
                 "Drawing Date",
@@ -107,7 +140,32 @@ namespace LotteryV2.Domain
                 "Ball-3",
                 "Ball-4",
                 "Ball-5",
-                "Ball-Power",
+                "Odd Ball",
+                "Sum",
+                "TemplateFingerPrint",
+                "TemplateFingerPrint.Value"
+            })
+            : Context.SlotCount == 5 ? String.Join(",", new string[]
+            {
+                "Game",
+                "Drawing Date",
+                "Ball-1",
+                "Ball-2",
+                "Ball-3",
+                "Ball-4",
+                "Ball-5",
+                "Sum",
+                "TemplateFingerPrint",
+                "TemplateFingerPrint.Value"
+            })
+            : String.Join(",", new string[]
+            {
+                "Game",
+                "Drawing Date",
+                "Ball-1",
+                "Ball-2",
+                "Ball-3",
+                "Ball-4",
                 "Sum",
                 "TemplateFingerPrint",
                 "TemplateFingerPrint.Value"

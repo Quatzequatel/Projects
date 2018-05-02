@@ -79,13 +79,16 @@ namespace LotteryV2.Domain
     /// </summary>
     public static class Groups
     {
-        public static Dictionary<int, SlotGroup> DefineGroups(DrawingContext context)
-        {
-            return DefineGroups(context.SlotCount, context.CurrentGame,
-                LoadSlotModel(context.HighestBall, context.SlotCount, context.CurrentGame,
-                    context.Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList())
-                );
-        }
+        //public static Dictionary<int, SlotGroup> DefineGroups(DrawingContext context)
+        //{
+        //    List<NumberModel> numberModelList = LoadSlotModel(context.HighestBall,
+        //        context.SlotCount,
+        //        context.GameType,
+        //        context.Drawings.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList());
+
+        //    return DefineGroups(context.SlotCount, context.GameType, numberModelList);
+        //}
+
         // until these are nessisary leave out. #over-engineering.
         //public static Dictionary<int, SlotGroup> DefineGroups(DrawingContext context, List<NumberModel> numbers)
         //{
@@ -112,7 +115,7 @@ namespace LotteryV2.Domain
 
         public static List<NumberModel> LoadSlotModel(DrawingContext context)
         {
-            return LoadSlotModel(context.HighestBall, context.SlotCount, context.CurrentGame, context.Drawings);
+            return LoadSlotModel(context.HighestBall, context.SlotCount, context.GameType, context.Drawings);
         }
         /// <summary>
         /// Generate model of numbers from list of drawings.
@@ -122,7 +125,7 @@ namespace LotteryV2.Domain
         /// <param name="game">type of game</param>
         /// <param name="drawings">pool of drawings to extract from.</param>
         /// <returns></returns>
-        public static List<NumberModel> LoadSlotModel(int highestBall, int slotCount, Game game, List<Drawing> drawings)
+        private static List<NumberModel> LoadSlotModel(int highestBall, int slotCount, Game game, List<Drawing> drawings)
         {
             List<NumberModel> numbers = new List<NumberModel>();
 

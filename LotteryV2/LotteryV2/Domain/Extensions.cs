@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LotteryV2.Domain.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -141,6 +142,16 @@ namespace LotteryV2.Domain
                 LastXList.Add(values[i]);
             }
             return LastXList;
+        }
+
+        private static int slotCount;
+        public static void SetSlotCount(this DrawingContext context)
+        {
+            slotCount = context.SlotCount;
+        }
+        public static int GetSlotCount(this int[] array)
+        {
+            return slotCount;
         }
 
         //public static Variance TrendValueSum(this Variance)

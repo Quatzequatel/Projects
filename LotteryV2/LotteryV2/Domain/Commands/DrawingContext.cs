@@ -9,17 +9,34 @@ namespace LotteryV2.Domain.Commands
     {
         public bool IsAlternateContext { get; set; } = false;
 
-        public readonly Game CurrentGame;
+        /// <summary>
+        /// type of game in current context
+        /// </summary>
+        public readonly Game GameType;
+        /// <summary>
+        /// how many slots in current game.
+        /// </summary>
         public int SlotCount { get => GetBallCount(); }
+        /// <summary>
+        /// number of the highest ball.
+        /// </summary>
         public int HighestBall { get => HighBallNumber(); }
+
         public DateTime NextDrawingDate { get; private set; }
         public DrawingContext SetNextDrawingDate(DateTime value) {NextDrawingDate = value; return this;}
         private List<Drawing> _Drawings;
+        /// <summary>
+        /// historical list of drawings for a given date range.
+        /// TBD this will be a dynamic range
+        /// </summary>
         public List<Drawing> Drawings
         {
             get => _Drawings?.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList();
             private set => _Drawings = value;
         }
+
+        public List<NumberModel> NumberModelList { get; private set; }
+
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
 
@@ -27,13 +44,15 @@ namespace LotteryV2.Domain.Commands
 
         public DrawingContext(Game currentGame, DateTime nextDrawing)
         {
-            CurrentGame = currentGame;
+            GameType = currentGame;
             NextDrawingDate = nextDrawing;
+            this.SetSlotCount();
         }
 
         public void DefineGroups()
         {
-            GroupsDictionary = Groups.DefineGroups(this);
+            NumberModelList = Groups.LoadSlotModel(this);
+            GroupsDictionary = Groups.DefineGroups(SlotCount, GameType, NumberModelList);
         }
 
         public void AddToPickedList(LotoNumber number)
@@ -71,22 +90,25 @@ namespace LotteryV2.Domain.Commands
 
         public string GetGameName()
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto: return "lotto";
                 case Game.MegaMillion: return "megamillions";
                 case Game.Powerball: return "powerball";
                 case Game.Hit5: return "hit5";
+                case Game.Match4: return "match4";
             }
             return "";
         }
 
         public int FirstYear()
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto:
                     return 1984;
+                case Game.Match4:
+                    return 2008;
                 case Game.MegaMillion:
                     return 2010;
                 case Game.Powerball:
@@ -100,30 +122,32 @@ namespace LotteryV2.Domain.Commands
 
         public int GetBallCount()
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto: return 6;
                 case Game.MegaMillion: return 6;
                 case Game.Powerball: return 6;
                 case Game.Hit5: return 5;
+                case Game.Match4: return 4;
                 default: return -1;
             }
         }
 
         public int HighBallNumber()
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto: return 49;
                 case Game.MegaMillion: return 75;
                 case Game.Powerball: return 79;
                 case Game.Hit5: return 39;
+                case Game.Match4: return 24;
                 default: return -1;
             }
         }
         public int OptionBallHighNumber()
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto: return HighBallNumber();
                 case Game.MegaMillion: return 25;
@@ -134,12 +158,12 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
-        public List<string> GetLinks(bool updateOnly = false)
+        public List<string> GetLinks(bool isUpdate = false)
         {
             string page = "http://www.walottery.com/WinningNumbers/PastDrawings.aspx";
             string gameParameter = GetGameName();
             List<String> links = new List<string>();
-            int startYear = updateOnly && Drawings.Count > 10
+            int startYear = isUpdate && Drawings.Count > 10
                 ? Drawings.Last().DrawingDate.Year
                 : FirstYear();
             for (int i = startYear; i <= DateTime.Now.Year; i++)
@@ -152,7 +176,7 @@ namespace LotteryV2.Domain.Commands
 
         public Tuple<int, int> GetMinMaxForSlot(int slot)
         {
-            switch (CurrentGame)
+            switch (GameType)
             {
                 case Game.Lotto:
                     switch (slot)

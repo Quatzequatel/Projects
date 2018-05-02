@@ -52,7 +52,7 @@ namespace LotteryV2.Domain
         public double SumSTD;
         public double SumVariance;
 
-        public SlotGroup Group;
+        //public SlotGroup Group;
 
         public int TimesChosen => DrawingDates.Count;
         public double PercentChosen => ((double)TimesChosen / DrawingsCount) * 100;

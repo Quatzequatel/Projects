@@ -19,7 +19,7 @@ namespace LotteryV2.Domain
             //_Group = group;
         }
 
-        public void AddNumber(SubSets group, NumberModel value) => _Groups[group].Add(value);
+        // public void AddNumber(SubSets group, NumberModel value) => _Groups[group].Add(value);
 
         /// <summary>
         /// Parse values list of numbers into bell curve groups of GroupType.
@@ -31,18 +31,19 @@ namespace LotteryV2.Domain
             if (slotList.Count() == 0) return;
 
             int fullGroupSize = slotList.Count();
-            int zeroGroupCount = slotList.Where(i => i.PercentChosen <= 0.1).Count();
-            int groupSize = zeroGroupCount == 0 ? fullGroupSize : fullGroupSize - zeroGroupCount;
-            int subGroupSize = (int)Math.Floor(groupSize / 5.0);
+            int zeroGroupCount = slotList.Where(i => i.PercentChosen <= 0).Count();
+            int statisticalGroup = zeroGroupCount == 0 ? fullGroupSize : fullGroupSize - zeroGroupCount;
+            int subGroupSize = (int)Math.Floor(statisticalGroup / 5.0);
+            int stragglers = statisticalGroup % 5;
             foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
                 switch (group)
                 {
                     case SubSets.Zero:
-                        _Groups[group] = new List<NumberModel>(values.Where(i => i.SlotId == _SlotId && i.PercentChosen <= 0.1).ToArray());
+                        _Groups[group] = new List<NumberModel>(values.Where(i => i.SlotId == _SlotId && i.PercentChosen == 0).ToArray());
                         break;
                     case SubSets.Low:
-                        _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 4).Take(subGroupSize));
+                        _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 4).Take(subGroupSize + stragglers));
                         break;
                     case SubSets.MidLow:
                         _Groups[group] = new List<NumberModel>(slotList.OrderByDescending(i => i.PercentChosen).Skip(subGroupSize * 3).Take(subGroupSize));
@@ -79,7 +80,16 @@ namespace LotteryV2.Domain
             var results = new List<FindGroup>();
             foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
-                if (_Groups[group].Where(i => i.Id == number).Count() > 0) return group;
+                if (_Groups[group].Where(i => i.Id == number).Count() > 0)
+                {
+                    string groups = FindGroupTypes(number);
+                    SubSets group2 = (SubSets)Enum.Parse(typeof(SubSets), groups);
+                    if (group != group2)
+                    {
+                        Console.WriteLine($"Error in slot template; {number} is wrong {group.ToString()} != {group2.ToString()}");
+                    }
+                    else return group;
+                }
             }
 
             return default(SubSets);
@@ -96,12 +106,13 @@ namespace LotteryV2.Domain
 
             foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
-                var result =Numbers(group).Where(i => i.Id == number && i.SlotId == _SlotId)
+                var result = Numbers(group).Where(i => i.Id == number && i.SlotId == _SlotId)
                     .Select(j => new FindGroup { Id = j.Id, Group = group, PercentChosen = j.PercentChosen, TimesChosen = j.TimesChosen }).FirstOrDefault();
                 if (result.Id != 0) items.Add(result);
             }
 
-            return string.Join("|", items.OrderByDescending(i => i.PercentChosen).Select(i=> i.Group).ToArray());
+            Console.WriteLine($"Id:{number}, items.Count: {items.Count}, {items[0].Group.ToString()}");
+            return string.Join("|", items.OrderByDescending(i => i.PercentChosen).Select(i => i.Group).ToArray());
         }
 
         public override string ToString()
@@ -112,6 +123,36 @@ namespace LotteryV2.Domain
                 sb.AppendLine($"{group},list:,{string.Join(",", Numbers(group).Select(i => i.Id).ToArray())}");
             }
             return sb.ToString();
+        }
+    }
+
+    public class Templates
+    {
+        private Dictionary<TemplateSets, List<FingerPrint>> _templates = new Dictionary<TemplateSets, List<FingerPrint>>();
+
+        public void AddDrawings(IEnumerable<Drawing> drawings)
+        {
+            Dictionary<int, int> fingerprintsByCount = new Dictionary<int, int>();
+            foreach (var item in drawings
+                .GroupBy(i => i.TemplateFingerPrint.GetValue())
+                .Select(group => new { key = group.Key, count = group.Count() })
+                .OrderBy(x => x.count))
+            {
+                drawings.ToList().ForEach(i => i.GetTemplateFingerPrint().Count = item.count);
+            }
+
+            drawings.ToList().Where(i => i.GetTemplateFingerPrint().Count <= (int)TemplateSets.Aqua)
+                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Aqua);
+
+            drawings.ToList()
+                .Where(i => i.GetTemplateFingerPrint().Count > (int)TemplateSets.Aqua
+                && i.GetTemplateFingerPrint().Count <= (int)TemplateSets.Sunrise)
+                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Sunrise);
+
+            drawings.ToList()
+                .Where(i => i.GetTemplateFingerPrint().Count > (int)TemplateSets.Sunrise)
+                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.RedHot);
+
         }
     }
 

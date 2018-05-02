@@ -28,8 +28,8 @@ namespace LotteryV2.Domain.Commands
             sb.AppendLine(context.Drawings[0].CSVHeading + ", Group");
             foreach (var item in context.Drawings)
             {
-                sb.Append(item.ToCSVString);
-                for (int i = 0; i < context.SlotCount; i++)
+                sb.Append(item.ToCSVString());
+                for (int i = 0; i <= context.SlotCount; i++)
                 {
                     sb.Append($",{groups[i+1].FindGroupTypes(item.Numbers[i])}");
                 }

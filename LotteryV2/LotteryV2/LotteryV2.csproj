@@ -66,6 +66,7 @@
     <Compile Include="Domain\Commands\DrawingContext.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\PurmutateNumbers.cs" />
+    <Compile Include="Domain\Commands\SingleCommand.cs" />
     <Compile Include="Domain\FingerPrint.cs" />
     <Compile Include="Domain\LotoNumber.cs" />
     <Compile Include="Domain\Commands\NumberGeneratorCommand.cs" />
