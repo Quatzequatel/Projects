@@ -11,7 +11,7 @@ namespace LotteryV2.Domain.Commands
         public void Execute()
         {
             DrawingContext context = new DrawingContext(
-                Game.Match4,
+                Game.Hit5,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 );
 
@@ -38,6 +38,10 @@ namespace LotteryV2.Domain.Commands
                 command.ShouldExecute(context);
                 command.Execute(context);
             }
+
+            //DefineDateRange
+            context.SetDrawingsDateRange(new DateTime(System.DateTime.Now.Year - 1, System.DateTime.Now.Month, System.DateTime.Now.Day)
+                , new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day));
 
             //DefineGroupsCommand
             bool shouldExecute = true;

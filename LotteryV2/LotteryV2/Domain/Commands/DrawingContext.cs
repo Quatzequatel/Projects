@@ -22,17 +22,34 @@ namespace LotteryV2.Domain.Commands
         /// </summary>
         public int HighestBall { get => HighBallNumber(); }
 
+        private DateTime StartDate;
+        private DateTime EndDate;
+
+        public void SetDrawingsDateRange(DateTime startDate, DateTime endDate)
+        { StartDate = startDate; EndDate = endDate; }
+
         public DateTime NextDrawingDate { get; private set; }
-        public DrawingContext SetNextDrawingDate(DateTime value) {NextDrawingDate = value; return this;}
+        public DrawingContext SetNextDrawingDate(DateTime value) { NextDrawingDate = value; return this; }
         private List<Drawing> _Drawings;
         /// <summary>
         /// historical list of drawings for a given date range.
         /// TBD this will be a dynamic range
         /// </summary>
+        //public List<Drawing> Drawings
+        //{
+        //    get => _Drawings?.Where(i => i.DrawingDate >= StartDate && i.DrawingDate <= EndDate).ToList();
+        //    private set => _Drawings = value;
+        //}
         public List<Drawing> Drawings
         {
-            get => _Drawings?.Where(i => i.DrawingDate >= new DateTime(1995, 1, 1)).ToList();
-            private set => _Drawings = value;
+            get
+            {
+                return _Drawings?.Where(i => i.DrawingDate >= StartDate && i.DrawingDate <= EndDate).ToList();
+            }
+            private set
+            {
+                _Drawings = value;
+            }
         }
 
         public List<NumberModel> NumberModelList { get; private set; }
