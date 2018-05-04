@@ -26,7 +26,7 @@ namespace LotteryV2.Domain.Commands
         private void ScrapeDrawings(DrawingContext context)
         {
             var web = new HtmlWeb();
-            var results = context.Drawings;
+            var results = context.AllDrawings;
 
             foreach (var link in context.GetLinks(true))
             {
@@ -68,6 +68,10 @@ namespace LotteryV2.Domain.Commands
                     if(results.FirstOrDefault(i=>i.DrawingDate == balls.DrawingDate) == null)
                     {
                         results.Add(balls);
+                    }
+                    else
+                    {
+                        break;
                     }
                     
                 }

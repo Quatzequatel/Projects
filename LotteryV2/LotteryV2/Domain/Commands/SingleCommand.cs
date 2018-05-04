@@ -15,6 +15,10 @@ namespace LotteryV2.Domain.Commands
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 );
 
+            //DefineDateRange
+            context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-1)
+                , new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day));
+
             //LoadDrawingsFromFile
             string filename = $"{context.FilePath}{context.GetGameName()}.json";
             if (System.IO.File.Exists(filename))
@@ -39,9 +43,6 @@ namespace LotteryV2.Domain.Commands
                 command.Execute(context);
             }
 
-            //DefineDateRange
-            context.SetDrawingsDateRange(new DateTime(System.DateTime.Now.Year - 1, System.DateTime.Now.Month, System.DateTime.Now.Day)
-                , new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day));
 
             //DefineGroupsCommand
             bool shouldExecute = true;
@@ -58,20 +59,17 @@ namespace LotteryV2.Domain.Commands
             //SaveGroupsToCsv
             if (shouldExecute)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var slotGroup in context.GroupsDictionary)
-                {
-                    //sb.AppendLine($"{context.GameType},{slotGroup.Key},{slotGroup.Value.}");
-                    sb.AppendLine("Game, Slot, Propability, Numbers");
-                    foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
-                    {
-                        sb.Append($"{context.GameType}, {slotGroup.Key}, {group.ToString()},")
-                            .Append(string.Join(",", slotGroup.Value.Numbers(group).Select(i => i.Id).ToArray()));
-                        sb.AppendLine();
-                    }
-                }
                 filename = $"{context.FilePath}{context.GetGameName()}-PropabilityGroupsData.csv";
-                System.IO.File.WriteAllText(filename, sb.ToString());
+                context.SaveGroupsToCsv(filename);
+            }
+
+            //SaveGroupsToCsv
+            if (shouldExecute)
+            {
+                context.SetDrawingsDateRange(context.StartDateGet().AddDays(14), context.EndDateGet());
+                
+                filename = $"{context.FilePath}{context.GetGameName()}14D-PropabilityGroupsData.csv";
+                context.SaveGroupsToCsv(filename);
             }
             //SaveGroups2JsonCommand
             if (shouldExecute)
@@ -94,7 +92,7 @@ namespace LotteryV2.Domain.Commands
                     );
             }
             //SaveJsonToFileCommand
-            if (context.Drawings.Count > 500)
+            if (context.Drawings.Count > 5)
             {
                 _Filename = $"{context.FilePath}{context.GetGameName()}_base.csv";
                 Dictionary<int, SlotGroup> groups = context.GroupsDictionary;

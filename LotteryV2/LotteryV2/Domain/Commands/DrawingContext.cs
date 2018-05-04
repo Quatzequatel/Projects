@@ -24,9 +24,21 @@ namespace LotteryV2.Domain.Commands
 
         private DateTime StartDate;
         private DateTime EndDate;
+        public DateTime StartDateGet() => StartDate;
+        public DateTime EndDateGet() => EndDate;
 
         public void SetDrawingsDateRange(DateTime startDate, DateTime endDate)
-        { StartDate = startDate; EndDate = endDate; }
+        {
+            bool refreshGroups = (startDate != StartDate || endDate != EndDate);
+            StartDate = startDate;
+            EndDate = endDate;
+            if(refreshGroups && this.Drawings?.Count > 0)
+            {
+                this.DefineGroups();
+                this.Drawings.ForEach(i => i.SetContext(this));
+                this.Drawings.ForEach(i => i.GetTemplateFingerPrint());
+            }
+        }
 
         public DateTime NextDrawingDate { get; private set; }
         public DrawingContext SetNextDrawingDate(DateTime value) { NextDrawingDate = value; return this; }
@@ -48,8 +60,13 @@ namespace LotteryV2.Domain.Commands
             }
             private set
             {
-                _Drawings = value;
+                _Drawings = new List<Drawing>(value.ToList());
             }
+        }
+
+        public List<Drawing> AllDrawings
+        {
+            get { return _Drawings; }
         }
 
         public List<NumberModel> NumberModelList { get; private set; }
