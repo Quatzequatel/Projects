@@ -32,11 +32,43 @@ namespace LotteryV2.Domain.Commands
             bool refreshGroups = (startDate != StartDate || endDate != EndDate);
             StartDate = startDate;
             EndDate = endDate;
-            if(refreshGroups && this.Drawings?.Count > 0)
+            if (refreshGroups && this.Drawings?.Count > 0)
             {
                 this.DefineGroups();
                 this.Drawings.ForEach(i => i.SetContext(this));
                 this.Drawings.ForEach(i => i.GetTemplateFingerPrint());
+            }
+        }
+
+        public void SetHistoricalPeriods()
+        {
+            DateTime firstDrawingDate = AllDrawings.First().DrawingDate;
+            //Find the first possible day to have periods applied.
+            foreach (var drawing in AllDrawings.Where(i => i.DrawingDate > firstDrawingDate.AddDays((int)HistoricalPeriods.Wk2)))
+            {
+                foreach (var period in (HistoricalPeriods[])Enum.GetValues(typeof(HistoricalPeriods)))
+                {
+                    DateTime currentPeriod = drawing.DrawingDate.AddDays(-(int)period);
+                    if (currentPeriod >= firstDrawingDate)
+                    {
+                        if (period == HistoricalPeriods.All)
+                        {
+                            this.SetDrawingsDateRange(firstDrawingDate, drawing.DrawingDate.AddDays(-1));
+                        }
+                        else
+                        {
+                            this.SetDrawingsDateRange(
+                                drawing.DrawingDate.Date.AddDays(-(int)period),
+                                drawing.DrawingDate.Date.AddDays(-1));
+                        }
+                        drawing.SetContext(this);
+                        drawing.SetHistoricalPeriodFingerPrint(period, drawing.GetTemplateFingerPrint());
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
 
@@ -75,6 +107,7 @@ namespace LotteryV2.Domain.Commands
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
 
         public DateTime? LastDrawingDate => Drawings?.Last<Drawing>().DrawingDate;
+        public DateTime? FirstDrawingDate => Drawings?.First<Drawing>().DrawingDate;
 
         public DrawingContext(Game currentGame, DateTime nextDrawing)
         {
@@ -83,6 +116,12 @@ namespace LotteryV2.Domain.Commands
             this.SetSlotCount();
         }
 
+        /// <summary>
+        /// Creates a dictionary of of Slot groups based on the Context Drawings values.
+        /// To do this requires LoadSlotModel() to execute which returns a list of NumberModels 
+        /// from the Context Drawings. Then DefineGroups() consumes the list of NumberModesl to
+        /// define the slot groups. Which are a probabiltiy group from the Drawings.
+        /// </summary>
         public void DefineGroups()
         {
             NumberModelList = Groups.LoadSlotModel(this);
@@ -94,6 +133,11 @@ namespace LotteryV2.Domain.Commands
             if (PickedNumbers == null) PickedNumbers = new Dictionary<string, LotoNumber>();
             if (Drawings.FirstOrDefault(i => i.KeyString == number.ToString()) == null)
                 PickedNumbers[number.ToString()] = number;
+        }
+
+        public void GetNextDrawingNumber(Drawing nextDrawing)
+        {
+
         }
 
         public void AddToPickedList(Dictionary<string, LotoNumber> numbers)

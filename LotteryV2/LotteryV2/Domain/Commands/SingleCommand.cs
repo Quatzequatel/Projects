@@ -11,7 +11,7 @@ namespace LotteryV2.Domain.Commands
         public void Execute()
         {
             DrawingContext context = new DrawingContext(
-                Game.Hit5,
+                Game.Match4,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 );
 
@@ -61,6 +61,38 @@ namespace LotteryV2.Domain.Commands
             {
                 filename = $"{context.FilePath}{context.GetGameName()}-PropabilityGroupsData.csv";
                 context.SaveGroupsToCsv(filename);
+            }
+
+            //Set the historical finger prints for all drawings
+            if(shouldExecute)
+            {
+                context.SetHistoricalPeriods();
+            }
+
+            //Validate last 100 drawing against Patterns
+            if(shouldExecute)
+            {
+                int AllDrawingsCount = context.AllDrawings.Count;
+                int index = 0;
+                int SampleSize = 1000;
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine($"{context.Drawings[0].HeadingCSVShort()}, {String.Join(",", Enum.GetNames(typeof(HistoricalPeriods)).Select(i => $"{i}, {i}Value"))}");
+                foreach (var item in context.AllDrawings.Skip( AllDrawingsCount - SampleSize).Take(SampleSize))
+                {
+                    sb.Append($"{item.ToCSVShort()}");
+                    foreach (var period in ((HistoricalPeriods[])Enum.GetValues(typeof(HistoricalPeriods))))
+                    {
+                        if (item.HistoricalPeriodFingerPrints.ContainsKey(period))
+                        {
+                            sb.Append($", {item.HistoricalPeriodFingerPrints[period].ToString()}");
+                        }
+                    }
+                    sb.AppendLine();
+                }
+                filename = $"{context.FilePath}{context.GetGameName()}-PastDrawingsReport.csv";
+                System.IO.File.WriteAllText(filename, sb.ToString());
+                return;
             }
 
             //SaveGroupsToCsv

@@ -31,7 +31,7 @@ namespace LotteryV2.Domain
             if (slotList.Count() == 0) return;
 
             int fullGroupSize = slotList.Count();
-            int zeroGroupCount = slotList.Where(i => i.PercentChosen <= 0).Count();
+            int zeroGroupCount = slotList.Where(i => i.PercentChosen == 0).Count();
             int statisticalGroup = zeroGroupCount == 0 ? fullGroupSize : fullGroupSize - zeroGroupCount;
             int subGroupSize = (int)Math.Floor(statisticalGroup / 5.0);
             int stragglers = statisticalGroup % 5;
@@ -111,7 +111,7 @@ namespace LotteryV2.Domain
                 if (result.Id != 0) items.Add(result);
             }
 
-            Console.WriteLine($"Id:{number}, items.Count: {items.Count}, {items[0].Group.ToString()}");
+            //Console.WriteLine($"Id:{number}, items.Count: {items.Count}, {items[0].Group.ToString()}");
             return string.Join("|", items.OrderByDescending(i => i.PercentChosen).Select(i => i.Group).ToArray());
         }
 

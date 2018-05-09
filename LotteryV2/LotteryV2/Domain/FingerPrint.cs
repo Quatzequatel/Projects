@@ -16,7 +16,9 @@ namespace LotteryV2.Domain
 
             for (int SlotId = 1; SlotId <= drawing.Numbers.Length; SlotId++)
             {
-                SubSets slotset = drawing.Context.GroupsDictionary[SlotId].FindGroupType(drawing.Numbers[SlotId - 1]);
+                SubSets slotset = drawing.Context.GroupsDictionary[SlotId]?.FindGroupType(drawing.Numbers[SlotId - 1]) != null ?
+                    drawing.Context.GroupsDictionary[SlotId].FindGroupType(drawing.Numbers[SlotId - 1]):
+                    SubSets.Zero;
                 Template.Add(slotset);
                 Value += ((int)slotset * (int)Math.Pow(10, SlotId));
             }
@@ -24,7 +26,7 @@ namespace LotteryV2.Domain
         public int GetValue() => Value;
         public override string ToString()
         {
-            return string.Join("-", Template.Select(i => Enum.GetName(typeof(SubSets), i)).ToArray());
+            return $"{string.Join("-", Template.Select(i => Enum.GetName(typeof(SubSets), i)).ToArray())},{GetValue().ToString()}";
         }
     }
 }

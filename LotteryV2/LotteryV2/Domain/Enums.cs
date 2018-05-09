@@ -33,4 +33,17 @@ namespace LotteryV2.Domain
         Sunrise = 7,
         RedHot = 100
     }
+
+    public enum HistoricalPeriods
+    {
+        Wk1 = 7,
+        Wk2 = 14,
+        Wk3 = 21,
+        Month1 = 30,
+        Month2 = 61,
+        Month3 = 92,
+        Month6 = 183,
+        Year = 365,
+        All = Year+Month6
+    }
 }

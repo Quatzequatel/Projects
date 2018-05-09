@@ -10,7 +10,7 @@ namespace LotteryV2.Domain
 
         public void Add(int value)
         {
-            if (numbers.Count <= 6)
+            if (numbers.Count < new int[0].GetSlotCount())
             {
                 numbers[value] = value;
             }

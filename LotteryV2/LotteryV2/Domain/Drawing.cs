@@ -28,6 +28,19 @@ namespace LotteryV2.Domain
         public Drawing SetWinners(int winners) { Winners = winners; return this; }
         public FingerPrint TemplateFingerPrint { get; private set; }
 
+        /// <summary>
+        /// use HistoricalPeriodFingerPrints for reports and fine tuning of a number selector.
+        /// </summary>
+        public Dictionary<HistoricalPeriods, FingerPrint> HistoricalPeriodFingerPrints { get; } = new Dictionary<HistoricalPeriods, FingerPrint>();
+
+        public void SetHistoricalPeriodFingerPrint(HistoricalPeriods key, FingerPrint value)
+        {
+            if (!HistoricalPeriodFingerPrints.ContainsKey(key))
+            {
+                HistoricalPeriodFingerPrints[key] = value;
+            }
+        }
+
         public Drawing(DrawingContext context)
         {
             balls = new int[context.SlotCount];
@@ -70,24 +83,26 @@ namespace LotteryV2.Domain
         /// </summary>
         public FingerPrint GetTemplateFingerPrint()
         {
-            if (TemplateFingerPrint != null) return TemplateFingerPrint;
-            else
-            {
-                TemplateFingerPrint = new FingerPrint(this);
-                return TemplateFingerPrint;
-            }
-
+            TemplateFingerPrint= new FingerPrint(this);
+            return TemplateFingerPrint;
         }
 
         public override string ToString()
         {
-            return Context.SlotCount == 6 ? $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}-{Numbers[5]}"
-                : Context.SlotCount == 5 ? $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}-{Numbers[4]}"
-                : $"{DrawingDate.ToShortDateString()},{Numbers[0]}-{Numbers[1]}-{Numbers[2]}-{Numbers[3]}";
+            return $"{DrawingDate.ToShortDateString()},{KeyString}";
         }
 
         public string KeyString => string.Join("-", Numbers);
 
+        public string HeadingCSVShort() => $"Game, DrawingDate, Drawing, Sum";
+
+        public string ToCSVShort()
+        {
+            return String.Join(",", new string[] {$"{Game.ToString()}",
+                            $"{DrawingDate.ToShortDateString()}",
+                            $"{KeyString}",
+                            $"{Sum}" });
+        }
         public string ToCSVString()
         {
             switch (Context.SlotCount)
