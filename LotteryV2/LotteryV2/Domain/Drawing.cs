@@ -10,28 +10,73 @@ namespace LotteryV2.Domain
 {
     public class Drawing
     {
+        //Private locals
         private int[] balls;
         private string drawingDate = string.Empty;
 
-        [JsonIgnore]
-        public DrawingContext Context { get; private set; }
-
-        public Game Game { get; set; }
-
-        public int[] Numbers { get => balls; set => balls = value; }
-        public int Sum => balls.Sum();
+        //public properties
         public DateTime DrawingDate { get; set; }
-        public Drawing SetDrawingDate(string date) { DrawingDate = DateTime.Parse(date); return this; }
+        public Game Game { get; set; }
+        /// <summary>
+        /// Array of chosen numbers
+        /// </summary>
+        public int[] Numbers { get => balls; set => balls = value; }
+        /// <summary>
+        /// value of the jackpot
+        /// </summary>
         public Decimal PrizeAmount { get; set; }
-        public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
+        public int Sum => balls.Sum();
+        /// <summary>
+        /// number of jackpot winners
+        /// </summary>
         public int Winners { get; set; }
-        public Drawing SetWinners(int winners) { Winners = winners; return this; }
+        /// <summary>
+        /// TBD need a better description. Fingerprint is tightly coupled to
+        /// period of time. What period is this finger print for?
+        /// </summary>
         public FingerPrint TemplateFingerPrint { get; private set; }
 
         /// <summary>
         /// use HistoricalPeriodFingerPrints for reports and fine tuning of a number selector.
         /// </summary>
         public Dictionary<HistoricalPeriods, FingerPrint> HistoricalPeriodFingerPrints { get; } = new Dictionary<HistoricalPeriods, FingerPrint>();
+
+        public KeyValuePair<string, FingerPrint>[] JsonHistoricalFingerPrints
+        {
+            get
+            {
+                return HistoricalPeriodFingerPrints.ToArray()
+                    .Select(i => new KeyValuePair<string, FingerPrint>(i.Key.ToString(), i.Value))
+                    .ToArray();
+            }
+            set
+            {
+                foreach (var item in value)
+                {
+                    SetHistoricalPeriodFingerPrint((HistoricalPeriods)Enum.Parse(typeof(HistoricalPeriods), item.Key), item.Value);
+                }
+            }
+        }
+
+
+        //Fluent methods
+        public Drawing SetDrawingDate(string date) { DrawingDate = DateTime.Parse(date); return this; }
+        public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
+        public Drawing SetWinners(int winners) { Winners = winners; return this; }
+
+
+        [JsonIgnore]
+        public DrawingContext Context { get; private set; }
+
+        public Drawing()
+        {
+
+            balls = new int[new int[0].GetSlotCount()];
+            for (int i = 0; i < balls.GetSlotCount(); i++)
+            {
+                balls[i] = int.MaxValue;
+            }
+        }
 
         public void SetHistoricalPeriodFingerPrint(HistoricalPeriods key, FingerPrint value)
         {
@@ -55,15 +100,7 @@ namespace LotteryV2.Domain
             Context = context; Game = context.GameType; return this;
         }
 
-        public Drawing()
-        {
 
-            balls = new int[new int[0].GetSlotCount()];
-            for (int i = 0; i < balls.GetSlotCount(); i++)
-            {
-                balls[i] = int.MaxValue;
-            }
-        }
         public void AddBall(int value)
         {
             for (int i = 0; i < balls.Length; i++)
@@ -83,7 +120,7 @@ namespace LotteryV2.Domain
         /// </summary>
         public FingerPrint GetTemplateFingerPrint()
         {
-            TemplateFingerPrint= new FingerPrint(this);
+            TemplateFingerPrint = new FingerPrint(this);
             return TemplateFingerPrint;
         }
 
@@ -129,7 +166,7 @@ namespace LotteryV2.Domain
                             $"{TemplateFingerPrint}",
                             $"{TemplateFingerPrint.GetValue()}" });
                 case 6:
-                    return String.Join(",",new string[] {$"{Game.ToString()}",
+                    return String.Join(",", new string[] {$"{Game.ToString()}",
                             $"{DrawingDate.ToShortDateString()}",
                             $"{Numbers[0]}",
                             $"{Numbers[1]}",
