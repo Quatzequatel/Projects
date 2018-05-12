@@ -304,6 +304,8 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
+        public string FilehistoricalPeriods => $"{this.FilePath}{this.GetGameName()}-HistoricalPeriods.json";
+
         public string FilePath => "C:\\Users\\Steven\\Documents\\";
 
         public void SetDrawings(List<Drawing> drawings)

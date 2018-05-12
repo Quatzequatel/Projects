@@ -14,6 +14,7 @@ namespace LotteryV2.Domain
         private int[] balls;
         private string drawingDate = string.Empty;
 
+        /*----------------------------------------*/
         //public properties
         public DateTime DrawingDate { get; set; }
         public Game Game { get; set; }
@@ -25,22 +26,29 @@ namespace LotteryV2.Domain
         /// value of the jackpot
         /// </summary>
         public Decimal PrizeAmount { get; set; }
+        /// <summary>
+        /// Sum of Numbers[]
+        /// </summary>
         public int Sum => balls.Sum();
         /// <summary>
         /// number of jackpot winners
         /// </summary>
         public int Winners { get; set; }
+
+        [JsonIgnore]
         /// <summary>
         /// TBD need a better description. Fingerprint is tightly coupled to
         /// period of time. What period is this finger print for?
         /// </summary>
         public FingerPrint TemplateFingerPrint { get; private set; }
 
+        [JsonIgnore]
         /// <summary>
         /// use HistoricalPeriodFingerPrints for reports and fine tuning of a number selector.
         /// </summary>
         public Dictionary<HistoricalPeriods, FingerPrint> HistoricalPeriodFingerPrints { get; } = new Dictionary<HistoricalPeriods, FingerPrint>();
 
+        [JsonIgnore]
         public KeyValuePair<string, FingerPrint>[] JsonHistoricalFingerPrints
         {
             get
@@ -58,7 +66,7 @@ namespace LotteryV2.Domain
             }
         }
 
-
+        /*----------------------------------------*/
         //Fluent methods
         public Drawing SetDrawingDate(string date) { DrawingDate = DateTime.Parse(date); return this; }
         public Drawing SetPrizeAmount(decimal amount) { PrizeAmount = amount; return this; }
@@ -68,6 +76,15 @@ namespace LotteryV2.Domain
         [JsonIgnore]
         public DrawingContext Context { get; private set; }
 
+        public void SetHistoricalPeriodFingerPrint(HistoricalPeriods key, FingerPrint value)
+        {
+            if (!HistoricalPeriodFingerPrints.ContainsKey(key))
+            {
+                HistoricalPeriodFingerPrints[key] = value;
+            }
+        }
+
+        /*----------------------------------------*/
         public Drawing()
         {
 
@@ -75,14 +92,6 @@ namespace LotteryV2.Domain
             for (int i = 0; i < balls.GetSlotCount(); i++)
             {
                 balls[i] = int.MaxValue;
-            }
-        }
-
-        public void SetHistoricalPeriodFingerPrint(HistoricalPeriods key, FingerPrint value)
-        {
-            if (!HistoricalPeriodFingerPrints.ContainsKey(key))
-            {
-                HistoricalPeriodFingerPrints[key] = value;
             }
         }
 
@@ -130,6 +139,7 @@ namespace LotteryV2.Domain
         }
 
         public string KeyString => string.Join("-", Numbers);
+
 
         public string HeadingCSVShort() => $"Game, DrawingDate, Drawing, Sum";
 
@@ -182,6 +192,7 @@ namespace LotteryV2.Domain
             }
         }
 
+        [JsonIgnore]
         public string CSVHeading =>
             Context.SlotCount == 6 ? String.Join(",", new string[]
             {

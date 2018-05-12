@@ -36,26 +36,36 @@ namespace LotteryV2.Domain.Commands
             }
 
             //UpdateJsonFromWeb
-            if (context.LastDrawingDate.Value < context?.NextDrawingDate)
+            UpdateJsonFromWeb command2 = new UpdateJsonFromWeb();
+            if (command2.ShouldExecute(context))
             {
-                UpdateJsonFromWeb command = new UpdateJsonFromWeb();
-                command.ShouldExecute(context);
-                command.Execute(context);
+                command2.Execute(context);
             }
 
+            //SaveToJson
+            SaveJsonToFileCommand save2json = new SaveJsonToFileCommand();
+            if (save2json.ShouldExecute(context))
+            {
+                save2json.Execute(context);
+            }
 
-            //DefineGroupsCommand
+            LoadFilehistoricalPeriods loadHistoricalPeriods = new LoadFilehistoricalPeriods();
+            if (loadHistoricalPeriods.ShouldExecute(context))
+            {
+                loadHistoricalPeriods.Execute(context);
+            }
+
             bool shouldExecute = true;
             if (shouldExecute)
             {
+                //DefineGroupsCommand
                 context.DefineGroups();
                 context.Drawings.ForEach(i => i.SetContext(context));
-            }
-            //SetTemplateFingerPrintCommand
-            if (shouldExecute)
-            {
+
+                //SetTemplateFingerPrintCommand
                 context.Drawings.ForEach(i => i.GetTemplateFingerPrint());
             }
+            
             //SaveGroupsToCsv
             if (shouldExecute)
             {
@@ -64,21 +74,35 @@ namespace LotteryV2.Domain.Commands
             }
 
             //Set the historical finger prints for all drawings
-            if(shouldExecute)
+            if (!shouldExecute)
             {
                 context.SetHistoricalPeriods();
             }
 
+            /*
+             Todo: 
+                1. find top patterns for each period.
+                2. Select numbers for each period by group.
+                3. Distill numbers to final selections.
+             */
+
+            //SaveToJson
+            SaveHistoricalPeriodsCommand saveHistoricalPeriods2json = new SaveHistoricalPeriodsCommand();
+            if (saveHistoricalPeriods2json.ShouldExecute(context))
+            {
+                saveHistoricalPeriods2json.Execute(context);
+            }
+            return;
+
             //Validate last 100 drawing against Patterns
-            if(shouldExecute)
+            if (shouldExecute)
             {
                 int AllDrawingsCount = context.AllDrawings.Count;
-                int index = 0;
                 int SampleSize = 1000;
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine($"{context.Drawings[0].HeadingCSVShort()}, {String.Join(",", Enum.GetNames(typeof(HistoricalPeriods)).Select(i => $"{i}, {i}Value"))}");
-                foreach (var item in context.AllDrawings.Skip( AllDrawingsCount - SampleSize).Take(SampleSize))
+                foreach (var item in context.AllDrawings.Skip(AllDrawingsCount - SampleSize).Take(SampleSize))
                 {
                     sb.Append($"{item.ToCSVShort()}");
                     foreach (var period in ((HistoricalPeriods[])Enum.GetValues(typeof(HistoricalPeriods))))
@@ -99,7 +123,7 @@ namespace LotteryV2.Domain.Commands
             if (shouldExecute)
             {
                 context.SetDrawingsDateRange(context.StartDateGet().AddDays(14), context.EndDateGet());
-                
+
                 filename = $"{context.FilePath}{context.GetGameName()}14D-PropabilityGroupsData.csv";
                 context.SaveGroupsToCsv(filename);
             }
@@ -157,7 +181,7 @@ namespace LotteryV2.Domain.Commands
                     .Select(group => new { key = group.Key, count = group.Count() })
                     .OrderBy(x => x.count))
                 {
-                    sb.AppendLine( $"{item.key}, {item.count}, {context.Drawings.Where(i=> i.TemplateFingerPrint.GetValue() == item.key).First().TemplateFingerPrint.ToString()}");
+                    sb.AppendLine($"{item.key}, {item.count}, {context.Drawings.Where(i => i.TemplateFingerPrint.GetValue() == item.key).First().TemplateFingerPrint.ToString()}");
                 }
                 sb.AppendLine();
                 System.IO.File.WriteAllText(_Filename, sb.ToString());

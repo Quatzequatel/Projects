@@ -65,7 +65,9 @@
     <Compile Include="Domain\Commands\DefineGroupsCommand.cs" />
     <Compile Include="Domain\Commands\DrawingContext.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
+    <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />
     <Compile Include="Domain\Commands\PurmutateNumbers.cs" />
+    <Compile Include="Domain\Commands\SaveHistoricalPeriodsCommand.cs" />
     <Compile Include="Domain\Commands\SingleCommand.cs" />
     <Compile Include="Domain\FingerPrint.cs" />
     <Compile Include="Domain\HistoricalSubSet.cs" />

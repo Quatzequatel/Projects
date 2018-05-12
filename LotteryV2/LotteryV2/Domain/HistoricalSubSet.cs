@@ -13,7 +13,7 @@ namespace LotteryV2.Domain
         private int _Id;
         private int _SlotId;
         private Game _Game;
-        private Dictionary<HistoricalPeriods, SubSets> HistoricalSubSets;
+        private Dictionary<HistoricalPeriods, SubSets> HistoricalSubSets = new Dictionary<HistoricalPeriods, SubSets>();
 
         public HistoricalSubSet(Game game, int slotId, int id)
         {
