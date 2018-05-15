@@ -6,6 +6,11 @@ namespace LotteryV2.Domain.Commands
 {
     public class LoadFilehistoricalPeriods : Command<DrawingContext>
     {
+        public override bool ShouldExecute(DrawingContext context)
+        {
+            return System.IO.File.Exists(context.FilehistoricalPeriods);
+        }
+
         public override void Execute(DrawingContext context)
         {
             LoadFromFile(context);
@@ -14,7 +19,8 @@ namespace LotteryV2.Domain.Commands
         private void LoadFromFile(DrawingContext context)
         {
 
-            List<HistoricalPeriodsJson> results = JsonConvert.DeserializeObject<List<HistoricalPeriodsJson>>(System.IO.File.ReadAllText(context.FilehistoricalPeriods));
+            List<HistoricalPeriodsJson> results = JsonConvert.DeserializeObject<List<HistoricalPeriodsJson>>
+                (System.IO.File.ReadAllText(context.FilehistoricalPeriods));
             foreach (var item in results)
             {
                 if (item.JsonHistoricalFingerPrints != null)

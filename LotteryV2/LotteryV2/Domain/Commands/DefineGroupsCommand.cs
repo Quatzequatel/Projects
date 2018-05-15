@@ -30,7 +30,23 @@ namespace LotteryV2.Domain.Commands
 
         private void SaveToJson(DrawingContext context)
         {
-            System.IO.File.WriteAllText(_Filename, JsonConvert.SerializeObject(context.GroupsDictionary.Select(i=>i.Value).ToArray(), Formatting.Indented));
+            System.IO.File.WriteAllText(_Filename, JsonConvert.SerializeObject(context.GroupsDictionary.Select(i => i.Value).ToArray(), Formatting.Indented));
+        }
+    }
+
+    public class SetTopPatternsCommand : Command<DrawingContext>
+    {
+        public override void Execute(DrawingContext context)
+        {
+            FindTopPatterns(context);
+        }
+
+        private void FindTopPatterns(DrawingContext context)
+        {
+            //    foreach (var item in context.Drawings.)
+            //    {
+
+            //    }
         }
     }
 }

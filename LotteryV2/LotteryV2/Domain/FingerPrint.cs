@@ -60,7 +60,11 @@ namespace LotteryV2.Domain
 
         }
 
-
+        /// <summary>
+        /// Uses Context.GroupDictionary to look up SubSet for each slot.
+        /// also calculates subset collection unique value.
+        /// </summary>
+        /// <param name="drawing"></param>
         public FingerPrint(Drawing drawing)
         {
 
@@ -76,19 +80,6 @@ namespace LotteryV2.Domain
         public override string ToString()
         {
             return $"{string.Join("-", Template.Select(i => Enum.GetName(typeof(SubSets), i)).ToArray())},{GetValue().ToString()}";
-        }
-    }
-
-    public class HistoricalPeriodsJson
-    {
-        public DateTime DrawingDate { get; set; }
-        public int[] Numbers { get; set; }
-        public string KeyString { get; set; }
-        public KeyValuePair<string,FingerPrint>[] JsonHistoricalFingerPrints { get; set; }
-
-        public HistoricalPeriodsJson()
-        {
-
         }
     }
 }

@@ -14,6 +14,7 @@ namespace LotteryV2.Domain.Commands
                 Game.Match4,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 );
+            context.SampleSize = 1000;
 
             //DefineDateRange
             context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-1)
@@ -36,26 +37,37 @@ namespace LotteryV2.Domain.Commands
             }
 
             //UpdateJsonFromWeb
-            UpdateJsonFromWeb command2 = new UpdateJsonFromWeb();
-            if (command2.ShouldExecute(context))
+            //UpdateJsonFromWeb command2 = new UpdateJsonFromWeb();
+            //if (command2.ShouldExecute(context))
+            //{
+            //    command2.Execute(context);
+            //}
+            using (UpdateJsonFromWeb c = new UpdateJsonFromWeb())
             {
-                command2.Execute(context);
+                if(c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
             }
 
             //SaveToJson
-            SaveJsonToFileCommand save2json = new SaveJsonToFileCommand();
-            if (save2json.ShouldExecute(context))
+            using (SaveJsonToFileCommand c = new SaveJsonToFileCommand())
             {
-                save2json.Execute(context);
+                if (c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
             }
 
+            bool shouldExecute = true;
+            bool shouldExecuteSetHistoricalPeriods = true;
             LoadFilehistoricalPeriods loadHistoricalPeriods = new LoadFilehistoricalPeriods();
             if (loadHistoricalPeriods.ShouldExecute(context))
             {
                 loadHistoricalPeriods.Execute(context);
+                shouldExecuteSetHistoricalPeriods = false;
             }
 
-            bool shouldExecute = true;
             if (shouldExecute)
             {
                 //DefineGroupsCommand
@@ -74,7 +86,7 @@ namespace LotteryV2.Domain.Commands
             }
 
             //Set the historical finger prints for all drawings
-            if (!shouldExecute)
+            if (shouldExecuteSetHistoricalPeriods)
             {
                 context.SetHistoricalPeriods();
             }
@@ -85,6 +97,7 @@ namespace LotteryV2.Domain.Commands
                 2. Select numbers for each period by group.
                 3. Distill numbers to final selections.
              */
+             (new SetTopPatternsCommand()).Execute(context);
 
             //SaveToJson
             SaveHistoricalPeriodsCommand saveHistoricalPeriods2json = new SaveHistoricalPeriodsCommand();
@@ -92,31 +105,14 @@ namespace LotteryV2.Domain.Commands
             {
                 saveHistoricalPeriods2json.Execute(context);
             }
-            return;
-
+            
             //Validate last 100 drawing against Patterns
-            if (shouldExecute)
+            using (PastDrawingReportCommand c = new PastDrawingReportCommand())
             {
-                int AllDrawingsCount = context.AllDrawings.Count;
-                int SampleSize = 1000;
-                StringBuilder sb = new StringBuilder();
-
-                sb.AppendLine($"{context.Drawings[0].HeadingCSVShort()}, {String.Join(",", Enum.GetNames(typeof(HistoricalPeriods)).Select(i => $"{i}, {i}Value"))}");
-                foreach (var item in context.AllDrawings.Skip(AllDrawingsCount - SampleSize).Take(SampleSize))
+                if (c.ShouldExecute(context))
                 {
-                    sb.Append($"{item.ToCSVShort()}");
-                    foreach (var period in ((HistoricalPeriods[])Enum.GetValues(typeof(HistoricalPeriods))))
-                    {
-                        if (item.HistoricalPeriodFingerPrints.ContainsKey(period))
-                        {
-                            sb.Append($", {item.HistoricalPeriodFingerPrints[period].ToString()}");
-                        }
-                    }
-                    sb.AppendLine();
+                    c.Execute(context);
                 }
-                filename = $"{context.FilePath}{context.GetGameName()}-PastDrawingsReport.csv";
-                System.IO.File.WriteAllText(filename, sb.ToString());
-                return;
             }
 
             //SaveGroupsToCsv

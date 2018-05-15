@@ -22,6 +22,11 @@ namespace LotteryV2.Domain.Commands
         /// </summary>
         public int HighestBall { get => HighBallNumber(); }
 
+        public int SampleSize { get; set; }
+
+        public Dictionary<HistoricalPeriods, Dictionary<DateTime,HistoricalPeriodItem>> foobar { get; set; }
+        public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
+
         private DateTime StartDate;
         private DateTime EndDate;
         public DateTime StartDateGet() => StartDate;
