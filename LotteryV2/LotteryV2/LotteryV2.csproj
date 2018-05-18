@@ -93,6 +93,7 @@
     <Compile Include="Domain\Slot.cs" />
     <Compile Include="Domain\SlotGroup.cs" />
     <Compile Include="Domain\Trendline.cs" />
+    <Compile Include="Domain\UniqueFingerPrints.cs" />
     <Compile Include="Service\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -24,7 +24,7 @@ namespace LotteryV2.Domain.Commands
 
         public int SampleSize { get; set; }
 
-        public Dictionary<HistoricalPeriods, Dictionary<DateTime,HistoricalPeriodItem>> foobar { get; set; }
+        public Dictionary<HistoricalPeriods, Dictionary<DateTime,HistoricalPeriodItem>> Foobar { get; set; }
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
 
         private DateTime StartDate;
@@ -309,7 +309,9 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
-        public string FilehistoricalPeriods => $"{this.FilePath}{this.GetGameName()}-HistoricalPeriods.json";
+        public string FileHistoricalPeriods => $"{this.FilePath}{this.GetGameName()}-HistoricalPeriods.json";
+
+        public string FileHistoricalSummary => $"{this.FilePath}{this.GetGameName()}-HistoricalSummary.csv";
 
         public string FilePath => "C:\\Users\\Steven\\Documents\\";
 

@@ -31,7 +31,7 @@ namespace LotteryV2.Domain.Commands
                     });
             }
 
-            System.IO.File.WriteAllText(context.FilehistoricalPeriods, JsonConvert.SerializeObject(results, Formatting.Indented));
+            System.IO.File.WriteAllText(context.FileHistoricalPeriods, JsonConvert.SerializeObject(results, Formatting.Indented));
         }
     }
 }

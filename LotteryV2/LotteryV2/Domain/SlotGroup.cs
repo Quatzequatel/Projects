@@ -138,19 +138,19 @@ namespace LotteryV2.Domain
                 .Select(group => new { key = group.Key, count = group.Count() })
                 .OrderBy(x => x.count))
             {
-                drawings.ToList().ForEach(i => i.GetTemplateFingerPrint().Count = item.count);
+                //drawings.ToList().ForEach(i => i.GetTemplateFingerPrint().Count = item.count);
             }
 
-            drawings.ToList().Where(i => i.GetTemplateFingerPrint().Count <= (int)TemplateSets.Aqua)
+            drawings.ToList().Where(i => i.GetTemplateFingerPrint().TimesChoosen <= (int)TemplateSets.Aqua)
                 .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Aqua);
 
             drawings.ToList()
-                .Where(i => i.GetTemplateFingerPrint().Count > (int)TemplateSets.Aqua
-                && i.GetTemplateFingerPrint().Count <= (int)TemplateSets.Sunrise)
+                .Where(i => i.GetTemplateFingerPrint().TimesChoosen > (int)TemplateSets.Aqua
+                && i.GetTemplateFingerPrint().TimesChoosen <= (int)TemplateSets.Sunrise)
                 .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Sunrise);
 
             drawings.ToList()
-                .Where(i => i.GetTemplateFingerPrint().Count > (int)TemplateSets.Sunrise)
+                .Where(i => i.GetTemplateFingerPrint().TimesChoosen > (int)TemplateSets.Sunrise)
                 .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.RedHot);
 
         }

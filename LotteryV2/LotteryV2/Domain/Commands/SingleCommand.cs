@@ -13,8 +13,10 @@ namespace LotteryV2.Domain.Commands
             DrawingContext context = new DrawingContext(
                 Game.Match4,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
-                );
-            context.SampleSize = 1000;
+                )
+            {
+                SampleSize = 1000
+            };
 
             //DefineDateRange
             context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-1)
@@ -37,14 +39,9 @@ namespace LotteryV2.Domain.Commands
             }
 
             //UpdateJsonFromWeb
-            //UpdateJsonFromWeb command2 = new UpdateJsonFromWeb();
-            //if (command2.ShouldExecute(context))
-            //{
-            //    command2.Execute(context);
-            //}
             using (UpdateJsonFromWeb c = new UpdateJsonFromWeb())
             {
-                if(c.ShouldExecute(context))
+                if (c.ShouldExecute(context))
                 {
                     c.Execute(context);
                 }
@@ -77,7 +74,7 @@ namespace LotteryV2.Domain.Commands
                 //SetTemplateFingerPrintCommand
                 context.Drawings.ForEach(i => i.GetTemplateFingerPrint());
             }
-            
+
             //SaveGroupsToCsv
             if (shouldExecute)
             {
@@ -105,9 +102,18 @@ namespace LotteryV2.Domain.Commands
             {
                 saveHistoricalPeriods2json.Execute(context);
             }
-            
+
             //Validate last 100 drawing against Patterns
             using (PastDrawingReportCommand c = new PastDrawingReportCommand())
+            {
+                if (c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
+            }
+
+            //Dump out all of the templates by period to CSV.
+            using (SaveHistoricalPatternSummary c = new SaveHistoricalPatternSummary())
             {
                 if (c.ShouldExecute(context))
                 {

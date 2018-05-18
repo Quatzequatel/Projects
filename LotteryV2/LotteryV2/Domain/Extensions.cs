@@ -170,5 +170,10 @@ namespace LotteryV2.Domain
             }
             System.IO.File.WriteAllText(fileName, sb.ToString());
         }
+
+        public static string GetName(this Enum value, Type enumType)
+        {
+            return Enum.GetName(enumType, value);
+        }
     }
 }
