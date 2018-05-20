@@ -38,7 +38,7 @@ namespace LotteryV2.Domain.Commands
             {
                 var element = new NumberModel(number, 0, context.GameType);
 
-                foreach (var item in numbers.Where(num => num.Id == number).ToArray())
+                foreach (var item in numbers.Where(num => num.BallId == number).ToArray())
                 {
                     if (element.DrawingsCount == 0) element.SetDrawingsCount(item.DrawingsCount);
                     element.AddDrawingDates(item.DrawingDates);

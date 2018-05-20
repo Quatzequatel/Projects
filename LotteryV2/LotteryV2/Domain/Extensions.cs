@@ -156,20 +156,6 @@ namespace LotteryV2.Domain
 
         //public static Variance TrendValueSum(this Variance)
 
-        public static void SaveGroupsToCsv(this DrawingContext context, string fileName)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Game, Slot, Propability, Numbers");
-            foreach (var slotGroup in context.GroupsDictionary)
-            {
-                foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
-                {
-                    sb.Append($"{context.GameType}, {slotGroup.Key}, {group.ToString()},")
-                        .AppendLine(string.Join(",", slotGroup.Value.Numbers(group).Select(i => i.Id).ToArray()));
-                }
-            }
-            System.IO.File.WriteAllText(fileName, sb.ToString());
-        }
 
         public static string GetName(this Enum value, Type enumType)
         {

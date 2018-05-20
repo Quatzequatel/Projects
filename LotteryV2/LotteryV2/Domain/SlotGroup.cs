@@ -80,7 +80,7 @@ namespace LotteryV2.Domain
             var results = new List<FindGroup>();
             foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
-                if (_Groups[group].Where(i => i.Id == number).Count() > 0)
+                if (_Groups[group].Where(i => i.BallId == number).Count() > 0)
                 {
                     string groups = FindGroupTypes(number);
                     SubSets group2 = (SubSets)Enum.Parse(typeof(SubSets), groups);
@@ -106,9 +106,9 @@ namespace LotteryV2.Domain
 
             foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
-                var result = Numbers(group).Where(i => i.Id == number && i.SlotId == _SlotId)
-                    .Select(j => new FindGroup { Id = j.Id, Group = group, PercentChosen = j.PercentChosen, TimesChosen = j.TimesChosen }).FirstOrDefault();
-                if (result.Id != 0) items.Add(result);
+                var result = Numbers(group).Where(i => i.BallId == number && i.SlotId == _SlotId)
+                    .Select(j => new FindGroup { BallId = j.BallId, Group = group, PercentChosen = j.PercentChosen, TimesChosen = j.TimesChosen }).FirstOrDefault();
+                if (result.BallId != 0) items.Add(result);
             }
 
             //Console.WriteLine($"Id:{number}, items.Count: {items.Count}, {items[0].Group.ToString()}");
@@ -120,45 +120,15 @@ namespace LotteryV2.Domain
             StringBuilder sb = new StringBuilder();
             foreach (var group in (SubSets[])Enum.GetValues(typeof(SubSets)))
             {
-                sb.AppendLine($"{group},list:,{string.Join(",", Numbers(group).Select(i => i.Id).ToArray())}");
+                sb.AppendLine($"{group},list:,{string.Join(",", Numbers(group).Select(i => i.BallId).ToArray())}");
             }
             return sb.ToString();
         }
     }
 
-    public class Templates
-    {
-        private Dictionary<TemplateSets, List<FingerPrint>> _templates = new Dictionary<TemplateSets, List<FingerPrint>>();
-
-        public void AddDrawings(IEnumerable<Drawing> drawings)
-        {
-            Dictionary<int, int> fingerprintsByCount = new Dictionary<int, int>();
-            foreach (var item in drawings
-                .GroupBy(i => i.TemplateFingerPrint.GetValue())
-                .Select(group => new { key = group.Key, count = group.Count() })
-                .OrderBy(x => x.count))
-            {
-                //drawings.ToList().ForEach(i => i.GetTemplateFingerPrint().Count = item.count);
-            }
-
-            drawings.ToList().Where(i => i.GetTemplateFingerPrint().TimesChoosen <= (int)TemplateSets.Aqua)
-                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Aqua);
-
-            drawings.ToList()
-                .Where(i => i.GetTemplateFingerPrint().TimesChoosen > (int)TemplateSets.Aqua
-                && i.GetTemplateFingerPrint().TimesChoosen <= (int)TemplateSets.Sunrise)
-                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.Sunrise);
-
-            drawings.ToList()
-                .Where(i => i.GetTemplateFingerPrint().TimesChoosen > (int)TemplateSets.Sunrise)
-                .ToList().ForEach(j => j.GetTemplateFingerPrint().TemplateSet = TemplateSets.RedHot);
-
-        }
-    }
-
     public struct FindGroup
     {
-        public int Id;
+        public int BallId;
         public SubSets Group;
         public double PercentChosen;
         public int TimesChosen;

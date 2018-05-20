@@ -18,12 +18,12 @@ namespace LotteryV2.Domain.Commands
             //    input.AddRange(groups[i].Numbers(GroupType.High).Select(num => num.Id).ToList());
             //}
 
-            input.AddRange(groups[1].Numbers(SubSets.High).Select(num => num.Id).ToList());
-            input.AddRange(groups[2].Numbers(SubSets.MidHigh).Select(num => num.Id).ToList());
-            input.AddRange(groups[3].Numbers(SubSets.MidHigh).Select(num => num.Id).ToList());
-            input.AddRange(groups[4].Numbers(SubSets.High).Select(num => num.Id).ToList());
-            input.AddRange(groups[5].Numbers(SubSets.High).Select(num => num.Id).ToList());
-            if(context.SlotCount > 5)input.AddRange(groups[6].Numbers(SubSets.High).Select(num => num.Id).ToList());
+            input.AddRange(groups[1].Numbers(SubSets.High).Select(num => num.BallId).ToList());
+            input.AddRange(groups[2].Numbers(SubSets.MidHigh).Select(num => num.BallId).ToList());
+            input.AddRange(groups[3].Numbers(SubSets.MidHigh).Select(num => num.BallId).ToList());
+            input.AddRange(groups[4].Numbers(SubSets.High).Select(num => num.BallId).ToList());
+            input.AddRange(groups[5].Numbers(SubSets.High).Select(num => num.BallId).ToList());
+            if(context.SlotCount > 5)input.AddRange(groups[6].Numbers(SubSets.High).Select(num => num.BallId).ToList());
 
             context.AddToPickedList(Groups.GenerateLotoNumbersFromInputArray(input.ToArray(), 6));
 

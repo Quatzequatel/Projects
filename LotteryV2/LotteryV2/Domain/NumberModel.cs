@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace LotteryV2.Domain
 {
+    /// <summary>
+    /// NumberModel builds on Number to add a few statics data.
+    /// Sum, Min/Max Sum, Avg Sum,
+    /// </summary>
     public class NumberModel : Number
     {
         public NumberModel(int id, int slotid, Game game) : base(id, slotid, game) { }
@@ -28,7 +32,7 @@ namespace LotteryV2.Domain
         /// <param name="drawings">list of drawings to define analysis pool.</param>
         public void LoadDrawings(List<Drawing> drawings)
         {
-            var list = drawings.Where(drawing => drawing.Game == Game && drawing.Numbers[SlotId - 1] == Id).ToArray();
+            var list = drawings.Where(drawing => drawing.Game == Game && drawing.Numbers[SlotId - 1] == BallId).ToArray();
             foreach (var item in list)
             {
                 base.AddDrawingDate(item.DrawingDate);
@@ -57,17 +61,26 @@ namespace LotteryV2.Domain
         public int TimesChosen => DrawingDates.Count;
         public double PercentChosen => ((double)TimesChosen / DrawingsCount) * 100;
 
-        public decimal TrendlineYvalue { get; set; }
-
+        /// <summary>
+        /// The number of drawings in the data set.
+        /// </summary>
         public int DrawingsCount { get; private set; }
+
+        /// <summary>
+        /// Set the DrawingsCount value.
+        /// </summary>
+        /// <param name="value"></param>
         public void SetDrawingsCount(int value) => DrawingsCount = value;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string CSVHeading => new string[] { "Game", "Slot", "Number", "Times Chosen", "Chosen %", "AvgSum", "MinSum", "MaxSum","SumSTD","SumVariance" }.CSV();
         public string CSVLine => new string[]
         {
             $"{Game}",
             $"{SlotId}",
-            $"{Id}",
+            $"{BallId}",
             $"{TimesChosen}",
             $"{PercentChosen}",
             $"{AvgSum}",

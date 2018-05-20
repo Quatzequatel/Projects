@@ -75,11 +75,13 @@ namespace LotteryV2.Domain.Commands
                 context.Drawings.ForEach(i => i.GetTemplateFingerPrint());
             }
 
-            //SaveGroupsToCsv
-            if (shouldExecute)
+
+            using (SaveGroupsDictionaryToCSVCommand c = new SaveGroupsDictionaryToCSVCommand())
             {
-                filename = $"{context.FilePath}{context.GetGameName()}-PropabilityGroupsData.csv";
-                context.SaveGroupsToCsv(filename);
+                if (c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
             }
 
             //Set the historical finger prints for all drawings
@@ -122,13 +124,15 @@ namespace LotteryV2.Domain.Commands
             }
 
             //SaveGroupsToCsv
-            if (shouldExecute)
+            using (SaveGroupsDictionaryToCSVCommand c = new SaveGroupsDictionaryToCSVCommand())
             {
-                context.SetDrawingsDateRange(context.StartDateGet().AddDays(14), context.EndDateGet());
-
-                filename = $"{context.FilePath}{context.GetGameName()}14D-PropabilityGroupsData.csv";
-                context.SaveGroupsToCsv(filename);
+                if (c.ShouldExecute(context))
+                {
+                    IEnumerable<string> additionalMetaData = new string[] { "14", $"{context.FilePath}{context.GetGameName()}14D-PropabilityGroupsData.csv" };
+                    c.Execute(context, additionalMetaData);
+                }
             }
+
             //SaveGroups2JsonCommand
             if (shouldExecute)
             {
@@ -200,7 +204,7 @@ namespace LotteryV2.Domain.Commands
                 sb.AppendLine(numbers[0].CSVHeading + ",GroupType");
                 foreach (var item in numbers)
                 {
-                    sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.Id)}");
+                    sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.BallId)}");
                 }
 
                 System.IO.File.WriteAllText(_Filename, sb.ToString());
@@ -229,7 +233,7 @@ namespace LotteryV2.Domain.Commands
                 {
                     var element = new NumberModel(number, 0, context.GameType);
 
-                    foreach (var item in numbers.Where(num => num.Id == number).ToArray())
+                    foreach (var item in numbers.Where(num => num.BallId == number).ToArray())
                     {
                         if (element.DrawingsCount == 0) element.SetDrawingsCount(item.DrawingsCount);
                         element.AddDrawingDates(item.DrawingDates);

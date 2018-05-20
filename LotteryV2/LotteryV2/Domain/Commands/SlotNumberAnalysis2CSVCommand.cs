@@ -26,7 +26,7 @@ namespace LotteryV2.Domain.Commands
             sb.AppendLine(numbers[0].CSVHeading + ",GroupType");
             foreach (var item in numbers)
             {
-                sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.Id)}");
+                sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.BallId)}");
             }
 
             System.IO.File.WriteAllText(_Filename, sb.ToString());

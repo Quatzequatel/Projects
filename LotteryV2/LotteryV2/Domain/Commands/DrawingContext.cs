@@ -326,5 +326,14 @@ namespace LotteryV2.Domain.Commands
             Drawings = drawings;
         }
 
+        public List<string> PickNumbers(HistoricalPeriods period, int howMany)
+        {
+            List<string> result = new List<string>();
+
+
+
+            return result;
+        }
+
     }
 }

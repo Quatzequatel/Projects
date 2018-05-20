@@ -5,18 +5,27 @@ using System;
 
 namespace LotteryV2.Domain
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class UniqueFingerPrints
     {
+        /// <summary>
+        /// int == FingerPrint.Value; a unique int key of the fingerprint.
+        /// </summary>
         public Dictionary<int, FingerPrint> FingerPrints { get; set; } = new Dictionary<int, FingerPrint>();
 
+        /// <summary>
+        /// Setter only to be used by Json deserializer.
+        /// </summary>
         public HistoricalPeriods Period { get; set; }
 
         public int TotalChosen() => FingerPrints.Sum(i => i.Value.TimesChoosen);
 
-        public UniqueFingerPrints()
-        {
-
-        }
+        /// <summary>
+        /// should only be used by Json deserializer.
+        /// </summary>
+        public UniqueFingerPrints() { }
 
         public UniqueFingerPrints(DrawingContext context, HistoricalPeriods period)
         {
@@ -40,7 +49,10 @@ namespace LotteryV2.Domain
 
             FingerPrints[fingerPrint.Value] = fingerPrint.Clone();
         }
-
+        /// <summary>
+        /// Returns the list of fingerprints that represent the top 60% choosen.
+        /// </summary>
+        /// <returns></returns>
         public List<FingerPrint> Top60Percent()
         {
             List<FingerPrint> results = new List<FingerPrint>();
@@ -49,7 +61,7 @@ namespace LotteryV2.Domain
             int currentTotal = 0;
             foreach (var finger in FingerPrints.OrderByDescending(i => i.Value.TimesChoosen).ToList())
             {
-                if( currentTotal <= sixtyPercent)
+                if (currentTotal <= sixtyPercent)
                 {
                     results.Add(finger.Value);
                     currentTotal += finger.Value.TimesChoosen;
@@ -62,24 +74,46 @@ namespace LotteryV2.Domain
         /// Retuns a dictionary of dictionaies.
         /// the outer dictionary represents each slot.
         /// the inner dictionary represens the weighted values of each subset.
+        /// Where the weight is the number of times subset was choosen.
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
         public Dictionary<int, Dictionary<SubSets, int>> WeightedSubSets(List<FingerPrint> values)
         {
-            Dictionary<int, Dictionary<SubSets, int>> slots = new Dictionary<int, Dictionary<SubSets, int>>();
+            Dictionary<int, Dictionary<SubSets, int>> slots = InitailizeSlots();
             int slotcount = new int[0].GetSlotCount();
-            //todo initalize the dictionaries
 
             foreach (var finger in values)
             {
                 for (int slot = 0; slot < slotcount; slot++)
                 {
-                    slots[slot][finger.GetTemplate()[slot]] += finger.Value;
+                    SubSets set = finger.GetTemplate()[slot];
+                    slots[slot][set] += finger.TimesChoosen;
                 }
             }
 
             return slots;
+        }
+
+        /// <summary>
+        /// Creates an outer Dictionary from 0 to SlotCount.
+        /// Initialize each with an inner Dictionary of SubSets with value = 0;
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<int, Dictionary<SubSets, int>> InitailizeSlots()
+        {
+            Dictionary<int, Dictionary<SubSets, int>> result = new Dictionary<int, Dictionary<SubSets, int>>();
+
+            for (int i = 0; i < new int[0].GetSlotCount(); i++)
+            {
+                result[i] = new Dictionary<SubSets, int>();
+                foreach (var set in (SubSets[])Enum.GetValues(typeof(SubSets)))
+                {
+                    result[i][set] = 0;
+                }
+            }
+
+            return result;
         }
 
         public override string ToString()
@@ -93,5 +127,17 @@ namespace LotteryV2.Domain
 
             return sb.ToString();
         }
+    }
+
+    public class SlotNumberSubSet
+    {
+        public SlotNumberSubSet()
+        {
+
+        }
+
+        public Dictionary<HistoricalPeriods, Dictionary<int, SlotGroup>> Data;
+        //public 
+
     }
 }

@@ -127,7 +127,7 @@ namespace LotteryV2.Domain
             {
                 var element = new NumberModel(number, 0, game);
 
-                foreach (var item in numbers.Where(num => num.Id == number).ToArray())
+                foreach (var item in numbers.Where(num => num.BallId == number).ToArray())
                 {
                     if (element.DrawingsCount == 0)
                     {
