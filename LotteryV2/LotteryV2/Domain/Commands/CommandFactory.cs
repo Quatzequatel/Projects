@@ -30,7 +30,7 @@ namespace LotteryV2.Domain.Commands
             typeof(LoadDrawingsFromFile), //load drawings from json file; if exists
             typeof(ScrapeFromWeb), //if no json file scrape from web and save.
             typeof(UpdateJsonFromWeb), // update json file by appending drawings.
-            typeof(DefineGroupsCommand),
+            typeof(DefineHistoricalGroups),
             typeof(SetTemplateFingerPrintCommand),
             typeof(SaveGroups2JsonCommand),
             //typeof(PurmutateNumbers),

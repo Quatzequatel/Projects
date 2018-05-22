@@ -8,15 +8,19 @@ namespace LotteryV2.Domain.Commands
 {
     public class SlotNumberAnalysisRanged2CSVCommand : Command<DrawingContext>
     {
-        private string _Filename;
+        public string Filename { get; set; }
         private List<NumberModel> numbers = new List<NumberModel>();
-        private int _TakeDrawwings = 1000;
-        private int _LeaveDrawings = 10;
-        private List<Tuple<int, double>> dataBag = new List<Tuple<int, double>>();
+        public int TakeDrawwings { get; set; } = 1000;
+        public int LeaveDrawings { get; set; } = 10;
+
+        public override bool ShouldExecute(DrawingContext context)
+        {
+            return context.Drawings.Count > 0;
+        }
+
 
         public override void Execute(DrawingContext context)
         {
-            _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
             LoadModel(context);
             SaveToCSV(context);
         }
@@ -27,8 +31,8 @@ namespace LotteryV2.Domain.Commands
             {
                 for (int number = 1; number <= context.HighestBall; number++)
                 {
-                    var element = new NumberModel(number, slot, context.GameType);
-                    element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, _TakeDrawwings, _LeaveDrawings);
+                    var element = new NumberModel(number, slot, DrawingContext.GameType);
+                    element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, TakeDrawwings, LeaveDrawings);
                     numbers.Add(element);
                 }
 
@@ -36,7 +40,7 @@ namespace LotteryV2.Domain.Commands
 
             for (int number = 1; number <= context.HighestBall; number++)
             {
-                var element = new NumberModel(number, 0, context.GameType);
+                var element = new NumberModel(number, 0, DrawingContext.GameType);
 
                 foreach (var item in numbers.Where(num => num.BallId == number).ToArray())
                 {
@@ -51,7 +55,7 @@ namespace LotteryV2.Domain.Commands
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Next Numbers");
-            for (int i = 1; i < _LeaveDrawings; i++)
+            for (int i = 1; i < LeaveDrawings; i++)
             {
                 sb.AppendLine(context.Drawings[context.Drawings.Count - i].ToString());
             }
@@ -61,7 +65,7 @@ namespace LotteryV2.Domain.Commands
                 sb.AppendLine(item.CSVLine);
             }
 
-            System.IO.File.WriteAllText(_Filename, sb.ToString());
+            System.IO.File.WriteAllText(Filename, sb.ToString());
         }
     }
 }

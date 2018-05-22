@@ -97,7 +97,7 @@ namespace LotteryV2.Domain
 
         public static List<NumberModel> LoadSlotModel(DrawingContext context)
         {
-            return LoadSlotModel(context.HighestBall, context.SlotCount, context.GameType, context.Drawings);
+            return LoadSlotModel(context.HighestBall, context.SlotCount, DrawingContext.GameType, context.Drawings);
         }
         /// <summary>
         /// Generate model of numbers from list of drawings.

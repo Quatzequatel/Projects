@@ -8,13 +8,18 @@ namespace LotteryV2.Domain.Commands
 {
     public class SlotNumberAnalysis2CSVCommand : Command<DrawingContext>
     {
-        private string _Filename;
+        public string Filename { get; set; }
         private List<NumberModel> numbers = new List<NumberModel>();
         Dictionary<int, SlotGroup> groups;
 
+        public override bool ShouldExecute(DrawingContext context)
+        {
+            return base.ShouldExecute(context);
+        }
+
         public override void Execute(DrawingContext context)
         {
-            _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
+            Filename = Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
             numbers = context.NumberModelList;
             groups = context.GroupsDictionary;
             SaveToCSV(context);
@@ -29,7 +34,7 @@ namespace LotteryV2.Domain.Commands
                 sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.BallId)}");
             }
 
-            System.IO.File.WriteAllText(_Filename, sb.ToString());
+            System.IO.File.WriteAllText(Filename, sb.ToString());
         }
     }
 }

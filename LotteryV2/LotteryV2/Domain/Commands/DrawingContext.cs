@@ -12,7 +12,7 @@ namespace LotteryV2.Domain.Commands
         /// <summary>
         /// type of game in current context
         /// </summary>
-        public readonly Game GameType;
+        public static Game GameType;
         /// <summary>
         /// how many slots in current game.
         /// </summary>
@@ -27,10 +27,25 @@ namespace LotteryV2.Domain.Commands
         public Dictionary<HistoricalPeriods, Dictionary<DateTime,HistoricalPeriodItem>> Foobar { get; set; }
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
 
-        private DateTime StartDate;
-        private DateTime EndDate;
-        public DateTime StartDateGet() => StartDate;
-        public DateTime EndDateGet() => EndDate;
+        /// <summary>
+        /// Start date of analysis period.
+        /// </summary>
+        public DateTime StartDate { get; private set; }
+        /// <summary>
+        /// Date of drawing or end of analysis period.
+        /// </summary>
+        public DateTime EndDate { get; private set; }
+        public void SetPeriodContext(HistoricalPeriods period)
+        {
+            if (period != HistoricalPeriods.All)
+            {
+                SetDrawingsDateRange(EndDate.AddDays(-(int)period), EndDate);
+            }
+            else
+            {
+                SetDrawingsDateRange(AllDrawings.OrderByDescending(i => i.DrawingDate).Last().DrawingDate, EndDate);
+            }
+        }
 
         public void SetDrawingsDateRange(DateTime startDate, DateTime endDate)
         {
@@ -79,33 +94,17 @@ namespace LotteryV2.Domain.Commands
 
         public DateTime NextDrawingDate { get; private set; }
         public DrawingContext SetNextDrawingDate(DateTime value) { NextDrawingDate = value; return this; }
-        private List<Drawing> _Drawings;
-        /// <summary>
-        /// historical list of drawings for a given date range.
-        /// TBD this will be a dynamic range
-        /// </summary>
-        //public List<Drawing> Drawings
-        //{
-        //    get => _Drawings?.Where(i => i.DrawingDate >= StartDate && i.DrawingDate <= EndDate).ToList();
-        //    private set => _Drawings = value;
-        //}
+
         public List<Drawing> Drawings
         {
             get
             {
-                return _Drawings?.Where(i => i.DrawingDate >= StartDate && i.DrawingDate <= EndDate).ToList();
-            }
-            private set
-            {
-                _Drawings = new List<Drawing>(value.ToList());
+                return AllDrawings?.Where(i => i.DrawingDate >= StartDate && i.DrawingDate <= EndDate).ToList();
             }
         }
 
-        public List<Drawing> AllDrawings
-        {
-            get { return _Drawings; }
-        }
-
+        public List<Drawing> AllDrawings { get; private set; }
+        
         public List<NumberModel> NumberModelList { get; private set; }
 
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
@@ -131,6 +130,25 @@ namespace LotteryV2.Domain.Commands
         {
             NumberModelList = Groups.LoadSlotModel(this);
             GroupsDictionary = Groups.DefineGroups(SlotCount, GameType, NumberModelList);
+        }
+
+        public HistoricalGroups HistoricalGroups { get; set; } = new HistoricalGroups();
+
+        public void DefineHistoricalGroups()
+        {
+            foreach (var period in (HistoricalPeriods[])Enum.GetValues(typeof(HistoricalPeriods)))
+            {
+                //Set the date range for Drawings.
+                SetPeriodContext(period);
+                //Extract the Group Definitions.
+                DefineGroups();
+
+                foreach (var slotgroup in GroupsDictionary)
+                {
+                    HistoricalGroups.PeriodGroups[period][slotgroup.Key] = slotgroup.Value;
+                }
+                 
+            }
         }
 
         public void AddToPickedList(LotoNumber number)
@@ -203,7 +221,7 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
-        public int GetBallCount()
+        public static int GetBallCount()
         {
             switch (GameType)
             {
@@ -318,12 +336,12 @@ namespace LotteryV2.Domain.Commands
         public void SetDrawings(List<Drawing> drawings)
         {
             if (Drawings != null) throw new AccessViolationException("Drawings has already been set.");
-            Drawings = drawings;
+            AllDrawings = drawings;
         }
 
         public void ReplaceDrawings(List<Drawing> drawings)
         {
-            Drawings = drawings;
+            AllDrawings = drawings;
         }
 
         public List<string> PickNumbers(HistoricalPeriods period, int howMany)

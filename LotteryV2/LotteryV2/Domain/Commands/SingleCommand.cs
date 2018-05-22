@@ -65,16 +65,13 @@ namespace LotteryV2.Domain.Commands
                 shouldExecuteSetHistoricalPeriods = false;
             }
 
-            if (shouldExecute)
+            using (DefineHistoricalGroups c = new DefineHistoricalGroups())
             {
-                //DefineGroupsCommand
-                context.DefineGroups();
-                context.Drawings.ForEach(i => i.SetContext(context));
-
-                //SetTemplateFingerPrintCommand
-                context.Drawings.ForEach(i => i.GetTemplateFingerPrint());
+                if (c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
             }
-
 
             using (SaveGroupsDictionaryToCSVCommand c = new SaveGroupsDictionaryToCSVCommand())
             {
@@ -83,6 +80,7 @@ namespace LotteryV2.Domain.Commands
                     c.Execute(context);
                 }
             }
+
 
             //Set the historical finger prints for all drawings
             if (shouldExecuteSetHistoricalPeriods)
@@ -123,15 +121,6 @@ namespace LotteryV2.Domain.Commands
                 }
             }
 
-            //SaveGroupsToCsv
-            using (SaveGroupsDictionaryToCSVCommand c = new SaveGroupsDictionaryToCSVCommand())
-            {
-                if (c.ShouldExecute(context))
-                {
-                    IEnumerable<string> additionalMetaData = new string[] { "14", $"{context.FilePath}{context.GetGameName()}14D-PropabilityGroupsData.csv" };
-                    c.Execute(context, additionalMetaData);
-                }
-            }
 
             //SaveGroups2JsonCommand
             if (shouldExecute)
@@ -194,66 +183,31 @@ namespace LotteryV2.Domain.Commands
             }
 
             //SlotNumberAnalysis2CSVCommand
-            if (shouldExecute)
+            using (SlotNumberAnalysis2CSVCommand c = new SlotNumberAnalysis2CSVCommand())
             {
-                _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
-                List<NumberModel> numbers = context.NumberModelList;
-                Dictionary<int, SlotGroup> groups = context.GroupsDictionary;
-
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(numbers[0].CSVHeading + ",GroupType");
-                foreach (var item in numbers)
+                if (c.ShouldExecute(context))
                 {
-                    sb.AppendLine(item.CSVLine + $",{groups[item.SlotId].FindGroupType(item.BallId)}");
+                    c.Execute(context);
                 }
-
-                System.IO.File.WriteAllText(_Filename, sb.ToString());
             }
             //SlotNumberAnalysisRanged2CSVCommand
-            if (shouldExecute)
+            using (SlotNumberAnalysis2CSVCommand c = new SlotNumberAnalysis2CSVCommand())
             {
-                _Filename = _Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
-                List<NumberModel> numbers = context.NumberModelList;
-                int _TakeDrawwings = 1000;
-                int _LeaveDrawings = 10;
-                List<Tuple<int, double>> dataBag = new List<Tuple<int, double>>();
-
-                for (int slot = 1; slot <= context.SlotCount; slot++)
+                if (c.ShouldExecute(context))
                 {
-                    for (int number = 1; number <= context.HighestBall; number++)
-                    {
-                        var element = new NumberModel(number, slot, context.GameType);
-                        element.LoadLastNumberOfDrawingsAndLeave(context.Drawings, _TakeDrawwings, _LeaveDrawings);
-                        numbers.Add(element);
-                    }
-
+                    c.Execute(context);
                 }
-
-                for (int number = 1; number <= context.HighestBall; number++)
+            }
+            using (SlotNumberAnalysisRanged2CSVCommand c = new SlotNumberAnalysisRanged2CSVCommand())
+            {
+                if (c.ShouldExecute(context))
                 {
-                    var element = new NumberModel(number, 0, context.GameType);
+                    c.Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
+                    c.TakeDrawwings = 1000;
+                    c.LeaveDrawings = 10;
 
-                    foreach (var item in numbers.Where(num => num.BallId == number).ToArray())
-                    {
-                        if (element.DrawingsCount == 0) element.SetDrawingsCount(item.DrawingsCount);
-                        element.AddDrawingDates(item.DrawingDates);
-                    }
-                    numbers.Add(element);
+                    c.Execute(context);
                 }
-
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Next Numbers");
-                for (int i = 1; i < _LeaveDrawings; i++)
-                {
-                    sb.AppendLine(context.Drawings[context.Drawings.Count - i].ToString());
-                }
-                sb.AppendLine().AppendLine().AppendLine(numbers[0].CSVHeading);
-                foreach (var item in numbers)
-                {
-                    sb.AppendLine(item.CSVLine);
-                }
-
-                System.IO.File.WriteAllText(_Filename, sb.ToString());
             }
         }
     }

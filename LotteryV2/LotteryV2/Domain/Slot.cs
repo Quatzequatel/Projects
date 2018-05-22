@@ -20,7 +20,7 @@ namespace LotteryV2.Domain
             Numbers = new List<Number>();
             for (int i = 0; i < MaxNumber; i++)
 			{
-                Numbers.Add(new Number(i, slotid, context.GameType));
+                Numbers.Add(new Number(i, slotid, DrawingContext.GameType));
 			}
         }
     }

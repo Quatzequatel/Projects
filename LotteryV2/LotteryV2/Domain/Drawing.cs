@@ -98,7 +98,7 @@ namespace LotteryV2.Domain
         public Drawing(DrawingContext context)
         {
             balls = new int[context.SlotCount];
-            Context = context; Game = context.GameType;
+            Context = context; Game = DrawingContext.GameType;
             for (int i = 0; i < balls.Length; i++)
             {
                 balls[i] = int.MaxValue;
@@ -106,7 +106,7 @@ namespace LotteryV2.Domain
         }
         public Drawing SetContext(DrawingContext context)
         {
-            Context = context; Game = context.GameType; return this;
+            Context = context; Game = DrawingContext.GameType; return this;
         }
 
 

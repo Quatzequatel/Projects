@@ -13,8 +13,8 @@ namespace LotteryV2.Domain
         public int BallId { get; private set; }
         public int SlotId { get; private set; }
         public Game Game { get; private set; }
-                
-        public List<DateTime> DrawingDates { get; private set; }
+
+        public List<DateTime> DrawingDates { get; private set; } = new List<DateTime>();
         
         public void AddDrawingDate(DateTime date) => DrawingDates.Add(date);
         public void AddDrawingDates(IEnumerable<DateTime> dates) => DrawingDates.AddRange(dates);

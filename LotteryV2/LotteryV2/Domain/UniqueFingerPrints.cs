@@ -122,7 +122,7 @@ namespace LotteryV2.Domain
 
             foreach (var finger in FingerPrints.OrderByDescending(i => i.Value.TimesChoosen).ToList())
             {
-                sb.Append(Period.GetName(typeof(HistoricalPeriods))).Append(",").AppendLine(finger.ToString());
+                sb.Append(Period.GetName(typeof(HistoricalPeriods))).Append(",").AppendLine(finger.Value.ToString());
             }
 
             return sb.ToString();

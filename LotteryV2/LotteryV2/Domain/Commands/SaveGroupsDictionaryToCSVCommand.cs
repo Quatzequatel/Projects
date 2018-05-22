@@ -10,6 +10,7 @@ namespace LotteryV2.Domain.Commands
     /// </summary>
     public class SaveGroupsDictionaryToCSVCommand : Command<DrawingContext>
     {
+        public string FirstLine { get; set; }
         public override bool ShouldExecute(DrawingContext context)
         {
             return base.ShouldExecute(context);
@@ -17,7 +18,7 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
-            string filename = $"{context.FilePath}{context.GetGameName()}-PropabilityGroupsData.csv";
+            string filename = $"{context.FilePath}{context.GetGameName()}-Period-PropabilityGroupsData.csv";
             SaveToCsvFile(context, filename);
         }
 
@@ -29,20 +30,27 @@ namespace LotteryV2.Domain.Commands
             int days = int.Parse(additionalMetaData.ToArray()[0]);
             string filename = additionalMetaData.ToArray()[1];
 
-            context.SetDrawingsDateRange(context.StartDateGet().AddDays(days), context.EndDateGet());
+            context.SetDrawingsDateRange(context.EndDate.AddDays(days), context.EndDate);
             SaveToCsvFile(context, filename);
         }
 
         public void SaveToCsvFile(DrawingContext context, string filename)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Game, Slot, Propability, Numbers");
-            foreach (var slotGroup in context.GroupsDictionary)
+            if(!string.IsNullOrEmpty(FirstLine))sb.AppendLine(FirstLine);
+            sb.AppendLine("Game, Period, Slot, Propability, Numbers");
+            foreach (var period in context.HistoricalGroups.PeriodGroups.Keys)
             {
-                foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
+                var slotGroup = context.HistoricalGroups.PeriodGroups[period];
+                if (slotGroup.Count == 0) continue;
+
+                for (int slotid = 0; slotid <= DrawingContext.GetBallCount(); slotid++)
                 {
-                    sb.Append($"{context.GameType}, {slotGroup.Key}, {group.ToString()},")
-                        .AppendLine(string.Join(",", slotGroup.Value.Numbers(group).Select(i => i.BallId).ToArray()));
+                    foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
+                    {
+                        sb.Append($"{DrawingContext.GameType}, {period}, {slotid}, {group.ToString()},")
+                            .AppendLine(string.Join(",", slotGroup[slotid].Numbers(group).Select(i => i.BallId).ToArray()));
+                    }
                 }
             }
             System.IO.File.WriteAllText(filename, sb.ToString());
