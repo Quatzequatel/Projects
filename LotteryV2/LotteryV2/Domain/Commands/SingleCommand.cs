@@ -11,7 +11,7 @@ namespace LotteryV2.Domain.Commands
         public void Execute()
         {
             DrawingContext context = new DrawingContext(
-                Game.Match4,
+                Game.Lotto,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 )
             {
@@ -121,6 +121,14 @@ namespace LotteryV2.Domain.Commands
                 }
             }
 
+            //Get Best numbers to pick.
+            using (PickNumbersBaseCommand c = new PickNumbersBaseCommand())
+            {
+                if (c.ShouldExecute(context))
+                {
+                    c.Execute(context);
+                }
+            }
 
             //SaveGroups2JsonCommand
             if (shouldExecute)

@@ -68,6 +68,7 @@
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />
     <Compile Include="Domain\Commands\PastDrawingReportCommand.cs" />
+    <Compile Include="Domain\Commands\PickNumbersBaseCommand.cs" />
     <Compile Include="Domain\Commands\PurmutateNumbers.cs" />
     <Compile Include="Domain\Commands\SaveGroups2JsonCommand.cs" />
     <Compile Include="Domain\Commands\SaveGroupsDictionaryToCSVCommand.cs" />

@@ -21,7 +21,7 @@ namespace LotteryV2.Domain.Commands
         {
             StringBuilder sb = new StringBuilder();
             StringBuilder sbWeighted = new StringBuilder();
-            sbWeighted.AppendLine("Period, Slot, Subset, times chosen, percent chosen");
+            sbWeighted.AppendLine("Period, Days, Slot, Subset, times chosen, percent chosen");
             foreach (HistoricalPeriods period in Enum.GetValues(typeof(HistoricalPeriods)))
             {
                 UniqueFingerPrints data = new UniqueFingerPrints(context, period);
@@ -33,7 +33,8 @@ namespace LotteryV2.Domain.Commands
                     int totaldraws = weightedslotes[slotid].Values.Sum();
                     foreach (var subset in (SubSets[])Enum.GetValues(typeof(SubSets)))
                     {
-                        sbWeighted.AppendLine($"{period}, {slotid}, {subset}, {weightedslotes[slotid][subset]}, {(weightedslotes[slotid][subset] / totaldraws) * 100}%");
+                        sbWeighted.Append($"{period}, {(int)period}, {slotid}, {subset}, {weightedslotes[slotid][subset]}")
+                            .AppendLine($", {(totaldraws != 0 ? ((weightedslotes[slotid][subset] / totaldraws) * 100) : 0)}%");
                     }
 
                 }

@@ -38,7 +38,7 @@ namespace LotteryV2.Domain.Commands
         {
             StringBuilder sb = new StringBuilder();
             if(!string.IsNullOrEmpty(FirstLine))sb.AppendLine(FirstLine);
-            sb.AppendLine("Game, Period, Slot, Propability, Numbers");
+            sb.AppendLine("Game, Period, Days, Slot, Propability, Numbers");
             foreach (var period in context.HistoricalGroups.PeriodGroups.Keys)
             {
                 var slotGroup = context.HistoricalGroups.PeriodGroups[period];
@@ -48,7 +48,7 @@ namespace LotteryV2.Domain.Commands
                 {
                     foreach (SubSets group in (SubSets[])Enum.GetValues(typeof(SubSets)))
                     {
-                        sb.Append($"{DrawingContext.GameType}, {period}, {slotid}, {group.ToString()},")
+                        sb.Append($"{DrawingContext.GameType}, {period}, {(int)period}, {slotid}, {group.ToString()},")
                             .AppendLine(string.Join(",", slotGroup[slotid].Numbers(group).Select(i => i.BallId).ToArray()));
                     }
                 }
