@@ -10,6 +10,7 @@ namespace LotteryV2.Domain
     /// </summary>
     public class Number
     {
+        public Dictionary<HistoricalPeriods, NumberHistory> HistoricalPerformance { get; set; } = new Dictionary<HistoricalPeriods, NumberHistory>();
         public int BallId { get; private set; }
         public int SlotId { get; private set; }
         public Game Game { get; private set; }
@@ -25,5 +26,19 @@ namespace LotteryV2.Domain
             SlotId = slotid;
             Game = game;
         }
+    }
+
+    public class NumberHistory
+    {
+        public HistoricalPeriods Period { get; set; }
+        public SubSets Subset { get; set; }
+        
+        public int DrawCount { get; set; }
+
+        public NumberHistory()
+        {
+
+        }
+
     }
 }

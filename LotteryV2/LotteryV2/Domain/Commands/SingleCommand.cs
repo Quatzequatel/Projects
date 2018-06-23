@@ -11,7 +11,7 @@ namespace LotteryV2.Domain.Commands
         public void Execute()
         {
             DrawingContext context = new DrawingContext(
-                Game.Lotto,
+                Game.Match4,
                 new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
                 )
             {

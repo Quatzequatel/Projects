@@ -38,6 +38,7 @@ namespace LotteryV2.Domain.Commands
 
                 List<int> currentPossibilities = context.HistoricalGroups
                     .PeriodGroups[HistoricalPeriods.Wk1][slotid].Numbers(SubSets.Zero)
+                    .OrderByDescending(i => i.DrawingsCount)
                     .Select(i => i.BallId).ToList();
 
                 slotPicks[slotid] = currentPossibilities.Except(neverChoose).ToList();
@@ -54,9 +55,52 @@ namespace LotteryV2.Domain.Commands
             {
                 sb.AppendLine($"{slotid}, {string.Join(",", slotPicks[slotid])}");
             }
-
             System.IO.File.WriteAllText(filename, sb.ToString());
+            AllChoices(filename);
         }
 
+        public void AllChoices(string filename)
+        {
+            for (int slotid = 1; slotid <= DrawingContext.GetBallCount(); slotid++)
+            {
+                for (int numberId = 0; numberId < slotPicks[slotid].Count; numberId++)
+                {
+                    StringBuilder sbNextSet = new StringBuilder();
+                    sbNextSet.Append($"{slotPicks[slotid][numberId]}");
+                    buildPick(slotid + 1, sbNextSet, filename);
+                }
+            }
+        }
+
+        public void buildPick(int slotid, StringBuilder sb, string filename)
+        {
+            if (slotid >= DrawingContext.GetBallCount())
+            {
+                string firstPartOfChoice = sb.ToString();
+                for (int i = 0; i < slotPicks[slotid].Count(); i++)
+                {
+                    if (i == 0)
+                        sb.AppendLine($"-{slotPicks[slotid][i]}");
+                    else
+                    {
+                        sb.AppendLine($"{firstPartOfChoice}-{slotPicks[slotid][i]}");
+                    }
+                }
+                //Save data to file.
+                System.IO.File.AppendAllText(filename, sb.ToString());
+                sb = new StringBuilder();
+            }
+            else
+            {
+                string firstPartOfChoice = sb.ToString();
+
+                for (int id = 0; id < slotPicks[slotid].Count(); id++)
+                {
+                    StringBuilder sbNext = new StringBuilder(firstPartOfChoice);
+                    sbNext.Append($"-{slotPicks[slotid][id]}");
+                    buildPick(slotid + 1, sbNext, filename);
+                }
+            }
+        }
     }
 }

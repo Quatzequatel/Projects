@@ -142,7 +142,7 @@ namespace LotteryV2.Domain.Commands
                 SetPeriodContext(period);
                 //Extract the Group Definitions.
                 DefineGroups();
-
+                //TODO: Use this context to organize historical period information per number.
                 foreach (var slotgroup in GroupsDictionary)
                 {
                     HistoricalGroups.PeriodGroups[period][slotgroup.Key] = slotgroup.Value;
