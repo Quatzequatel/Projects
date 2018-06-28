@@ -24,7 +24,6 @@ namespace LotteryV2.Domain.Commands
 
         public int SampleSize { get; set; }
 
-        public Dictionary<HistoricalPeriods, Dictionary<DateTime,HistoricalPeriodItem>> Foobar { get; set; }
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
 
         /// <summary>
@@ -104,19 +103,19 @@ namespace LotteryV2.Domain.Commands
         }
 
         public List<Drawing> AllDrawings { get; private set; }
-        
+
         public List<NumberModel> NumberModelList { get; private set; }
 
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
 
-        public DateTime? LastDrawingDate => Drawings?.Last<Drawing>().DrawingDate;
-        public DateTime? FirstDrawingDate => Drawings?.First<Drawing>().DrawingDate;
+        public DateTime? LastDrawingDate { get { return Drawings.Count > 0 ? Drawings?.Last<Drawing>()?.DrawingDate: null; } }
+        public DateTime? FirstDrawingDate { get { return Drawings.Count > 0 ? Drawings?.First<Drawing>()?.DrawingDate: null; } }
 
-        public DrawingContext(Game currentGame, DateTime nextDrawing)
+        public DrawingContext(Game currentGame, DateTime? nextDrawing = null)
         {
             GameType = currentGame;
-            NextDrawingDate = nextDrawing;
+            NextDrawingDate = nextDrawing != null ? nextDrawing.Value : new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day);
             this.SetSlotCount();
         }
 

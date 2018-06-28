@@ -36,10 +36,14 @@ namespace LotteryV2.Domain.Commands
                     .PeriodGroups[HistoricalPeriods.All][slotid].Numbers(SubSets.Low)
                     .Select(i => i.BallId).ToList());
 
-                List<int> currentPossibilities = context.HistoricalGroups
-                    .PeriodGroups[HistoricalPeriods.Wk1][slotid].Numbers(SubSets.Zero)
+                List<int> currentPossibilities = new List<int>();
+                foreach (var group in new SubSets[] {SubSets.High, SubSets.MidHigh, SubSets.Mid })
+                {
+                    currentPossibilities.AddRange(context.HistoricalGroups
+                    .PeriodGroups[HistoricalPeriods.Month3][slotid].Numbers(group)
                     .OrderByDescending(i => i.DrawingsCount)
-                    .Select(i => i.BallId).ToList();
+                    .Select(i => i.BallId).ToList());
+                }
 
                 slotPicks[slotid] = currentPossibilities.Except(neverChoose).ToList();
             }
@@ -55,6 +59,7 @@ namespace LotteryV2.Domain.Commands
             {
                 sb.AppendLine($"{slotid}, {string.Join(",", slotPicks[slotid])}");
             }
+            sb.AppendLine().AppendLine().AppendLine("Numbers, Base13, Base21");
             System.IO.File.WriteAllText(filename, sb.ToString());
             AllChoices(filename);
         }
@@ -67,21 +72,22 @@ namespace LotteryV2.Domain.Commands
                 {
                     StringBuilder sbNextSet = new StringBuilder();
                     sbNextSet.Append($"{slotPicks[slotid][numberId]}");
-                    buildPick(slotid + 1, sbNextSet, filename);
+                    BuildPick(slotid + 1, sbNextSet, filename);
                 }
             }
         }
 
-        public void buildPick(int slotid, StringBuilder sb, string filename)
+        public void BuildPick(int slotid, StringBuilder sb, string filename)
         {
-            if (slotid >= DrawingContext.GetBallCount())
+            if (slotid > DrawingContext.GetBallCount()) return;
+
+            if (slotid == DrawingContext.GetBallCount())
             {
                 string firstPartOfChoice = sb.ToString();
+                sb = new StringBuilder();
                 for (int i = 0; i < slotPicks[slotid].Count(); i++)
                 {
-                    if (i == 0)
-                        sb.AppendLine($"-{slotPicks[slotid][i]}");
-                    else
+                    if ($"{firstPartOfChoice}-{slotPicks[slotid][i]}".Split('-').Count() == DrawingContext.GetBallCount())
                     {
                         sb.AppendLine($"{firstPartOfChoice}-{slotPicks[slotid][i]}");
                     }
@@ -98,7 +104,7 @@ namespace LotteryV2.Domain.Commands
                 {
                     StringBuilder sbNext = new StringBuilder(firstPartOfChoice);
                     sbNext.Append($"-{slotPicks[slotid][id]}");
-                    buildPick(slotid + 1, sbNext, filename);
+                    BuildPick(slotid + 1, sbNext, filename);
                 }
             }
         }

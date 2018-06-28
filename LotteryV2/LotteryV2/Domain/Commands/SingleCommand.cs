@@ -8,24 +8,27 @@ namespace LotteryV2.Domain.Commands
 {
     public class SingleCommand
     {
+        private DrawingContext context;
+
+        public void Execute( DrawingContext context)
+        {
+            this.context = context;
+            this.Execute();
+
+        }
         public void Execute()
         {
-            DrawingContext context = new DrawingContext(
-                Game.Match4,
-                new System.DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day)
-                )
-            {
-                SampleSize = 1000
-            };
 
             //DefineDateRange
             context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-1)
                 , new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day));
+            Console.WriteLine($"Begin type {context.GetGameName()} DateRange: {context.StartDate} to {context.EndDate}");
 
             //LoadDrawingsFromFile
             string filename = $"{context.FilePath}{context.GetGameName()}.json";
             if (System.IO.File.Exists(filename))
             {
+                Console.WriteLine("LoadDrawingsFromFile");
                 List<Drawing> data = JsonConvert.DeserializeObject<List<Drawing>>(System.IO.File.ReadAllText(filename));
                 context.SetDrawings(data);
             }
@@ -33,6 +36,7 @@ namespace LotteryV2.Domain.Commands
             //ScrapeFromWeb
             if (!System.IO.File.Exists(filename))
             {
+                Console.WriteLine("ScrapeFromWeb");
                 ScrapeFromWeb command = new ScrapeFromWeb();
                 command.ShouldExecute(context);
                 command.Execute(context);
@@ -41,6 +45,7 @@ namespace LotteryV2.Domain.Commands
             //UpdateJsonFromWeb
             using (UpdateJsonFromWeb c = new UpdateJsonFromWeb())
             {
+                Console.WriteLine("UpdateJsonFromWeb");
                 if (c.ShouldExecute(context))
                 {
                     c.Execute(context);
@@ -50,6 +55,7 @@ namespace LotteryV2.Domain.Commands
             //SaveToJson
             using (SaveJsonToFileCommand c = new SaveJsonToFileCommand())
             {
+                Console.WriteLine("SaveJsonToFileCommand");
                 if (c.ShouldExecute(context))
                 {
                     c.Execute(context);
@@ -61,12 +67,14 @@ namespace LotteryV2.Domain.Commands
             LoadFilehistoricalPeriods loadHistoricalPeriods = new LoadFilehistoricalPeriods();
             if (loadHistoricalPeriods.ShouldExecute(context))
             {
+                Console.WriteLine("LoadFilehistoricalPeriods");
                 loadHistoricalPeriods.Execute(context);
                 shouldExecuteSetHistoricalPeriods = false;
             }
 
             using (DefineHistoricalGroups c = new DefineHistoricalGroups())
             {
+                Console.WriteLine("DefineHistoricalGroups");
                 if (c.ShouldExecute(context))
                 {
                     c.Execute(context);
@@ -75,6 +83,7 @@ namespace LotteryV2.Domain.Commands
 
             using (SaveGroupsDictionaryToCSVCommand c = new SaveGroupsDictionaryToCSVCommand())
             {
+                Console.WriteLine("SaveGroupsDictionaryToCSVCommand");
                 if (c.ShouldExecute(context))
                 {
                     c.Execute(context);
@@ -85,6 +94,7 @@ namespace LotteryV2.Domain.Commands
             //Set the historical finger prints for all drawings
             if (shouldExecuteSetHistoricalPeriods)
             {
+                Console.WriteLine("SetHistoricalPeriods");
                 context.SetHistoricalPeriods();
             }
 
@@ -94,12 +104,14 @@ namespace LotteryV2.Domain.Commands
                 2. Select numbers for each period by group.
                 3. Distill numbers to final selections.
              */
-             (new SetTopPatternsCommand()).Execute(context);
+            Console.WriteLine("SetTopPatternsCommand");
+            (new SetTopPatternsCommand()).Execute(context);
 
             //SaveToJson
             SaveHistoricalPeriodsCommand saveHistoricalPeriods2json = new SaveHistoricalPeriodsCommand();
             if (saveHistoricalPeriods2json.ShouldExecute(context))
             {
+                Console.WriteLine("SaveHistoricalPeriodsCommand");
                 saveHistoricalPeriods2json.Execute(context);
             }
 
@@ -117,6 +129,7 @@ namespace LotteryV2.Domain.Commands
             {
                 if (c.ShouldExecute(context))
                 {
+                    Console.WriteLine("SaveHistoricalPatternSummary");
                     c.Execute(context);
                 }
             }
@@ -126,6 +139,7 @@ namespace LotteryV2.Domain.Commands
             {
                 if (c.ShouldExecute(context))
                 {
+                    Console.WriteLine("PickNumbersBaseCommand");
                     c.Execute(context);
                 }
             }
@@ -153,6 +167,7 @@ namespace LotteryV2.Domain.Commands
             //SaveJsonToFileCommand
             if (context.Drawings.Count > 5)
             {
+                Console.WriteLine("SaveJsonToFileCommand");
                 _Filename = $"{context.FilePath}{context.GetGameName()}_base.csv";
                 Dictionary<int, SlotGroup> groups = context.GroupsDictionary;
                 StringBuilder sb = new StringBuilder();
@@ -195,6 +210,7 @@ namespace LotteryV2.Domain.Commands
             {
                 if (c.ShouldExecute(context))
                 {
+                    Console.WriteLine("SlotNumberAnalysis2CSVCommand");
                     c.Execute(context);
                 }
             }
@@ -203,6 +219,7 @@ namespace LotteryV2.Domain.Commands
             {
                 if (c.ShouldExecute(context))
                 {
+                    Console.WriteLine("SlotNumberAnalysis2CSVCommand");
                     c.Execute(context);
                 }
             }
@@ -210,6 +227,7 @@ namespace LotteryV2.Domain.Commands
             {
                 if (c.ShouldExecute(context))
                 {
+                    Console.WriteLine("SlotNumberAnalysisRanged2CSVCommand");
                     c.Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
                     c.TakeDrawwings = 1000;
                     c.LeaveDrawings = 10;

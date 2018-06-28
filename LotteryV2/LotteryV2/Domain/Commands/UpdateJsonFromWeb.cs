@@ -17,7 +17,7 @@ namespace LotteryV2.Domain.Commands
         /// <returns></returns>
         public override bool ShouldExecute(DrawingContext context)
         {
-            return (context.LastDrawingDate.Value < context?.NextDrawingDate);
+            return (context.LastDrawingDate.HasValue ? context.FirstDrawingDate.Value < context?.NextDrawingDate: true);
         }
         public override void Execute(DrawingContext context)
         {
