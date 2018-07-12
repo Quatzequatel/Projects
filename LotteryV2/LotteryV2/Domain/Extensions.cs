@@ -161,5 +161,26 @@ namespace LotteryV2.Domain
         {
             return Enum.GetName(enumType, value);
         }
+
+        static Random random = new Random();
+
+        public static IEnumerable<T> RandomPermutation<T>(this IEnumerable<T> sequence)
+        {
+            T[] retArray = sequence.ToArray();
+
+
+            for (int i = 0; i < retArray.Length - 1; i += 1)
+            {
+                int swapIndex = random.Next(i, retArray.Length);
+                if (swapIndex != i)
+                {
+                    T temp = retArray[i];
+                    retArray[i] = retArray[swapIndex];
+                    retArray[swapIndex] = temp;
+                }
+            }
+
+            return retArray;
+        }
     }
 }
