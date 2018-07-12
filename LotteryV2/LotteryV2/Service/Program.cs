@@ -16,10 +16,10 @@ namespace LotteryV2
             //var commands = (new CommandFactory().CreateCommands(context));
             //(new CommandExecutor<DrawingContext>()).Execute(context, commands);
 
-            List<Game> Games = new List<Game>() { Game.Lotto};
+            //List<Game> Games = new List<Game>() { Game.Lotto };
             //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5 };
-            //List<Game> Games = new List<Game>() {  Game.Lotto, Game.MegaMillion, Game.Powerball };
-            //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5, Game.Lotto, Game.MegaMillion, Game.Powerball };
+            //List<Game> Games = new List<Game>() { Game.Lotto, Game.MegaMillion, Game.Powerball };
+            List<Game> Games = new List<Game>() { Game.Hit5, Game.Lotto, Game.MegaMillion, Game.Powerball };
             //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5, Game.Lotto };
 
             foreach (var game in Games)
