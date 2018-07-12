@@ -20,7 +20,7 @@ namespace LotteryV2.Domain.Commands
         {
 
             //DefineDateRange
-            context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-1)
+            context.SetDrawingsDateRange(System.DateTime.Now.AddMonths(-60)
                 , new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, System.DateTime.Now.Day));
             Console.WriteLine($"Begin type {context.GetGameName()} DateRange: {context.StartDate} to {context.EndDate}");
 
@@ -39,7 +39,7 @@ namespace LotteryV2.Domain.Commands
                 Console.WriteLine("ScrapeFromWeb");
                 ScrapeFromWeb command = new ScrapeFromWeb();
                 command.ShouldExecute(context);
-                command.Execute(context);
+                //command.Execute(context);
             }
 
             //UpdateJsonFromWeb
@@ -48,7 +48,7 @@ namespace LotteryV2.Domain.Commands
                 Console.WriteLine("UpdateJsonFromWeb");
                 if (c.ShouldExecute(context))
                 {
-                    c.Execute(context);
+                    //c.Execute(context);
                 }
             }
 
@@ -58,7 +58,7 @@ namespace LotteryV2.Domain.Commands
                 Console.WriteLine("SaveJsonToFileCommand");
                 if (c.ShouldExecute(context))
                 {
-                    c.Execute(context);
+                    //c.Execute(context);
                 }
             }
 
