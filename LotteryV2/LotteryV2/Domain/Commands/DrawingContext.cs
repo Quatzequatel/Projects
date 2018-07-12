@@ -238,7 +238,7 @@ namespace LotteryV2.Domain.Commands
             switch (GameType)
             {
                 case Game.Lotto: return 49;
-                case Game.MegaMillion: return 75;
+                case Game.MegaMillion: return 70;
                 case Game.Powerball: return 79;
                 case Game.Hit5: return 39;
                 case Game.Match4: return 24;
@@ -272,6 +272,19 @@ namespace LotteryV2.Domain.Commands
             }
 
             return links;
+        }
+
+        public Boolean HasOptionalBall()
+        {
+            switch (GameType)
+            {
+                case Game.MegaMillion:
+                case Game.Powerball:
+                    return true;
+                    
+                default:
+                    return false;
+            }
         }
 
         public Tuple<int, int> GetMinMaxForSlot(int slot)
