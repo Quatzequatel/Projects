@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using System;
 
 namespace LotteryV2.Domain.Commands
 {
@@ -13,7 +14,9 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("LoadFilehistoricalPeriods");
             LoadFromFile(context);
+            context.ShouldExecuteSetHistoricalPeriods = false;
         }
 
         private void LoadFromFile(DrawingContext context)

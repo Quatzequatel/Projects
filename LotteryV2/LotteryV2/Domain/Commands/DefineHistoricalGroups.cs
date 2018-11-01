@@ -1,4 +1,6 @@
-﻿namespace LotteryV2.Domain.Commands
+﻿using System;
+
+namespace LotteryV2.Domain.Commands
 {
     class DefineHistoricalGroups : Command<DrawingContext>
     {
@@ -9,6 +11,7 @@
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("DefineHistoricalGroups");
             //DefineGroupsCommand
             context.DefineGroups();
             context.Drawings.ForEach(i => i.SetContext(context));

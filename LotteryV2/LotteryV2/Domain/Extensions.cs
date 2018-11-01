@@ -182,5 +182,20 @@ namespace LotteryV2.Domain
 
             return retArray;
         }
+
+        public static IEnumerable<NumberModel> IntersectNumberModel(this IEnumerable<NumberModel> outer, 
+            IEnumerable<NumberModel> inner)
+        {
+            return outer.Join(inner, o => o.BallId, i => i.BallId, (o, i) => o);
+        }
+
+        public static IEnumerable<TResult> Intersect<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
+            IEnumerable<TInner> inner,
+            Func<TOuter, TKey> outerKeySelector,
+            Func<TInner, TKey> innerKeySelector,
+            Func<TOuter, TInner, TResult> resultSelector)
+        {
+            return outer.Join(inner, outerKeySelector, innerKeySelector, resultSelector);
+        }
     }
 }

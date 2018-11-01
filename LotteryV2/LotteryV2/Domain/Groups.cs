@@ -46,7 +46,7 @@ namespace LotteryV2.Domain
     /// 
     /// Zero set contains all numbers never choosen for given slot.
     /// 
-    /// After Zero set is defined the rest the set are [all numbers] - [zero set]/5 in size.
+    /// After Zero set is defined the rest the set are ([all numbers] - [zero set])/5 in size.
     /// Any remainder is split amont low and midlow groups. the idea being the high + midhigh 
     /// groups will account for 60% of the selected numbers.
     /// 

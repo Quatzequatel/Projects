@@ -16,17 +16,33 @@ namespace LotteryV2
             //var commands = (new CommandFactory().CreateCommands(context));
             //(new CommandExecutor<DrawingContext>()).Execute(context, commands);
 
-            //List<Game> Games = new List<Game>() { Game.Lotto };
+            List<Game> Games = new List<Game>() { Game.MegaMillion, Game.Powerball};
             //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5 };
             //List<Game> Games = new List<Game>() { Game.Lotto, Game.MegaMillion, Game.Powerball };
-            List<Game> Games = new List<Game>() { Game.Hit5, Game.Lotto, Game.MegaMillion, Game.Powerball };
-            //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5, Game.Lotto };
+            //List<Game> Games = new List<Game>() { Game.Match4, Game.Hit5, Game.Lotto, Game.MegaMillion, Game.Powerball };
+            //List<Game> Games = new List<Game>() { Game.Hit5, Game.Lotto };
 
             foreach (var game in Games)
             {
-                SingleCommand justDoIt = new SingleCommand();
-                DrawingContext context = new DrawingContext(game) { SampleSize = 1000 };
-                justDoIt.Execute(context);
+                DrawingContext context = new DrawingContext(game)
+                {
+                    SampleSize = 1000,
+                    SkipDownload = true,
+                    ShouldExecuteSetHistoricalPeriods = true
+                };
+
+                foreach (var item in new CommandFactory().CreateCommands(context))
+                {
+                    try
+                    {
+                        if (item.ShouldExecute(context)) item.Execute(context);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                }
             }
 
         }

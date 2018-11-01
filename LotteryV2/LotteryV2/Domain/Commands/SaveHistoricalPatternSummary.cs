@@ -14,6 +14,7 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("SaveHistoricalPatternSummary");
             SaveToCsvFile(context);
         }
 

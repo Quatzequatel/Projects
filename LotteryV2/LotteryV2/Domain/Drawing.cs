@@ -18,6 +18,11 @@ namespace LotteryV2.Domain
         //public properties
         public DateTime DrawingDate { get; set; }
         public Game Game { get; set; }
+
+        public Boolean HasOptionBall { get; set; }
+
+        public int OptionBallValue { get; set; }
+
         /// <summary>
         /// Array of chosen numbers
         /// </summary>
@@ -85,6 +90,7 @@ namespace LotteryV2.Domain
         }
 
         /*----------------------------------------*/
+        //Constructor.
         public Drawing()
         {
 
@@ -116,10 +122,10 @@ namespace LotteryV2.Domain
             {
                 if (balls[i] == int.MaxValue) { balls[i] = value; break; }
             }
-            if (balls[balls.Length - 1] != int.MaxValue)
-            {
-                balls = balls.OrderBy(i => i).ToArray();
-            }
+            //if (balls[balls.Length - 1] != int.MaxValue)
+            //{
+            //    balls = balls.OrderBy(i => i).ToArray();
+            //}
         }
 
         public void AddBall(string value) => AddBall(Convert.ToInt32(value));

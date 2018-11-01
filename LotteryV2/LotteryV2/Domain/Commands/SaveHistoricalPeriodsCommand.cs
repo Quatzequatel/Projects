@@ -10,6 +10,7 @@ namespace LotteryV2.Domain.Commands
     {
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("SaveHistoricalPeriodsCommand");
             SaveToJSON(context);
         }
 
@@ -32,6 +33,19 @@ namespace LotteryV2.Domain.Commands
             }
 
             System.IO.File.WriteAllText(context.FileHistoricalPeriods, JsonConvert.SerializeObject(results, Formatting.Indented));
+        }
+    }
+
+    public class SetHistoricalPeriodsCommand: Command<DrawingContext>
+    {
+        public override bool ShouldExecute(DrawingContext context)
+        {
+            return base.ShouldExecute(context);
+        }
+        public override void Execute(DrawingContext context)
+        {
+            Console.WriteLine("SetHistoricalPeriods");
+            context.SetHistoricalPeriods();
         }
     }
 }

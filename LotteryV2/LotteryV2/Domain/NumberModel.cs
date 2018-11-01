@@ -36,7 +36,7 @@ namespace LotteryV2.Domain
             foreach (var item in list)
             {
                 base.AddDrawingDate(item.DrawingDate);
-                TotalSum = +item.Sum;
+                TotalSum += item.Sum;
             }
             DrawingsCount = drawings.Count;
             if (list.Count() == 0) return;

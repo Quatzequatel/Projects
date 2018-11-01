@@ -19,6 +19,7 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("SlotNumberAnalysis2CSVCommand");
             Filename = Filename = $"{context.FilePath}{context.GetGameName()}_SlotNumberAnalysis.csv";
             numbers = context.NumberModelList;
             groups = context.GroupsDictionary;

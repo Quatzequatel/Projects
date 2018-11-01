@@ -18,6 +18,7 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("SaveGroupsDictionaryToCSVCommand");
             string filename = $"{context.FilePath}{context.GetGameName()}-Period-PropabilityGroupsData.csv";
             SaveToCsvFile(context, filename);
         }

@@ -24,6 +24,10 @@ namespace LotteryV2.Domain.Commands
 
         public int SampleSize { get; set; }
 
+        public Boolean SkipDownload { get; set; }
+
+        public Boolean ShouldExecuteSetHistoricalPeriods { get; set; }
+
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
 
         /// <summary>
@@ -61,6 +65,7 @@ namespace LotteryV2.Domain.Commands
 
         public void SetHistoricalPeriods()
         {
+            Console.WriteLine("SetHistoricalPeriods");
             DateTime firstDrawingDate = AllDrawings.First().DrawingDate;
             //Find the first possible day to have periods applied.
             foreach (var drawing in AllDrawings.Where(i => i.DrawingDate > firstDrawingDate.AddDays((int)HistoricalPeriods.Wk2)))
@@ -258,6 +263,18 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
+        public Boolean HasOptionalBall()
+        {
+            switch(GameType)
+            {
+                case Game.MegaMillion:
+                case Game.Powerball:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public List<string> GetLinks(bool isUpdate = false)
         {
             string page = "http://www.walottery.com/WinningNumbers/PastDrawings.aspx";
@@ -272,19 +289,6 @@ namespace LotteryV2.Domain.Commands
             }
 
             return links;
-        }
-
-        public Boolean HasOptionalBall()
-        {
-            switch (GameType)
-            {
-                case Game.MegaMillion:
-                case Game.Powerball:
-                    return true;
-                    
-                default:
-                    return false;
-            }
         }
 
         public Tuple<int, int> GetMinMaxForSlot(int slot)
@@ -348,12 +352,12 @@ namespace LotteryV2.Domain.Commands
         public void SetDrawings(List<Drawing> drawings)
         {
             if (Drawings != null) throw new AccessViolationException("Drawings has already been set.");
-            AllDrawings = drawings;
+            AllDrawings = drawings.OrderBy(i=> i.DrawingDate).ToList();
         }
 
         public void ReplaceDrawings(List<Drawing> drawings)
         {
-            AllDrawings = drawings;
+            AllDrawings = drawings.OrderBy(i => i.DrawingDate).ToList();
         }
 
         public List<string> PickNumbers(HistoricalPeriods period, int howMany)

@@ -21,6 +21,9 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
+            Console.WriteLine("SlotNumberAnalysisRanged2CSVCommand");
+            this.Filename = $"{context.FilePath}{context.GetGameName()}_RangedSlotNumberAnalysis.csv";
+
             LoadModel(context);
             SaveToCSV(context);
         }

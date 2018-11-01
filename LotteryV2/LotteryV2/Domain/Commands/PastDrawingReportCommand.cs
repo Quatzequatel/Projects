@@ -8,6 +8,7 @@ namespace LotteryV2.Domain.Commands
     {
         public override bool ShouldExecute(DrawingContext context)
         {
+            Console.WriteLine("PastDrawingReportCommand");
             return context.Drawings.Count > 0;
         }
 

@@ -38,6 +38,7 @@
     <Reference Include="HtmlAgilityPack, Version=1.7.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.7.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.SqlClrProvider, Version=14.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -49,6 +50,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Data.Services.Design" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -74,6 +78,7 @@
     <Compile Include="Domain\Commands\SaveGroupsDictionaryToCSVCommand.cs" />
     <Compile Include="Domain\Commands\SaveHistoricalPatternSummary.cs" />
     <Compile Include="Domain\Commands\SaveHistoricalPeriodsCommand.cs" />
+    <Compile Include="Domain\Commands\SaveToDBCommand.cs" />
     <Compile Include="Domain\Commands\SetTemplateFingerPrintCommand.cs" />
     <Compile Include="Domain\Commands\SetTopPatternsCommand.cs" />
     <Compile Include="Domain\Commands\SingleCommand.cs" />
