@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace LotteryV2.Domain.Commands
+namespace LotteryV2.Domain.Model
 {
     public class HistoricalPeriodItem
     {

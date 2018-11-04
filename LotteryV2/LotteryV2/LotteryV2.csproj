@@ -69,8 +69,8 @@
     <Compile Include="Domain\Commands\CreatNumbersModelCommand.cs" />
     <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
-    <Compile Include="Domain\Commands\DrawingContext.cs" />
-    <Compile Include="Domain\Commands\HistoricalPeriodItem.cs" />
+    <Compile Include="Domain\DrawingContext.cs" />
+    <Compile Include="Domain\Model\HistoricalPeriodItem.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />
     <Compile Include="Domain\Commands\NumberModelCommandFactory.cs" />
