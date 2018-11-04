@@ -63,14 +63,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Commands\AnalysisContext.cs" />
     <Compile Include="Domain\Commands\CommandExecutor.cs" />
     <Compile Include="Domain\Commands\CommandFactory.cs" />
     <Compile Include="Domain\Commands\CreatNumbersModelCommand.cs" />
+    <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
     <Compile Include="Domain\Commands\DrawingContext.cs" />
     <Compile Include="Domain\Commands\HistoricalPeriodItem.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />
+    <Compile Include="Domain\Commands\NumberModelCommandFactory.cs" />
     <Compile Include="Domain\Commands\PastDrawingReportCommand.cs" />
     <Compile Include="Domain\Commands\PickNumbersBaseCommand.cs" />
     <Compile Include="Domain\Commands\PurmutateNumbers.cs" />
@@ -82,11 +85,11 @@
     <Compile Include="Domain\Commands\SetTemplateFingerPrintCommand.cs" />
     <Compile Include="Domain\Commands\SetTopPatternsCommand.cs" />
     <Compile Include="Domain\Commands\SingleCommand.cs" />
-    <Compile Include="Domain\FingerPrint.cs" />
-    <Compile Include="Domain\HistoricalGroups.cs" />
-    <Compile Include="Domain\HistoricalPeriodsJson.cs" />
-    <Compile Include="Domain\HistoricalSubSet.cs" />
-    <Compile Include="Domain\LotoNumber.cs" />
+    <Compile Include="Domain\Model\FingerPrint.cs" />
+    <Compile Include="Domain\Model\HistoricalGroups.cs" />
+    <Compile Include="Domain\Model\HistoricalPeriodsJson.cs" />
+    <Compile Include="Domain\Model\HistoricalSubSet.cs" />
+    <Compile Include="Domain\Model\LotoNumber.cs" />
     <Compile Include="Domain\Commands\NumberGeneratorCommand.cs" />
     <Compile Include="Domain\Commands\SaveBaseCSVCommand.cs" />
     <Compile Include="Domain\Commands\SaveJsonToFileCommand.cs" />
@@ -95,18 +98,18 @@
     <Compile Include="Domain\Commands\SlotNumberAnalysis2CSVCommand.cs" />
     <Compile Include="Domain\Commands\SlotNumberAnalysisRanged2CSVCommand.cs" />
     <Compile Include="Domain\Commands\UpdateJsonFromWeb.cs" />
-    <Compile Include="Domain\Drawing.cs" />
+    <Compile Include="Domain\Model\Drawing.cs" />
     <Compile Include="Domain\Enums.cs" />
     <Compile Include="Domain\Extensions.cs" />
-    <Compile Include="Domain\Groups.cs" />
-    <Compile Include="Domain\Number.cs" />
+    <Compile Include="Domain\Model\Groups.cs" />
+    <Compile Include="Domain\Model\Number.cs" />
     <Compile Include="Domain\Commands\Command.cs" />
-    <Compile Include="Domain\NumberModel.cs" />
-    <Compile Include="Domain\Slot.cs" />
-    <Compile Include="Domain\SlotGroup.cs" />
-    <Compile Include="Domain\Templates.cs" />
+    <Compile Include="Domain\Model\NumberModel.cs" />
+    <Compile Include="Domain\Model\Slot.cs" />
+    <Compile Include="Domain\Model\SlotGroup.cs" />
+    <Compile Include="Domain\Model\Templates.cs" />
     <Compile Include="Domain\Trendline.cs" />
-    <Compile Include="Domain\UniqueFingerPrints.cs" />
+    <Compile Include="Domain\Model\UniqueFingerPrints.cs" />
     <Compile Include="Service\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

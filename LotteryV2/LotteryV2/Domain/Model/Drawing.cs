@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using LotteryV2.Domain.Commands;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     public class Drawing
     {

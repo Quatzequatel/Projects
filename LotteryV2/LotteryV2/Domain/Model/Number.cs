@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     /// <summary>
     /// Simple DTO to store DrawingDates a number was drawn on.

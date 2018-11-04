@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

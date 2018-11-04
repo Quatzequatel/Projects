@@ -19,29 +19,4 @@ namespace LotteryV2.Domain.Commands
         }
 
     }
-
-    public class AnalysisContext
-    {
-        public AnalysisContext(DrawingContext drawingContext)
-        {
-            NextDrawingDate = drawingContext.NextDrawingDate;
-            DrawingContext = drawingContext;
-        }
-        public readonly DateTime NextDrawingDate;
-        public readonly DrawingContext DrawingContext;
-        
-    }
-
-    public class NumberModelCommandFactory : ICommandFactory<AnalysisContext>
-    {
-        public LinkedList<Command<AnalysisContext>> CreateAlternateCommands(AnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public LinkedList<Command<AnalysisContext>> CreateCommands(AnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

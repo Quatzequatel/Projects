@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     public class HistoricalPeriodsJson
     {

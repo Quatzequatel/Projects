@@ -2,6 +2,7 @@
 using System.Text;
 using System;
 using System.Linq;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

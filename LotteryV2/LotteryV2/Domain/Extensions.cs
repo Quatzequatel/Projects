@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     public static class Extensions
     {

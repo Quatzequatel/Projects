@@ -2,8 +2,9 @@
 using System.Linq;
 using System;
 using Newtonsoft.Json;
+using LotteryV2.Domain.Model;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     public class FingerPrint
     {

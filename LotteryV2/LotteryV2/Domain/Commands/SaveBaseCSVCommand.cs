@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

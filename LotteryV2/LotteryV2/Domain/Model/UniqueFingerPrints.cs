@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     /// <summary>
     /// 

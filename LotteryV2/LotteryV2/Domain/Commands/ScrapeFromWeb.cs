@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

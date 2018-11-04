@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LotteryV2.Domain.Commands;
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     /// <summary>
     /// The purpose of the model is to reduce the choosen set to something where all purmuations

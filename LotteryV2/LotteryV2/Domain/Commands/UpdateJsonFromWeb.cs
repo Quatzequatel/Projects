@@ -1,10 +1,8 @@
 ﻿using HtmlAgilityPack;
 using ScrapySharp.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

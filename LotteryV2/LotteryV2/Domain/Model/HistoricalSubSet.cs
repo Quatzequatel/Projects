@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     /// <summary>
     /// Historical SubSet is the subset value of a number in a period of time.

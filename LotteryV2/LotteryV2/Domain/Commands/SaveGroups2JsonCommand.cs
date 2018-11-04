@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain.Commands
 {

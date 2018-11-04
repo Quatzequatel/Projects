@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace LotteryV2.Domain
+namespace LotteryV2.Domain.Model
 {
     /// <summary>
     /// NumberModel builds on Number to add a few statics data.
