@@ -28,6 +28,8 @@ namespace LotteryV2.Domain
 
         public Boolean SkipDownload { get; set; }
 
+        public Boolean IsCompleteDownload { get; set; }
+
         public Boolean ShouldExecuteSetHistoricalPeriods { get; set; }
 
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
@@ -116,8 +118,8 @@ namespace LotteryV2.Domain
         public Dictionary<int, SlotGroup> GroupsDictionary { get; private set; }
         public Dictionary<string, LotoNumber> PickedNumbers { get; private set; }
 
-        public DateTime? LastDrawingDate { get { return Drawings.Count > 0 ? Drawings?.Last<Drawing>()?.DrawingDate: null; } }
-        public DateTime? FirstDrawingDate { get { return Drawings.Count > 0 ? Drawings?.First<Drawing>()?.DrawingDate: null; } }
+        public DateTime? LastDrawingDate { get { return Drawings.Count > 0 ? Drawings?.Last<Drawing>()?.DrawingDate : null; } }
+        public DateTime? FirstDrawingDate { get { return Drawings.Count > 0 ? Drawings?.First<Drawing>()?.DrawingDate : null; } }
 
         public DrawingContext(Game currentGame, DateTime? nextDrawing = null)
         {
@@ -153,7 +155,7 @@ namespace LotteryV2.Domain
                 {
                     HistoricalGroups.PeriodGroups[period][slotgroup.Key] = slotgroup.Value;
                 }
-                 
+
             }
         }
 
@@ -267,7 +269,7 @@ namespace LotteryV2.Domain
 
         public Boolean HasOptionalBall()
         {
-            switch(GameType)
+            switch (GameType)
             {
                 case Game.MegaMillion:
                 case Game.Powerball:
@@ -277,12 +279,12 @@ namespace LotteryV2.Domain
             }
         }
 
-        public List<string> GetLinks(bool isUpdate = false)
+        public List<string> GetLinks()
         {
             string page = "http://www.walottery.com/WinningNumbers/PastDrawings.aspx";
             string gameParameter = GetGameName();
             List<String> links = new List<string>();
-            int startYear = isUpdate && Drawings.Count > 10
+            int startYear = !IsCompleteDownload && Drawings.Count > 10
                 ? Drawings.Last().DrawingDate.Year
                 : FirstYear();
             for (int i = startYear; i <= DateTime.Now.Year; i++)
@@ -353,8 +355,14 @@ namespace LotteryV2.Domain
 
         public void SetDrawings(List<Drawing> drawings)
         {
-            if (Drawings != null) throw new AccessViolationException("Drawings has already been set.");
-            AllDrawings = drawings.OrderBy(i=> i.DrawingDate).ToList();
+            if (Drawings != null) //throw new AccessViolationException("Drawings has already been set.");
+            {
+                AllDrawings = Drawings.Union(drawings).OrderBy(i => i.DrawingDate).ToList();
+            }
+            else
+            {
+                AllDrawings = drawings.OrderBy(i => i.DrawingDate).ToList();
+            }
         }
 
         public void ReplaceDrawings(List<Drawing> drawings)

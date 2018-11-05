@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using LotteryV2.Domain.Model;
+using LotteryV2.Domain.Extensions;
 using System;
 
 namespace LotteryV2.Domain.Extensions
@@ -44,6 +45,44 @@ namespace LotteryV2.Domain.Extensions
             }
 
             return sqlcommand;
+        }
+
+        public static Drawing MapGetValuesToDrawingItem(this object[] fields, Game game)
+        {
+            Drawing item = new Drawing()
+            {
+                DrawingDate = Convert.ToDateTime(fields[1].ToString()),
+                Game = game
+            };
+            item.Numbers[0] = Convert.ToInt16(fields[4]);
+            item.Numbers[1] = Convert.ToInt16(fields[5]);
+            item.Numbers[2] = Convert.ToInt16(fields[6]);
+            item.Numbers[3] = Convert.ToInt16(fields[7]);
+
+            switch (game)
+            {
+                case Game.Lotto:
+                    item.Numbers[4] = Convert.ToInt16(fields[8]);
+                    item.Numbers[5] = Convert.ToInt16(fields[9]);
+                    break;
+                case Game.MegaMillion:
+                    item.Numbers[4] = Convert.ToInt16(fields[8]);
+                    item.Numbers[5] = Convert.ToInt16(fields[10]);
+                    break;
+                case Game.Powerball:
+                    item.Numbers[4] = Convert.ToInt16(fields[8]);
+                    item.Numbers[5] = Convert.ToInt16(fields[10]);
+                    break;
+                case Game.Hit5:
+                    item.Numbers[4] = Convert.ToInt16(fields[8]);
+                    break;
+                case Game.Match4:
+                default:
+                    break;
+            }
+
+
+            return item;
         }
     }
 }

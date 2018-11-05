@@ -28,6 +28,7 @@ namespace LotteryV2
                 {
                     SampleSize = 1000,
                     SkipDownload = true,
+                    IsCompleteDownload=false,
                     ShouldExecuteSetHistoricalPeriods = true
                 };
 

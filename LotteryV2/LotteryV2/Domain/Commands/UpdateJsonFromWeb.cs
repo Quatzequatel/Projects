@@ -27,7 +27,7 @@ namespace LotteryV2.Domain.Commands
             var web = new HtmlWeb();
             var results = context.AllDrawings;
 
-            foreach (var link in context.GetLinks(true))
+            foreach (var link in context.GetLinks())
             {
 
                 var doc = web.Load(link);

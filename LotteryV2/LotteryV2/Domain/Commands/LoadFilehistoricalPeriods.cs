@@ -8,6 +8,7 @@ namespace LotteryV2.Domain.Commands
 {
     public class LoadFilehistoricalPeriods : Command<DrawingContext>
     {
+        //TBD Remove Command
         public override bool ShouldExecute(DrawingContext context)
         {
             return System.IO.File.Exists(context.FileHistoricalPeriods);

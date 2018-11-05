@@ -2,7 +2,7 @@
 using System.Linq;
 using System;
 using Newtonsoft.Json;
-using LotteryV2.Domain.Model;
+using LotteryV2.Domain.Extensions;
 
 namespace LotteryV2.Domain.Model
 {
