@@ -1,4 +1,5 @@
 ﻿using LotteryV2.Domain.Commands;
+using LotteryV2.Domain.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System;

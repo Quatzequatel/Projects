@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using LotteryV2.Domain.Model;
+using LotteryV2.Domain.Extensions;
 
 namespace LotteryV2.Domain
 {

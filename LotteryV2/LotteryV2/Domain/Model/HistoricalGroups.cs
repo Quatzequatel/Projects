@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LotteryV2.Domain.Commands;
+using LotteryV2.Domain.Extensions;
 using LotteryV2.Domain.Model;
 
 namespace LotteryV2.Domain

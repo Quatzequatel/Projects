@@ -70,6 +70,8 @@
     <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
     <Compile Include="Domain\DrawingContext.cs" />
+    <Compile Include="Domain\Extensions\DatabaseExtensions.cs" />
+    <Compile Include="Domain\Extensions\DrawingExtensions.cs" />
     <Compile Include="Domain\Model\HistoricalPeriodItem.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />
@@ -100,7 +102,6 @@
     <Compile Include="Domain\Commands\UpdateJsonFromWeb.cs" />
     <Compile Include="Domain\Model\Drawing.cs" />
     <Compile Include="Domain\Enums.cs" />
-    <Compile Include="Domain\Extensions.cs" />
     <Compile Include="Domain\Model\Groups.cs" />
     <Compile Include="Domain\Model\Number.cs" />
     <Compile Include="Domain\Commands\Command.cs" />

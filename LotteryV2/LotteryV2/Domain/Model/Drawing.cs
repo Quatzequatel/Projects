@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using LotteryV2.Domain.Commands;
+using LotteryV2.Domain.Extensions;
 
 namespace LotteryV2.Domain.Model
 {
@@ -19,9 +17,9 @@ namespace LotteryV2.Domain.Model
         public DateTime DrawingDate { get; set; }
         public Game Game { get; set; }
 
-        public Boolean HasOptionBall { get; set; }
+        //public Boolean HasOptionBall { get; set; }
 
-        public int OptionBallValue { get; set; }
+        //public int OptionBallValue { get; set; }
 
         /// <summary>
         /// Array of chosen numbers
