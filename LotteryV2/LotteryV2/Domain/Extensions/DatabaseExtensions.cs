@@ -7,6 +7,16 @@ namespace LotteryV2.Domain.Extensions
 {
     public static class DatabaseExtensions
     {
+        public static SqlCommand MapDrawingToInsertBallDrawingDetails(this Drawing item, SqlCommand sqlcommand, int slotId)
+        {
+            sqlcommand.Parameters.AddWithValue("@BallId", item.Numbers[slotId].ToString());
+            sqlcommand.Parameters.AddWithValue("@SlotId", (slotId+1).ToString());
+            sqlcommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
+            sqlcommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+
+            return sqlcommand;
+        }
+
         public static SqlCommand MapDrawingToInsertDrawingDetails(this Drawing item, SqlCommand sqlcommand)
         {
             sqlcommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
@@ -16,32 +26,31 @@ namespace LotteryV2.Domain.Extensions
             sqlcommand.Parameters.AddWithValue("@B2", item.Numbers[1].ToString());
             sqlcommand.Parameters.AddWithValue("@B3", item.Numbers[2].ToString());
             sqlcommand.Parameters.AddWithValue("@B4", item.Numbers[3].ToString());
-            if (item.Game != Game.Match4)
+
+            switch (item.Game)
             {
-                sqlcommand.Parameters.AddWithValue("@B5", item.Numbers[4]);
-                if (item.Game != Game.MegaMillion && item.Game != Game.Powerball)
-                {
-                    if (item.Game == Game.Hit5)
-                    {
-                        sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                    }
-                    else //lotto
-                    {
-                        sqlcommand.Parameters.AddWithValue("@B6", item.Numbers[5].ToString());
-                    }
+                case Game.Lotto:
+                    sqlcommand.Parameters.AddWithValue("@B6", item.Numbers[5].ToString());
                     sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
-                }
-                else
-                {
+                    break;
+                case Game.MegaMillion:
                     sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
                     sqlcommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
-                }
-            }
-            else
-            {
-                sqlcommand.Parameters.AddWithValue("@B5", DBNull.Value);
-                sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    break;
+                case Game.Powerball:
+                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlcommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
+                    break;
+                case Game.Hit5:
+                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    break;
+                case Game.Match4:
+                default:
+                    sqlcommand.Parameters.AddWithValue("@B5", DBNull.Value);
+                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    break;
             }
 
             return sqlcommand;

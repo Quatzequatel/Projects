@@ -12,8 +12,14 @@ namespace LotteryV2.Domain.Commands
 //([DrawingDate],[Game],[DrawingNumbers],[B1],[B2],[B3],[B4],[B5],[B6],[OB])
 //VALUES(@DrawingDate,@Game,@DrawingNumbers,@B1,@B2,@B3,@B4,@B5,@B6,@OB)";
         private string SprocName = "[dbo].[InsertDrawingDetails]";
+        private string SprocName2 = "[dbo].[InsertBallDrawingDetails]";
 
-        //DrawingContext context;
+        public override bool ShouldExecute(DrawingContext context)
+        {
+            //TBD   need to do a check to see if the table needs to be updated.
+            //TBD  The loop in Save() should start at new drawings.
+            return true;
+        }
 
         public override void Execute(DrawingContext context)
         {
@@ -38,6 +44,17 @@ namespace LotteryV2.Domain.Commands
                         if(item.MapDrawingToInsertDrawingDetails(command).ExecuteNonQuery() < 0)
                         {
                             //throw new Exception("Error writing to DB.");
+                        }
+
+                        for (int i = 0; i < item.Numbers.Length; i++)
+                        {
+                            using (SqlCommand command2 = new SqlCommand(SprocName2, con) { CommandType = System.Data.CommandType.StoredProcedure })
+                            {
+                                if (item.MapDrawingToInsertBallDrawingDetails(command2, i).ExecuteNonQuery() < 0)
+                                {
+                                    //throw new Exception("Error writing to DB."); 
+                                }
+                            }
                         }
                     }
                 }

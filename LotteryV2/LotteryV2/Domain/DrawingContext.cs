@@ -26,7 +26,7 @@ namespace LotteryV2.Domain
 
         public int SampleSize { get; set; }
 
-        public Boolean SkipDownload { get; set; }
+        public CommandsType CommandsType { get; set; }
 
         public Boolean IsCompleteDownload { get; set; }
 

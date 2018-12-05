@@ -70,6 +70,7 @@
     <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
     <Compile Include="Domain\Commands\LoadFromDatabaseCommand.cs" />
+    <Compile Include="Domain\Commands\SaveToDBAllDrawingsToBallDrawingsCommand.cs" />
     <Compile Include="Domain\DrawingContext.cs" />
     <Compile Include="Domain\Extensions\DatabaseExtensions.cs" />
     <Compile Include="Domain\Extensions\DrawingExtensions.cs" />

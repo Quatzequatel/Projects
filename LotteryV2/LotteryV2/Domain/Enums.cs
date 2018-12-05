@@ -46,4 +46,11 @@ namespace LotteryV2.Domain
         Year = 365,
         All = Year+Month6
     }
+
+    public enum CommandsType
+    {
+        Default = 0,
+        SkipDownload = 1,
+        AlternateCommands = 2
+    }
 }

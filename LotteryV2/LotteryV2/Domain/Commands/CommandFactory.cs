@@ -17,7 +17,9 @@ namespace LotteryV2.Domain.Commands
         }
 
         private static IEnumerable<Type> GetCommandTypes(DrawingContext context) =>
-            context.SkipDownload ? SkipDownloadCommands() : DefaultCommands;
+            context.CommandsType == CommandsType.SkipDownload ? SkipDownloadCommands() 
+            : context.CommandsType == CommandsType.AlternateCommands ? AlternateCommands()
+            : DefaultCommands;
 
         public LinkedList<Command<DrawingContext>> Resolve(List<Type> types)
         {
@@ -49,7 +51,7 @@ namespace LotteryV2.Domain.Commands
             typeof(SaveDrawingTemplateToCSVCommand), //Create CSV report of Drawing Templates.
             //typeof(PurmutateNumbers),
             //typeof(NumberGeneratorCommand),
-            typeof(SaveBaseCSVCommand), //save to CSV file.
+            //typeof(SaveBaseCSVCommand), //save to CSV file.
             typeof(SlotNumberAnalysis2CSVCommand),
             typeof(SlotNumberAnalysisRanged2CSVCommand)
         };
@@ -57,7 +59,7 @@ namespace LotteryV2.Domain.Commands
         private static IEnumerable<Type> SkipDownloadCommands() => new List<Type>
         {
             typeof(DefineDrawingDateRangeCommand), //define context TBD.
-            typeof(LoadFromDatabaseCommand), //load drawings from json file; if exists
+            typeof(LoadFromDatabaseCommand), //load drawings Database.
 
             ////Load new data from Web.
             //typeof(ScrapeFromWeb), //if no json file scrape from web and save.
@@ -84,9 +86,11 @@ namespace LotteryV2.Domain.Commands
             typeof(SlotNumberAnalysisRanged2CSVCommand)
         };
 
-        private static IEnumerable<Type> AlternateCommands()
+        private static IEnumerable<Type> AlternateCommands() => new List<Type>
         {
-             throw new NotImplementedException();
-        }
+            typeof(DefineDrawingDateRangeCommand), //define context TBD.
+            typeof(LoadFromDatabaseCommand), //load drawings Database.
+            typeof(SaveToDBAllDrawingsToBallDrawingsCommand) //load drawings into BallDrawings Table.
+        };
     }
 }
