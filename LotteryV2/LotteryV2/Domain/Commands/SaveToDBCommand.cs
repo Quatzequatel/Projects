@@ -7,7 +7,7 @@ namespace LotteryV2.Domain.Commands
 
     public class SaveToDBCommand : Command<DrawingContext>
     {
-        private string connectionString = "Data Source=OceanView;Initial Catalog=Lottery;Integrated Security=True";
+        private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Local"].ConnectionString;
 //        private string InsertQuery = @"[dbo].[InsertDrawingDetails]
 //([DrawingDate],[Game],[DrawingNumbers],[B1],[B2],[B3],[B4],[B5],[B6],[OB])
 //VALUES(@DrawingDate,@Game,@DrawingNumbers,@B1,@B2,@B3,@B4,@B5,@B6,@OB)";

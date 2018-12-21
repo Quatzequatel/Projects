@@ -38,6 +38,9 @@
     <Reference Include="HtmlAgilityPack, Version=1.7.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.7.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SqlServer.SqlClrProvider, Version=14.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -49,11 +52,14 @@
       <HintPath>..\packages\ScrapySharp.2.6.2\lib\net45\ScrapySharpAsync.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Data.Services.Design" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -69,12 +75,18 @@
     <Compile Include="Domain\Commands\CreatNumbersModelCommand.cs" />
     <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
+    <Compile Include="Domain\Commands\FillBallTimesChosenInPeriodsDataCommand.cs" />
     <Compile Include="Domain\Commands\LoadFromDatabaseCommand.cs" />
     <Compile Include="Domain\Commands\SaveToDBAllDrawingsToBallDrawingsCommand.cs" />
+    <Compile Include="Domain\Commands\TrendExpirementCommand.cs" />
     <Compile Include="Domain\DrawingContext.cs" />
     <Compile Include="Domain\Extensions\DatabaseExtensions.cs" />
     <Compile Include="Domain\Extensions\DrawingExtensions.cs" />
+    <Compile Include="Domain\Extensions\MapperExtensions.cs" />
     <Compile Include="Domain\Extensions\OtherExtensions.cs" />
+    <Compile Include="Domain\Model\BallDrawingsInRangeResultItem.cs" />
+    <Compile Include="Domain\Model\BallTimesChosenInPeriodsDataSetItem.cs" />
+    <Compile Include="Domain\Model\GetTimesChosenInDateRangeItem.cs" />
     <Compile Include="Domain\Model\HistoricalPeriodItem.cs" />
     <Compile Include="Domain\Commands\LoadDrawingsFromFile.cs" />
     <Compile Include="Domain\Commands\LoadFilehistoricalPeriods.cs" />

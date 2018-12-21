@@ -7,6 +7,30 @@ namespace LotteryV2.Domain.Extensions
 {
     public static class DatabaseExtensions
     {
+        public static SqlCommand MapGetBallDrawingsinRangeParameters(this SqlCommand sqlcommand, string game, int slotId, DateTime startDate, DateTime endDate)
+        {
+            sqlcommand.Parameters.AddWithValue("@Game", game);
+            sqlcommand.Parameters.AddWithValue("@SlotId", slotId.ToString());
+            sqlcommand.Parameters.AddWithValue("@StartDate", startDate.ToShortDateString());
+            sqlcommand.Parameters.AddWithValue("@EndDate", endDate.ToShortDateString());
+            
+
+            return sqlcommand;
+        }
+
+        public static SqlCommand MapResultToInsertBallTimesChosenInPeriodsDataSet(this GetTimesChosenInDateRangeItem item, SqlCommand sqlcommand)
+        {
+            sqlcommand.Parameters.AddWithValue("@StartDate", item.StartDate.ToShortDateString());
+            sqlcommand.Parameters.AddWithValue("@Period", item.Period.ToString());
+            sqlcommand.Parameters.AddWithValue("@BallId", item.BallId.ToString());
+            sqlcommand.Parameters.AddWithValue("@SlotId", item.SlotId.ToString());
+            sqlcommand.Parameters.AddWithValue("@Count", item.Count.ToString());
+            sqlcommand.Parameters.AddWithValue("@Percent", item.Percent);
+            sqlcommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+
+            return sqlcommand;
+        }
+
         public static SqlCommand MapDrawingToInsertBallDrawingDetails(this Drawing item, SqlCommand sqlcommand, int slotId)
         {
             sqlcommand.Parameters.AddWithValue("@BallId", item.Numbers[slotId].ToString());
