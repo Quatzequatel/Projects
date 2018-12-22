@@ -84,6 +84,7 @@
     <Compile Include="Domain\Extensions\DrawingExtensions.cs" />
     <Compile Include="Domain\Extensions\MapperExtensions.cs" />
     <Compile Include="Domain\Extensions\OtherExtensions.cs" />
+    <Compile Include="Domain\Extensions\SqlCommandExtensions.cs" />
     <Compile Include="Domain\Model\BallDrawingsInRangeResultItem.cs" />
     <Compile Include="Domain\Model\BallTimesChosenInPeriodsDataSetItem.cs" />
     <Compile Include="Domain\Model\GetTimesChosenInDateRangeItem.cs" />

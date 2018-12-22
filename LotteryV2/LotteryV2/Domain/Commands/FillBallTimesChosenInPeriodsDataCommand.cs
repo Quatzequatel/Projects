@@ -12,7 +12,7 @@ namespace LotteryV2.Domain.Commands
     {
         private DrawingContext Context;
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Local"].ConnectionString;
-        private string sqlGetTimesChosenInDateRange = "SELECT * From [dbo].[GetTimesChosenInDateRange](@Game, @SlotId, @StartDate, @EndDate) ORDER BY [COUNT] DESC";
+        private string sqlGetTimesChosenInDateRange = "SELECT * From [dbo].[GetTimesChosenInDateRange](@Game, @SlotId, @StartDate, @EndDate) ";
         private string sqlInsertBallTimesChosenInPeriodsDataSet = "[dbo].[InsertBallTimesChosenInPeriodsDataSet]";
         /*
          * Parameters are:
@@ -25,6 +25,9 @@ namespace LotteryV2.Domain.Commands
 		@Game = NULL
 
              */
+
+        private bool IsOpen = false;
+        private SqlConnection Connection;
 
         public override bool ShouldExecute(DrawingContext context)
         {
@@ -47,55 +50,59 @@ namespace LotteryV2.Domain.Commands
             int period = 7;
             int[] slots = new int[] { 0, 1, 2, 3, 4 };
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            Connection = new SqlConnection(connectionString);
+            OpenConnection();
+            ReadData(context, startDate, period, slots);
+            CloseConnection();
+        }
+
+        private void ReadData(DrawingContext context, DateTime startDate, int period, int[] slots)
+        {
+            DateTime periodStartDate = startDate.Date;
+            foreach (var dataSetDate in GetPeriodDateList(startDate, period))
             {
-                bool isOpen = false;
-
-                foreach (var item in GetPeriodDateList(startDate, period))
+                foreach (var slotId in slots)
                 {
-                    SqlDataReader dataReader = null;
-                    try
+                    List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(periodStartDate, dataSetDate, period, slotId);
+
+                    foreach (var item in timesChosenList)
                     {
-                        using (SqlCommand command = new SqlCommand(sqlGetTimesChosenInDateRange, con))
-                        {
-                            if(isOpen)
-                            {
-                                isOpen = true;
-                                con.Open();
-                            }
-
-                            foreach (var slotId in slots)
-                            {
-                                dataReader = command.MapGetBallDrawingsinRangeParameters(context.GetGameName(),
-                                                          0,
-                                                          item,
-                                                          item.AddDays(period)).ExecuteReader();
-                                while(dataReader.Read())
-                                {
-                                    object[] fields = new object[dataReader.FieldCount];
-                                    int fieldCount = dataReader.GetValues(fields);
-
-                                    GetTimesChosenInDateRangeItem dataSetItem
-                                        = fields.MapResultToBallTimesChosenInPeriodsDataSetItem()
-                                        .MapToGetTimesChosenInDateRangeItem(startDate, period, context.GetGameName());
-
-                                    using (SqlCommand command2 = new SqlCommand(sqlInsertBallTimesChosenInPeriodsDataSet, con) { CommandType = System.Data.CommandType.StoredProcedure })
-                                    {
-                                        if(dataSetItem.MapResultToInsertBallTimesChosenInPeriodsDataSet(command2).ExecuteNonQuery() < 0)
-                                        {
-                                            //throw new Exception("Error writing to DB."); 
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                }
-                    finally
-                    {
-
+                        (new SqlCommand(sqlInsertBallTimesChosenInPeriodsDataSet, Connection) { CommandType = System.Data.CommandType.StoredProcedure })
+                            .ExecuteSprocInsertBallTimesChosenInPeriodsDataSet(item);
                     }
                 }
+                //next period.
+                periodStartDate = dataSetDate.Date;
+            }
+        }
+
+        private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(DateTime startDate, DateTime dataSetDate, int period, int slotId)
+        {
+            SqlCommand command = new SqlCommand(sqlGetTimesChosenInDateRange, Connection) 
+                .MapGetBallDrawingsinRangeParameters(Context.GetGameName(),
+                                                    slotId,
+                                                    dataSetDate,
+                                                    dataSetDate.AddDays(period));
+
+            return command.ReadsqlGetTimesChosenInDateRange(startDate, slotId, period, Context.GetGameName());
+        }
+
+
+        private void OpenConnection()
+        {
+            if (!IsOpen && Connection != null)
+            {
+                IsOpen = true;
+                Connection.Open();
+            }
+        }
+
+        private void CloseConnection()
+        {
+            if (Connection != null)
+            {
+                Connection.Close();
+                IsOpen = false;
             }
         }
 

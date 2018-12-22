@@ -38,9 +38,8 @@ namespace LotteryV2
                     {
                         if (item.ShouldExecute(context)) item.Execute(context);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-
                         throw;
                     }
                 }

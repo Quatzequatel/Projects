@@ -29,9 +29,9 @@ namespace LotteryV2.Domain.Extensions
         }
 
         public static GetTimesChosenInDateRangeItem MapToGetTimesChosenInDateRangeItem(this BallTimesChosenInPeriodsDataSetItem item,
-                                                    DateTime startDate, int period, string game)
+                                                    DateTime startDate, int slotId, int period, string game)
         {
-            return new GetTimesChosenInDateRangeItem(item, startDate, period, game);
+            return new GetTimesChosenInDateRangeItem(item, startDate, slotId, period, game);
         }
     }
 }

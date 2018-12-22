@@ -90,7 +90,8 @@ namespace LotteryV2.Domain.Commands
         {
             typeof(DefineDrawingDateRangeCommand), //define context TBD.
             typeof(LoadFromDatabaseCommand), //load drawings Database.
-            typeof(TrendExpirementCommand), //???
+            //typeof(TrendExpirementCommand), 
+            typeof(FillBallTimesChosenInPeriodsDataCommand), //???
             //typeof(SaveToDBAllDrawingsToBallDrawingsCommand) //load drawings into BallDrawings Table.
         };
     }

@@ -15,7 +15,8 @@ namespace LotteryV2.Domain.Commands
 
         public override bool ShouldExecute(DrawingContext context)
         {
-            return base.ShouldExecute(context);
+            //return base.ShouldExecute(context);
+            return true;
         }
 
         public override void Execute(DrawingContext context)
