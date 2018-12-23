@@ -51,6 +51,8 @@ namespace LotteryV2.Domain
     {
         Default = 0,
         SkipDownload = 1,
-        AlternateCommands = 2
+        AlternateCommands = 2,
+        GenerateData = 3
+        
     }
 }

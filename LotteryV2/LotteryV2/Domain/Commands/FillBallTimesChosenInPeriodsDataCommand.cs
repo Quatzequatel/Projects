@@ -37,33 +37,42 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
-            Console.WriteLine("TrendExpirementCommand");
+            Console.WriteLine("FillBallTimesChosenInPeriodsDataCommand");
             FillTable(context);
-            Console.WriteLine("TrendExpirementCommand - completed.");
+            Console.WriteLine("FillBallTimesChosenInPeriodsDataCommand - completed.");
         }
 
         private void FillTable(DrawingContext context)
         {
             //The first drawing date in table is 8/3/2008.
-            DateTime startDate = new DateTime(2008, 8, 3);
+            //DateTime startDate = new DateTime(2008, 8, 3);
             //use a period of 7 days per data set.
-            int period = 7;
+            //int period = 3;
             int[] slots = new int[] { 0, 1, 2, 3, 4 };
+
+            
 
             Connection = new SqlConnection(connectionString);
             OpenConnection();
-            ReadData(context, startDate, period, slots);
+            foreach (var period in new int[] {3,5,8,13,21,34 })
+            {
+                Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {slots[0].ToString()} - {slots[slots.Length - 1].ToString()} ");
+                ReadData(context,  period, slots);
+            }
+            
             CloseConnection();
         }
 
-        private void ReadData(DrawingContext context, DateTime startDate, int period, int[] slots)
+        private void ReadData(DrawingContext context, int period, int[] slots)
         {
-            DateTime periodStartDate = startDate.Date;
-            foreach (var dataSetDate in GetPeriodDateList(startDate, period))
+            //DateTime periodStartDate = startDate.Date;
+            Console.WriteLine($"Last Date = {GetPeriodDateList( period).First().ToShortDateString()}");
+            foreach (var endPeriodDate in GetPeriodDateList( period))
             {
+                
                 foreach (var slotId in slots)
                 {
-                    List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(periodStartDate, dataSetDate, period, slotId);
+                    List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(endPeriodDate.AddDays(-period).Date, period, slotId);
 
                     foreach (var item in timesChosenList)
                     {
@@ -72,19 +81,19 @@ namespace LotteryV2.Domain.Commands
                     }
                 }
                 //next period.
-                periodStartDate = dataSetDate.Date;
+                //periodStartDate = dataSetDate.Date;
             }
         }
 
-        private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(DateTime startDate, DateTime dataSetDate, int period, int slotId)
+        private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(DateTime startPeriodDate, int period, int slotId)
         {
             SqlCommand command = new SqlCommand(sqlGetTimesChosenInDateRange, Connection) 
                 .MapGetBallDrawingsinRangeParameters(Context.GetGameName(),
                                                     slotId,
-                                                    dataSetDate,
-                                                    dataSetDate.AddDays(period));
+                                                    startPeriodDate,
+                                                    startPeriodDate.AddDays(period).Date);
 
-            return command.ReadsqlGetTimesChosenInDateRange(startDate, slotId, period, Context.GetGameName());
+            return command.ReadsqlGetTimesChosenInDateRange(startPeriodDate, slotId, period, Context.GetGameName());
         }
 
 
@@ -112,9 +121,9 @@ namespace LotteryV2.Domain.Commands
         /// <param name="startDate"></param>
         /// <param name="period"></param>
         /// <returns></returns>
-        private List<DateTime> GetPeriodDateList(DateTime startDate, int period)
+        private List<DateTime> GetPeriodDateList( int period)
         {
-            return Context.AllDrawings.Where((drawing, index) => (index + 1) % period == 0).Select(d => d.DrawingDate).ToList();
+            return Context.AllDrawings.OrderByDescending(d => d.DrawingDate).Where((drawing, index) => drawing.Game == Game.Match4 && index % period == 0).Select(d => d.DrawingDate).ToList();
         }
 
     }

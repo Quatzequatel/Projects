@@ -31,6 +31,7 @@ namespace LotteryV2.Domain
         public Boolean IsCompleteDownload { get; set; }
 
         public Boolean ShouldExecuteSetHistoricalPeriods { get; set; }
+        public Boolean SkipScrapeFromWeb { get; set; }
 
         public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
 

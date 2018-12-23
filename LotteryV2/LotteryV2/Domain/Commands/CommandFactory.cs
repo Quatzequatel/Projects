@@ -17,8 +17,9 @@ namespace LotteryV2.Domain.Commands
         }
 
         private static IEnumerable<Type> GetCommandTypes(DrawingContext context) =>
-            context.CommandsType == CommandsType.SkipDownload ? SkipDownloadCommands() 
+            context.CommandsType == CommandsType.SkipDownload ? SkipDownloadCommands()
             : context.CommandsType == CommandsType.AlternateCommands ? AlternateCommands()
+            : context.CommandsType == CommandsType.GenerateData ? GenerateDataCommands()
             : DefaultCommands;
 
         public LinkedList<Command<DrawingContext>> Resolve(List<Type> types)
@@ -53,7 +54,8 @@ namespace LotteryV2.Domain.Commands
             //typeof(NumberGeneratorCommand),
             //typeof(SaveBaseCSVCommand), //save to CSV file.
             typeof(SlotNumberAnalysis2CSVCommand),
-            typeof(SlotNumberAnalysisRanged2CSVCommand)
+            typeof(SlotNumberAnalysisRanged2CSVCommand),
+            typeof(FillBallTimesChosenInPeriodsDataCommand)
         };
 
         private static IEnumerable<Type> SkipDownloadCommands() => new List<Type>
@@ -93,6 +95,23 @@ namespace LotteryV2.Domain.Commands
             //typeof(TrendExpirementCommand), 
             typeof(FillBallTimesChosenInPeriodsDataCommand), //???
             //typeof(SaveToDBAllDrawingsToBallDrawingsCommand) //load drawings into BallDrawings Table.
+        };
+
+        private static IEnumerable<Type> GenerateDataCommands() => new List<Type>
+        {
+            
+            //typeof(DefineDrawingDateRangeCommand), //define context TBD.
+            //typeof(LoadFromDatabaseCommand),
+
+            ////Load new data from Web.
+            //typeof(ScrapeFromWeb), //if no json file scrape from web and save.
+            //typeof(SaveToDBCommand), //Save to SQL DB.
+
+            typeof(DefineDrawingDateRangeCommand), //define context TBD.
+            typeof(LoadFromDatabaseCommand), //load drawings Database.
+            //typeof(TrendExpirementCommand), 
+            typeof(FillBallTimesChosenInPeriodsDataCommand), //???
+
         };
     }
 }

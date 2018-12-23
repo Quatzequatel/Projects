@@ -20,7 +20,7 @@ namespace LotteryV2.Domain.Commands
         public override bool ShouldExecute(DrawingContext context)
         {
             _Filename = $"{context.FilePath}{context.GetGameName()}.json";
-            return  System.IO.File.Exists(_Filename);
+            return !context.SkipScrapeFromWeb; //&& System.IO.File.Exists(_Filename);
         }
 
         public override void Execute(DrawingContext context)
