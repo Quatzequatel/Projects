@@ -16,7 +16,8 @@ namespace LotteryV2.Domain.Commands
         private string sqlInsertBallTimesChosenInPeriodsDataSet = "[dbo].[InsertBallTimesChosenInPeriodsDataSet]";
         /*
          * Parameters are:
-        @StartDate = ,
+        @TestId,
+        @EndPeriodDate = ,
 		@Period = NULL,
 		@BallId = NULL,
 		@SlotId = NULL,

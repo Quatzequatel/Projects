@@ -20,7 +20,8 @@ namespace LotteryV2.Domain.Extensions
 
         public static SqlCommand MapResultToInsertBallTimesChosenInPeriodsDataSet(this GetTimesChosenInDateRangeItem item, SqlCommand sqlcommand)
         {
-            sqlcommand.Parameters.AddWithValue("@StartDate", item.StartDate.ToShortDateString());
+            sqlcommand.Parameters.AddWithValue("@TestId", item.TestId);
+            sqlcommand.Parameters.AddWithValue("@EndPeriodDate", item.StartDate.ToShortDateString());
             sqlcommand.Parameters.AddWithValue("@Period", item.Period.ToString());
             sqlcommand.Parameters.AddWithValue("@BallId", item.BallId.ToString());
             sqlcommand.Parameters.AddWithValue("@SlotId", item.SlotId.ToString());
