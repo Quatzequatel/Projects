@@ -14,30 +14,11 @@ namespace LotteryV2.Domain.Commands
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Local"].ConnectionString;
         private string sqlGetTimesChosenInDateRange = "SELECT * From [dbo].[GetTimesChosenInDateRange](@Game, @SlotId, @StartDate, @EndDate) ";
         private string sqlInsertBallTimesChosenInPeriodsDataSet = "[dbo].[InsertBallTimesChosenInPeriodsDataSet]";
-        /*
-         * Parameters are:
-        @StartDate = ,
-		@Period = NULL,
-		@BallId = NULL,
-		@SlotId = NULL,
-		@Count = NULL,
-		@Percent = NULL,
-		@Game = NULL
-
-             */
 
         private bool IsOpen = false;
         private SqlConnection Connection;
         private List<int> PeriodDurations = new List<int>() { 3, 5, 8, 13, 21, 34 };
         private int[] Slots = new int[] { 0, 1, 2, 3, 4 };
-        private DateTime LastDrawingDate() => Context.AllDrawings.Where(d => d.Game == Context.GetGameType).OrderByDescending(d => d.DrawingDate).Select(i => i.DrawingDate).First();
-        private DateTime FirstDrawingDate() => LastDrawingDate().AddDays(TestPeriodDuration());
-
-        private DateTime TestCaseLastDrawingDate { get; set; }
-        private DateTime TestCaseFirstDrawingDate { get; set; }
-
-        private int TestPeriodDuration() => PeriodDurations.Last() * 2;
-
 
         public override bool ShouldExecute(DrawingContext context)
         {
@@ -47,20 +28,26 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
-                DoAll();
+            RetrieveDataForAllPeriodsAndSaveSummaryElementsToDB();
         }
 
-        private void DoAll()
+        private void RetrieveDataForAllPeriodsAndSaveSummaryElementsToDB()
         {
+            int testPeriodDuration = PeriodDurations.Last() * 2;
+            DateTime lastDrawingDate= Context.AllDrawings.Where(d => d.Game == Context.GetGameType).OrderByDescending(d => d.DrawingDate).Select(i => i.DrawingDate).First();
+            DateTime FirstDrawingDat= lastDrawingDate.AddDays(testPeriodDuration);
+            
+            DateTime testCaseLastDrawingDate;
+            DateTime testCaseFirstDrawingDate;
+
             int testId = 0;
             int testSampleSize = 2;
             //Get major test case data.
-            var testDates1 = GetTestDateList(LastDrawingDate(), TestPeriodDuration(), testSampleSize);
-            foreach (var testDate in GetTestDateList(LastDrawingDate(), TestPeriodDuration(), testSampleSize))
+            foreach (var testDate in GetTestDateList(lastDrawingDate, testPeriodDuration, testSampleSize))
             {
                 testId++;
-                TestCaseLastDrawingDate = testDate;
-                TestCaseFirstDrawingDate = TestCaseLastDrawingDate.AddDays(-TestPeriodDuration());
+                testCaseLastDrawingDate = testDate;
+                testCaseFirstDrawingDate = testCaseLastDrawingDate.AddDays(-testPeriodDuration);
 
                 Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Test{testId}");
                 Connection = new SqlConnection(connectionString);
@@ -68,33 +55,30 @@ namespace LotteryV2.Domain.Commands
                 //for each period get data where lastDrawingDate is the same.
                 foreach (var period in PeriodDurations)
                 {
+                    Console.WriteLine($"First Date = {testCaseFirstDrawingDate.ToShortDateString()} to Last Date = {testCaseLastDrawingDate.ToShortDateString()}");
                     Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {Slots[0].ToString()} - {Slots[Slots.Length - 1].ToString()} ");
 
-                    Console.WriteLine($"First Date = {TestCaseFirstDrawingDate.ToShortDateString()} to Last Date = {TestCaseLastDrawingDate.ToShortDateString()}");
-                    var testDates = GetTestDateList(TestCaseLastDrawingDate, period, GetNumberPeriodsBetween(TestCaseFirstDrawingDate, TestCaseLastDrawingDate, period));
-
-                    foreach (var endPeriodDate in GetTestDateList(TestCaseLastDrawingDate, period, GetNumberPeriodsBetween(TestCaseFirstDrawingDate, TestCaseLastDrawingDate, period)))
+                    int NumberPeriodsInTestDateRange = GetNumberPeriodsInTestDateRange(testCaseFirstDrawingDate, testCaseLastDrawingDate, period);
+                    foreach (var endPeriodDate in GetTestDateList(testCaseLastDrawingDate, period, NumberPeriodsInTestDateRange))
                     {
                         foreach (var slotId in Slots)
                         {
                             List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(testId, endPeriodDate.AddDays(-period).Date, period, slotId);
-                            WriteTest(timesChosenList);
+                            SaveTimeChosenItemToDB(timesChosenList);
                         }
                     }
-
                 }
-
                 CloseConnection();
                 Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand -  Test{testId} completed.");
             }
         }
 
-        private int GetNumberPeriodsBetween(DateTime startDate, DateTime endDate, int period)
+        private int GetNumberPeriodsInTestDateRange(DateTime startDate, DateTime endDate, int period)
         {
-            return Convert.ToInt32( Math.Ceiling((double)(endDate - startDate).Days / Convert.ToDouble( period)));
+            return Convert.ToInt32(Math.Ceiling((double)(endDate - startDate).Days / Convert.ToDouble(period)));
         }
 
-        private void WriteTest(List<GetTimesChosenInDateRangeItem> timesChosenList)
+        private void SaveTimeChosenItemToDB(List<GetTimesChosenInDateRangeItem> timesChosenList)
         {
             foreach (var item in timesChosenList)
             {
@@ -114,6 +98,14 @@ namespace LotteryV2.Domain.Commands
             return command.ReadsqlGetTimesChosenInDateRange(testId, startPeriodDate, slotId, period, Context.GetGameName());
         }
 
+        private List<DateTime> GetTestDateList(DateTime lastEndDate, int period, int take)
+        {
+            return Context.AllDrawings.OrderByDescending(d => d.DrawingDate)
+                .Where(drawing => drawing.Game == Context.GetGameType && drawing.DrawingDate <= lastEndDate).Select(d => d.DrawingDate)
+                .Where((drawing, index) => index % period == 0)
+                .Take(take)
+                .ToList();
+        }
 
         private void OpenConnection()
         {
@@ -132,15 +124,5 @@ namespace LotteryV2.Domain.Commands
                 IsOpen = false;
             }
         }
-
-        private List<DateTime> GetTestDateList(DateTime lastEndDate, int period, int take)
-        {
-            return Context.AllDrawings.OrderByDescending(d => d.DrawingDate)
-                .Where(drawing => drawing.Game == Context.GetGameType && drawing.DrawingDate <= lastEndDate).Select(d=> d.DrawingDate)
-                .Where((drawing, index) => index % period == 0)
-                .Take(take)
-                .ToList();
-        }
-
     }
 }
