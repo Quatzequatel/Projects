@@ -211,6 +211,8 @@ namespace LotteryV2.Domain
             return "";
         }
 
+        public Game GetGameType { get { return GameType; } }
+
         public int FirstYear()
         {
             switch (GameType)

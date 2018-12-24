@@ -7,7 +7,7 @@ namespace LotteryV2.Domain.Extensions
 {
     public static class SqlCommandExtensions
     {
-        public static List<GetTimesChosenInDateRangeItem> ReadsqlGetTimesChosenInDateRange(this SqlCommand command, DateTime startPeriodDate, int slotId, int period, string game)
+        public static List<GetTimesChosenInDateRangeItem> ReadsqlGetTimesChosenInDateRange(this SqlCommand command, int testId, DateTime startPeriodDate, int slotId, int period, string game)
         {
             List<GetTimesChosenInDateRangeItem> result = new List<GetTimesChosenInDateRangeItem>();
             SqlDataReader dataReader = command.ExecuteReader();
@@ -18,7 +18,7 @@ namespace LotteryV2.Domain.Extensions
                 int fieldCount = dataReader.GetValues(fields);
 
                 result.Add(fields.MapResultToBallTimesChosenInPeriodsDataSetItem()
-                .MapToGetTimesChosenInDateRangeItem(startPeriodDate, slotId, period, game));
+                .MapToGetTimesChosenInDateRangeItem(testId, startPeriodDate, slotId, period, game));
             }
 
             if (dataReader != null)

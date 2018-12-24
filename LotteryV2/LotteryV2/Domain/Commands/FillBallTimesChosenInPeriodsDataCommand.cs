@@ -28,6 +28,16 @@ namespace LotteryV2.Domain.Commands
 
         private bool IsOpen = false;
         private SqlConnection Connection;
+        private List<int> PeriodDurations = new List<int>() { 3, 5, 8, 13, 21, 34 };
+        private int[] Slots = new int[] { 0, 1, 2, 3, 4 };
+        private DateTime LastDrawingDate() => Context.AllDrawings.Where(d => d.Game == Context.GetGameType).OrderByDescending(d => d.DrawingDate).Select(i => i.DrawingDate).First();
+        private DateTime FirstDrawingDate() => LastDrawingDate().AddDays(TestPeriodDuration());
+
+        private DateTime TestCaseLastDrawingDate { get; set; }
+        private DateTime TestCaseFirstDrawingDate { get; set; }
+
+        private int TestPeriodDuration() => PeriodDurations.Last() * 2;
+
 
         public override bool ShouldExecute(DrawingContext context)
         {
@@ -37,63 +47,71 @@ namespace LotteryV2.Domain.Commands
 
         public override void Execute(DrawingContext context)
         {
-            Console.WriteLine("FillBallTimesChosenInPeriodsDataCommand");
-            FillTable(context);
-            Console.WriteLine("FillBallTimesChosenInPeriodsDataCommand - completed.");
+                DoAll();
         }
 
-        private void FillTable(DrawingContext context)
+        private void DoAll()
         {
-            //The first drawing date in table is 8/3/2008.
-            //DateTime startDate = new DateTime(2008, 8, 3);
-            //use a period of 7 days per data set.
-            //int period = 3;
-            int[] slots = new int[] { 0, 1, 2, 3, 4 };
-
-            
-
-            Connection = new SqlConnection(connectionString);
-            OpenConnection();
-            foreach (var period in new int[] {3,5,8,13,21,34 })
+            int testId = 0;
+            int testSampleSize = 2;
+            //Get major test case data.
+            var testDates1 = GetTestDateList(LastDrawingDate(), TestPeriodDuration(), testSampleSize);
+            foreach (var testDate in GetTestDateList(LastDrawingDate(), TestPeriodDuration(), testSampleSize))
             {
-                Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {slots[0].ToString()} - {slots[slots.Length - 1].ToString()} ");
-                ReadData(context,  period, slots);
-            }
-            
-            CloseConnection();
-        }
+                testId++;
+                TestCaseLastDrawingDate = testDate;
+                TestCaseFirstDrawingDate = TestCaseLastDrawingDate.AddDays(-TestPeriodDuration());
 
-        private void ReadData(DrawingContext context, int period, int[] slots)
-        {
-            //DateTime periodStartDate = startDate.Date;
-            Console.WriteLine($"Last Date = {GetPeriodDateList( period).First().ToShortDateString()}");
-            foreach (var endPeriodDate in GetPeriodDateList( period))
-            {
-                
-                foreach (var slotId in slots)
+                Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Test{testId}");
+                Connection = new SqlConnection(connectionString);
+                OpenConnection();
+                //for each period get data where lastDrawingDate is the same.
+                foreach (var period in PeriodDurations)
                 {
-                    List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(endPeriodDate.AddDays(-period).Date, period, slotId);
+                    Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {Slots[0].ToString()} - {Slots[Slots.Length - 1].ToString()} ");
 
-                    foreach (var item in timesChosenList)
+                    Console.WriteLine($"First Date = {TestCaseFirstDrawingDate.ToShortDateString()} to Last Date = {TestCaseLastDrawingDate.ToShortDateString()}");
+                    var testDates = GetTestDateList(TestCaseLastDrawingDate, period, GetNumberPeriodsBetween(TestCaseFirstDrawingDate, TestCaseLastDrawingDate, period));
+
+                    foreach (var endPeriodDate in GetTestDateList(TestCaseLastDrawingDate, period, GetNumberPeriodsBetween(TestCaseFirstDrawingDate, TestCaseLastDrawingDate, period)))
                     {
-                        (new SqlCommand(sqlInsertBallTimesChosenInPeriodsDataSet, Connection) { CommandType = System.Data.CommandType.StoredProcedure })
-                            .ExecuteSprocInsertBallTimesChosenInPeriodsDataSet(item);
+                        foreach (var slotId in Slots)
+                        {
+                            List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(testId, endPeriodDate.AddDays(-period).Date, period, slotId);
+                            WriteTest(timesChosenList);
+                        }
                     }
+
                 }
-                //next period.
-                //periodStartDate = dataSetDate.Date;
+
+                CloseConnection();
+                Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand -  Test{testId} completed.");
             }
         }
 
-        private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(DateTime startPeriodDate, int period, int slotId)
+        private int GetNumberPeriodsBetween(DateTime startDate, DateTime endDate, int period)
         {
-            SqlCommand command = new SqlCommand(sqlGetTimesChosenInDateRange, Connection) 
+            return Convert.ToInt32( Math.Ceiling((double)(endDate - startDate).Days / Convert.ToDouble( period)));
+        }
+
+        private void WriteTest(List<GetTimesChosenInDateRangeItem> timesChosenList)
+        {
+            foreach (var item in timesChosenList)
+            {
+                (new SqlCommand(sqlInsertBallTimesChosenInPeriodsDataSet, Connection) { CommandType = System.Data.CommandType.StoredProcedure })
+                    .ExecuteSprocInsertBallTimesChosenInPeriodsDataSet(item);
+            }
+        }
+
+        private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(int testId, DateTime startPeriodDate, int period, int slotId)
+        {
+            SqlCommand command = new SqlCommand(sqlGetTimesChosenInDateRange, Connection)
                 .MapGetBallDrawingsinRangeParameters(Context.GetGameName(),
                                                     slotId,
                                                     startPeriodDate,
                                                     startPeriodDate.AddDays(period).Date);
 
-            return command.ReadsqlGetTimesChosenInDateRange(startPeriodDate, slotId, period, Context.GetGameName());
+            return command.ReadsqlGetTimesChosenInDateRange(testId, startPeriodDate, slotId, period, Context.GetGameName());
         }
 
 
@@ -115,15 +133,13 @@ namespace LotteryV2.Domain.Commands
             }
         }
 
-        /// <summary>
-        /// Select dates at period intervals.
-        /// </summary>
-        /// <param name="startDate"></param>
-        /// <param name="period"></param>
-        /// <returns></returns>
-        private List<DateTime> GetPeriodDateList( int period)
+        private List<DateTime> GetTestDateList(DateTime lastEndDate, int period, int take)
         {
-            return Context.AllDrawings.OrderByDescending(d => d.DrawingDate).Where((drawing, index) => drawing.Game == Game.Match4 && index % period == 0).Select(d => d.DrawingDate).ToList();
+            return Context.AllDrawings.OrderByDescending(d => d.DrawingDate)
+                .Where(drawing => drawing.Game == Context.GetGameType && drawing.DrawingDate <= lastEndDate).Select(d=> d.DrawingDate)
+                .Where((drawing, index) => index % period == 0)
+                .Take(take)
+                .ToList();
         }
 
     }
