@@ -24,6 +24,5 @@ namespace LotteryV2.Domain.Model
             SlotId = slotId;
             Game = OtherExtensions.ToEnum<Game>(game, Game.Match4);
         }
-
     }
 }

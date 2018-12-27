@@ -33,7 +33,9 @@ namespace LotteryV2.Domain
         public Boolean ShouldExecuteSetHistoricalPeriods { get; set; }
         public Boolean SkipScrapeFromWeb { get; set; }
 
-        public Dictionary<HistoricalPeriods, List<HistoricalPeriodItem>> Periods { get; set; }
+        public List<int> PeriodDurations { get { return new List<int>() { 3, 5, 8, 13, 21, 34 }; } }
+
+        public int[] Slots { get { return new int[] { 0, 1, 2, 3, 4 }; } }
 
         /// <summary>
         /// Start date of analysis period.
@@ -158,18 +160,6 @@ namespace LotteryV2.Domain
                 }
 
             }
-        }
-
-        public void AddToPickedList(LotoNumber number)
-        {
-            if (PickedNumbers == null) PickedNumbers = new Dictionary<string, LotoNumber>();
-            if (Drawings.FirstOrDefault(i => i.KeyString == number.ToString()) == null)
-                PickedNumbers[number.ToString()] = number;
-        }
-
-        public void GetNextDrawingNumber(Drawing nextDrawing)
-        {
-
         }
 
         public void AddToPickedList(Dictionary<string, LotoNumber> numbers)
@@ -298,58 +288,6 @@ namespace LotteryV2.Domain
             return links;
         }
 
-        public Tuple<int, int> GetMinMaxForSlot(int slot)
-        {
-            switch (GameType)
-            {
-                case Game.Lotto:
-                    switch (slot)
-                    {
-                        case 0: return new Tuple<int, int>(1, 29);
-                        case 1: return new Tuple<int, int>(2, 39);
-                        case 2: return new Tuple<int, int>(3, 45);
-                        case 3: return new Tuple<int, int>(7, 47);
-                        case 4: return new Tuple<int, int>(12, 48);
-                        case 5: return new Tuple<int, int>(18, 49);
-                        default: return new Tuple<int, int>(0, 0);
-                    }
-                case Game.MegaMillion:
-                    switch (slot)
-                    {
-                        case 0: return new Tuple<int, int>(1, 41);
-                        case 1: return new Tuple<int, int>(2, 58);
-                        case 2: return new Tuple<int, int>(4, 68);
-                        case 3: return new Tuple<int, int>(11, 70);
-                        case 4: return new Tuple<int, int>(21, 70);
-                        case 5: return new Tuple<int, int>(1, 25);
-                        default: return new Tuple<int, int>(0, 0);
-                    }
-                case Game.Powerball:
-                    switch (slot)
-                    {
-                        case 0: return new Tuple<int, int>(1, 29);
-                        case 1: return new Tuple<int, int>(2, 39);
-                        case 2: return new Tuple<int, int>(3, 45);
-                        case 3: return new Tuple<int, int>(7, 47);
-                        case 4: return new Tuple<int, int>(12, 48);
-                        case 5: return new Tuple<int, int>(1, 26);
-                        default: return new Tuple<int, int>(0, 0);
-                    }
-                case Game.Hit5:
-                    switch (slot)
-                    {
-                        case 0: return new Tuple<int, int>(1, 29);
-                        case 1: return new Tuple<int, int>(2, 39);
-                        case 2: return new Tuple<int, int>(3, 39);
-                        case 3: return new Tuple<int, int>(7, 39);
-                        case 4: return new Tuple<int, int>(12, 39);
-                        default: return new Tuple<int, int>(0, 0);
-                    }
-                default:
-                    return new Tuple<int, int>(0, 0);
-            }
-        }
-
         public string FileHistoricalPeriods => $"{this.FilePath}{this.GetGameName()}-HistoricalPeriods.json";
 
         public string FileHistoricalSummary => $"{this.FilePath}{this.GetGameName()}-HistoricalSummary.csv";
@@ -373,14 +311,6 @@ namespace LotteryV2.Domain
             AllDrawings = drawings.OrderBy(i => i.DrawingDate).ToList();
         }
 
-        public List<string> PickNumbers(HistoricalPeriods period, int howMany)
-        {
-            List<string> result = new List<string>();
-
-
-
-            return result;
-        }
 
     }
 }

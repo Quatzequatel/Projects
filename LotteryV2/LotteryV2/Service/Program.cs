@@ -29,7 +29,7 @@ namespace LotteryV2
                     SampleSize = 1000,
                     CommandsType = CommandsType.GenerateData,
                     IsCompleteDownload = false,
-                    SkipScrapeFromWeb = true,
+                    SkipScrapeFromWeb = false,
                     ShouldExecuteSetHistoricalPeriods = true
                 };
 

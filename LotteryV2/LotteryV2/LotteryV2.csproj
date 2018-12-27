@@ -76,6 +76,7 @@
     <Compile Include="Domain\Commands\DefineDrawingDateRangeCommand.cs" />
     <Compile Include="Domain\Commands\DefineHistoricalGroups.cs" />
     <Compile Include="Domain\Commands\FillBallTimesChosenInPeriodsDataCommand.cs" />
+    <Compile Include="Domain\Commands\InsertSlopeInterceptDetailsItemCommand.cs" />
     <Compile Include="Domain\Commands\LoadFromDatabaseCommand.cs" />
     <Compile Include="Domain\Commands\SaveToDBAllDrawingsToBallDrawingsCommand.cs" />
     <Compile Include="Domain\Commands\TrendExpirementCommand.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Domain\Model\Number.cs" />
     <Compile Include="Domain\Commands\Command.cs" />
     <Compile Include="Domain\Model\NumberModel.cs" />
+    <Compile Include="Domain\Model\PeriodSlotIdBallItem.cs" />
     <Compile Include="Domain\Model\Slot.cs" />
     <Compile Include="Domain\Model\SlotGroup.cs" />
     <Compile Include="Domain\Model\Templates.cs" />

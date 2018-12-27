@@ -10,15 +10,15 @@ namespace LotteryV2.Domain.Commands
 {
     class FillBallTimesChosenInPeriodsDataCommand : Command<DrawingContext>
     {
-        private DrawingContext Context;
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Local"].ConnectionString;
         private string sqlGetTimesChosenInDateRange = "SELECT * From [dbo].[GetTimesChosenInDateRange](@Game, @SlotId, @StartDate, @EndDate) ";
         private string sqlInsertBallTimesChosenInPeriodsDataSet = "[dbo].[InsertBallTimesChosenInPeriodsDataSet]";
 
+        private DrawingContext Context;
         private bool IsOpen = false;
         private SqlConnection Connection;
-        private List<int> PeriodDurations = new List<int>() { 3, 5, 8, 13, 21, 34 };
-        private int[] Slots = new int[] { 0, 1, 2, 3, 4 };
+        //private List<int> PeriodDurations = new List<int>() { 3, 5, 8, 13, 21, 34 };
+        //private int[] Slots = new int[] { 0, 1, 2, 3, 4 };
 
         public override bool ShouldExecute(DrawingContext context)
         {
@@ -33,7 +33,7 @@ namespace LotteryV2.Domain.Commands
 
         private void RetrieveDataForAllPeriodsAndSaveSummaryElementsToDB()
         {
-            int testPeriodDuration = PeriodDurations.Last() * 2;
+            int testPeriodDuration = Context.PeriodDurations.Last() * 2;
             DateTime lastDrawingDate= Context.AllDrawings.Where(d => d.Game == Context.GetGameType).OrderByDescending(d => d.DrawingDate).Select(i => i.DrawingDate).First();
             DateTime FirstDrawingDat= lastDrawingDate.AddDays(testPeriodDuration);
             
@@ -53,15 +53,15 @@ namespace LotteryV2.Domain.Commands
                 Connection = new SqlConnection(connectionString);
                 OpenConnection();
                 //for each period get data where lastDrawingDate is the same.
-                foreach (var period in PeriodDurations)
+                foreach (var period in Context.PeriodDurations)
                 {
                     Console.WriteLine($"First Date = {testCaseFirstDrawingDate.ToShortDateString()} to Last Date = {testCaseLastDrawingDate.ToShortDateString()}");
-                    Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {Slots[0].ToString()} - {Slots[Slots.Length - 1].ToString()} ");
+                    Console.WriteLine($"FillBallTimesChosenInPeriodsDataCommand - Period = {period.ToString()}, Slots {Context.Slots[0].ToString()} - {Context.Slots[Context.Slots.Length - 1].ToString()} ");
 
                     int NumberPeriodsInTestDateRange = GetNumberPeriodsInTestDateRange(testCaseFirstDrawingDate, testCaseLastDrawingDate, period);
                     foreach (var endPeriodDate in GetTestDateList(testCaseLastDrawingDate, period, NumberPeriodsInTestDateRange))
                     {
-                        foreach (var slotId in Slots)
+                        foreach (var slotId in Context.Slots)
                         {
                             List<GetTimesChosenInDateRangeItem> timesChosenList = RetrieveDataForPeriod(testId, endPeriodDate.AddDays(-period).Date, period, slotId);
                             SaveTimeChosenItemToDB(timesChosenList);
@@ -86,6 +86,8 @@ namespace LotteryV2.Domain.Commands
                     .ExecuteSprocInsertBallTimesChosenInPeriodsDataSet(item);
             }
         }
+
+
 
         private List<GetTimesChosenInDateRangeItem> RetrieveDataForPeriod(int testId, DateTime startPeriodDate, int period, int slotId)
         {

@@ -7,6 +7,25 @@ namespace LotteryV2.Domain.Extensions
 {
     public static class DatabaseExtensions
     {
+        public static SqlCommand MapParametersToGetDaysToNextDrawing(this SqlCommand sqlCommand, DateTime endDrawingDate, int ballId, int slotId, string game)
+        {
+            sqlCommand.Parameters.AddWithValue("@EndDrawingDate", endDrawingDate);
+            sqlCommand.Parameters.AddWithValue("@BallId", ballId);
+            sqlCommand.Parameters.AddWithValue("@SlotId", slotId);
+            sqlCommand.Parameters.AddWithValue("@Game", game);
+
+            return sqlCommand;
+        }
+        public static SqlCommand MapTbl_SelectPeriodCountForSlotIdBallId(this SqlCommand sqlCommand, int testId, int slotId, int period, int ballId)
+        {
+            sqlCommand.Parameters.AddWithValue("@TestId", testId);
+            sqlCommand.Parameters.AddWithValue("@SlotId", slotId);
+            sqlCommand.Parameters.AddWithValue("@Period", period);
+            sqlCommand.Parameters.AddWithValue("@BallId", ballId);
+
+
+            return sqlCommand;
+        }
         public static SqlCommand MapGetBallDrawingsinRangeParameters(this SqlCommand sqlcommand, string game, int slotId, DateTime startDate, DateTime endDate)
         {
             sqlcommand.Parameters.AddWithValue("@Game", game);
@@ -18,67 +37,91 @@ namespace LotteryV2.Domain.Extensions
             return sqlcommand;
         }
 
-        public static SqlCommand MapResultToInsertBallTimesChosenInPeriodsDataSet(this GetTimesChosenInDateRangeItem item, SqlCommand sqlcommand)
+        public static SqlCommand MapResultToInsertBallTimesChosenInPeriodsDataSet(this GetTimesChosenInDateRangeItem item, SqlCommand sqlCommand)
         {
-            sqlcommand.Parameters.AddWithValue("@TestId", item.TestId);
-            sqlcommand.Parameters.AddWithValue("@EndPeriodDate", item.EndPeriodDate);
-            sqlcommand.Parameters.AddWithValue("@Period", item.Period);
-            sqlcommand.Parameters.AddWithValue("@BallId", item.BallId);
-            sqlcommand.Parameters.AddWithValue("@SlotId", item.SlotId);
-            sqlcommand.Parameters.AddWithValue("@Count", item.Count);
-            sqlcommand.Parameters.AddWithValue("@Percent", item.Percent);
-            sqlcommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+            sqlCommand.Parameters.AddWithValue("@TestId", item.TestId);
+            sqlCommand.Parameters.AddWithValue("@EndPeriodDate", item.EndPeriodDate);
+            sqlCommand.Parameters.AddWithValue("@Period", item.Period);
+            sqlCommand.Parameters.AddWithValue("@BallId", item.BallId);
+            sqlCommand.Parameters.AddWithValue("@SlotId", item.SlotId);
+            sqlCommand.Parameters.AddWithValue("@Count", item.Count);
+            sqlCommand.Parameters.AddWithValue("@Percent", item.Percent);
+            sqlCommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
 
-            return sqlcommand;
+            return sqlCommand;
         }
 
-        public static SqlCommand MapDrawingToInsertBallDrawingDetails(this Drawing item, SqlCommand sqlcommand, int slotId)
+        public static SqlCommand MapToExecuteInsertSlopeInterceptDetailsItem(this InsertSlopeInterceptDetailsItem item, SqlCommand sqlCommand)
         {
-            sqlcommand.Parameters.AddWithValue("@BallId", item.Numbers[slotId].ToString());
-            sqlcommand.Parameters.AddWithValue("@SlotId", (slotId+1).ToString());
-            sqlcommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
-            sqlcommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+            sqlCommand.Parameters.AddWithValue("@EndPeriodDate", item.EndPeriodDate);
+            sqlCommand.Parameters.AddWithValue("@Period", item.Period);
+            sqlCommand.Parameters.AddWithValue("@BallId", item.BallId);
+            sqlCommand.Parameters.AddWithValue("@SlotId", item.SlotId);
+            sqlCommand.Parameters.AddWithValue("@Intercept", item.Intercept);
+            sqlCommand.Parameters.AddWithValue("@Slope", item.Slope);
+            sqlCommand.Parameters.Add("@NextTimeChosenCount", System.Data.SqlDbType.Int);
+            
+            if (item.NextTimeChosenCount.HasValue)
+            {
+                sqlCommand.Parameters["@NextTimeChosenCount"].Value = item.NextTimeChosenCount.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters["@NextTimeChosenCount"].Value = DBNull.Value;
+            }
 
-            return sqlcommand;
+            sqlCommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+
+            return sqlCommand;
         }
 
-        public static SqlCommand MapDrawingToInsertDrawingDetails(this Drawing item, SqlCommand sqlcommand)
+        public static SqlCommand MapDrawingToInsertBallDrawingDetails(this Drawing item, SqlCommand sqlCommand, int slotId)
         {
-            sqlcommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
-            sqlcommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
-            sqlcommand.Parameters.AddWithValue("@DrawingNumbers", item.KeyString);
-            sqlcommand.Parameters.AddWithValue("@B1", item.Numbers[0].ToString());
-            sqlcommand.Parameters.AddWithValue("@B2", item.Numbers[1].ToString());
-            sqlcommand.Parameters.AddWithValue("@B3", item.Numbers[2].ToString());
-            sqlcommand.Parameters.AddWithValue("@B4", item.Numbers[3].ToString());
+            sqlCommand.Parameters.AddWithValue("@BallId", item.Numbers[slotId].ToString());
+            sqlCommand.Parameters.AddWithValue("@SlotId", (slotId+1).ToString());
+            sqlCommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
+            sqlCommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+
+            return sqlCommand;
+        }
+
+        public static SqlCommand MapDrawingToInsertDrawingDetails(this Drawing item, SqlCommand sqlCommand)
+        {
+            sqlCommand.Parameters.AddWithValue("@DrawingDate", item.DrawingDate.ToShortDateString());
+            sqlCommand.Parameters.AddWithValue("@Game", item.Game.GetName(typeof(Game)));
+            sqlCommand.Parameters.AddWithValue("@DrawingNumbers", item.KeyString);
+            sqlCommand.Parameters.AddWithValue("@B1", item.Numbers[0].ToString());
+            sqlCommand.Parameters.AddWithValue("@B2", item.Numbers[1].ToString());
+            sqlCommand.Parameters.AddWithValue("@B3", item.Numbers[2].ToString());
+            sqlCommand.Parameters.AddWithValue("@B4", item.Numbers[3].ToString());
 
             switch (item.Game)
             {
                 case Game.Lotto:
-                    sqlcommand.Parameters.AddWithValue("@B6", item.Numbers[5].ToString());
-                    sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@B6", item.Numbers[5].ToString());
+                    sqlCommand.Parameters.AddWithValue("@OB", DBNull.Value);
                     break;
                 case Game.MegaMillion:
-                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                    sqlcommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
+                    sqlCommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
                     break;
                 case Game.Powerball:
-                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                    sqlcommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
+                    sqlCommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@OB", item.Numbers[5].ToString());
                     break;
                 case Game.Hit5:
-                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                    sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@OB", DBNull.Value);
                     break;
                 case Game.Match4:
                 default:
-                    sqlcommand.Parameters.AddWithValue("@B5", DBNull.Value);
-                    sqlcommand.Parameters.AddWithValue("@B6", DBNull.Value);
-                    sqlcommand.Parameters.AddWithValue("@OB", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@B5", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@B6", DBNull.Value);
+                    sqlCommand.Parameters.AddWithValue("@OB", DBNull.Value);
                     break;
             }
 
-            return sqlcommand;
+            return sqlCommand;
         }
 
         public static Drawing MapGetValuesToDrawingItem(this object[] fields, Game game)

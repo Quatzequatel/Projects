@@ -33,5 +33,17 @@ namespace LotteryV2.Domain.Extensions
         {
             return new GetTimesChosenInDateRangeItem(item, testId, startPeriodDate, slotId, period, game);
         }
+
+        public static PeriodSlotIdBallItem MapResultToPeriodSlotIdBallItem(this object[] fields, int testId, int slotId, int period, int ballId)
+        {
+            return new PeriodSlotIdBallItem(Convert.ToDateTime(fields[0]), 
+                Convert.ToInt16(fields[1]),
+                testId,
+                period,
+                ballId,
+                slotId,
+                "Match4"
+                );
+        }
     }
 }
