@@ -41,9 +41,10 @@ namespace LotteryV2.Domain.Commands
             DateTime testCaseFirstDrawingDate;
 
             int testId = 0;
-            int testSampleSize = 2;
+            int testSampleSize = 100;
+            int samplePeriods = 3;
             //Get major test case data.
-            foreach (var testDate in GetTestDateList(lastDrawingDate, testPeriodDuration, testSampleSize))
+            foreach (var testDate in GetTestDateList(lastDrawingDate, samplePeriods, testSampleSize))
             {
                 testId++;
                 testCaseLastDrawingDate = testDate;

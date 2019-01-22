@@ -36,7 +36,7 @@ namespace LotteryV2.Domain.Commands
         private void CollectData(DrawingContext context)
         {
 
-            foreach (var testId in new int[] { 1, 2 })
+            for (int testId=1; testId < 1001; testId++)
             {
                 Connection = new SqlConnection(connectionString);
                 OpenConnection();

@@ -100,17 +100,18 @@ namespace LotteryV2.Domain.Commands
         private static IEnumerable<Type> GenerateDataCommands() => new List<Type>
         {
 
-            typeof(DefineDrawingDateRangeCommand), //define context TBD.
-            typeof(LoadFromDatabaseCommand),
+            //typeof(DefineDrawingDateRangeCommand), //define context TBD.
+            //typeof(LoadFromDatabaseCommand),
 
-            //Load new data from Web.
-            typeof(ScrapeFromWeb), //if no json file scrape from web and save.
-            typeof(SaveToDBCommand), //Save to SQL DB.
+            ////Load new data from Web.
+            //typeof(ScrapeFromWeb), //if no json file scrape from web and save.
+            //typeof(SaveToDBCommand), //Save to SQL DB.
 
             typeof(DefineDrawingDateRangeCommand), //define context TBD.
             typeof(LoadFromDatabaseCommand), //load drawings Database.
             //typeof(TrendExpirementCommand), 
-            //typeof(FillBallTimesChosenInPeriodsDataCommand), //???
+            typeof(TruncateDataRegressionTables),
+            typeof(FillBallTimesChosenInPeriodsDataCommand), //???
             typeof(InsertSlopeInterceptDetailsItemCommand)
         };
     }
