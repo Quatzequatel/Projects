@@ -9,10 +9,98 @@ namespace ConsoleApp1
 {
     public class ArrayQuestions
     {
+        public ArrayQuestions()
+        {
+
+        }
         public static void TestIt()
         {
             TestItSudoku2();
+            int[] numbers = new int[] { 2, 3, 1, 0, 2, 5, 3 };
+            ArrayQuestions aq = new ArrayQuestions();
+            Console.WriteLine(String.Format("has duplicates({1}) : {0}", aq.HasDuplicates3(numbers), numbers.Print<int>()));
         }
+        /*
+         This has duplicate question is lame. 
+         yes there is a forumulic way to determine for very narrow set of circumstances.
+         given those circumstances there is a faster way to apply the constraints
+         and return the value. Book version is  HasDuplicates1(), IMHO HasDuplicates3()
+         is better.
+
+             */
+        public int HasDuplicate1(int[] numbers)
+        {
+            int length = numbers.Length;
+            int foo = numbers.Min();
+            int sum1 = 0;
+            for(int i = 0; i < length; i++)
+            {
+                if(numbers[i] < 0 || numbers[i] > length - 2)
+                {
+                    throw new ArgumentOutOfRangeException("Invalid numbers");
+                }
+                sum1 += numbers[i];
+            }
+            int sum2 = ((length - 1) * (length - 2)) >> 1;
+            return sum1 - sum2;
+        }
+
+        public int HasDuplicates2(int[] numbers)
+        {
+            int length = numbers.Length;
+            int firstValue = numbers[0];
+            int difference = 1;
+            int sum1 = 0;
+            int sum2 = 0;
+            //using formula
+            sum2 = (length >> 1) * (2 * firstValue + (length - 1) * difference);
+
+            for (int i = 0; i < length; i++)
+            {
+                sum1 += numbers[i];
+            }
+
+            return (sum1 - sum2) + difference;
+        }
+
+        public int HasDuplicates3(int[] numbers)
+        {
+            int length = numbers.Length;
+            int firstValue = numbers[0];
+            int difference = (numbers[numbers.Length -1] - firstValue) / (length-1);
+            int sum1 = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                sum1 += numbers[i];
+                if(numbers[i] != firstValue + (i * difference) || i > 0 ? numbers[i] == numbers[i-1]: false)
+                {
+                    return numbers[i];
+                }
+                
+            }
+
+            return -1;
+        }
+
+        public static int solution(int[] A)
+        {
+            int Length = A.Length;
+            int low = A.Min();
+            int[] sorted = A.OrderBy(x => x).ToArray();
+            for (int i = 0; i < Length-1; i++)
+            {
+                if (sorted[i] < 0 || sorted[i] == sorted[i + 1] || sorted[i] + 1 == sorted[i + 1]) { }
+                else
+                {
+                    return sorted[i] + 1;
+                }
+            }
+            return sorted[A.Length - 1] < 0 ? 1 : sorted[A.Length - 1] + 1;
+        }
+
+
+
         public static void TestItFirstNotRepeatingCharacter()
         {
             if (FirstNotRepeatingCharacter("abacabad") != 'c') throw new Exception("firstNotRepeatingCharacter failed. expected '' for response");
@@ -112,6 +200,8 @@ namespace ConsoleApp1
             }
             return true;
         }
+
+
 
         public static bool Sudoku2(char[][] grid)
         {
@@ -228,9 +318,22 @@ namespace ConsoleApp1
             }
             return true;
         }
-        public static string Print(this char[] values)
+
+        public static string Print<T>(this T[] values)
         {
             return String.Join(", ", values);
         }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            if (action == null) throw new ArgumentNullException("action");
+
+            foreach (T item in source)
+            {
+                action(item);
+            }
+        }
     }
 }
+

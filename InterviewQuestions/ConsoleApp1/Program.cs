@@ -10,14 +10,23 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            ArrayQuestions.TestIt();
-            //Permutation.IsPermutationTest();
-            //Permutation.IsPalindromeTest();
-            //Lists.Stack<int>.CanPushOnStackTest();
-            //Lists.Queue<int>.QueueUnitTest();
-            //Lists.LinkList<int>.LinkListUnitTest();
-            //LinkListBook.LinkListUnitTest();
-            //Console.ReadKey();
+            Codility.TestIt();
+
+            //Solution solution = new Solution();
+            //int[] A = new int[] { 1,3,6,4,1,2 };
+            //int[] sorted = A.OrderBy(x => x).ToArray();
+            //Console.WriteLine(String.Format("{0} ; result is {1}", sorted.Print(), ArrayQuestions.solution(A)));
+
+            ////Fibonacci.FibonacciSequenceo(10);
+            ////Fibonacci.FibonacciSequenceUpTo(10000);
+            //ArrayQuestions.TestIt();
+            ////Permutation.IsPermutationTest();
+            ////Permutation.IsPalindromeTest();
+            ////Lists.Stack<int>.CanPushOnStackTest();
+            ////Lists.Queue<int>.QueueUnitTest();
+            ////Lists.LinkList<int>.LinkListUnitTest();
+            ////LinkListBook.LinkListUnitTest();
+            Console.ReadKey();
         }
 
         static void TestOneEditAway()

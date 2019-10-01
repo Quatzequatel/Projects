@@ -54,17 +54,10 @@ namespace ConsoleApp1.Lists
             }
 
             Console.WriteLine("Stack contains the following items");
-            foreach (var item in list.Nodes())
-            {
-                Console.WriteLine(item.Data.ToString());
-            }
+            list.Nodes().ForEach(x => Console.WriteLine(x.Data.ToString()));
 
-            list.Nodes().Select(x => String.Format("Value = {0}", x.Data));
-            Console.WriteLine(String.Format("NodeTest Pop() Before={0}, value poped {1} After={2}", list.Size(), list.Pop(), list.Size()));
-            Console.WriteLine(String.Format("NodeTest Pop() Before={0}, value poped {1} After={2}", list.Size(), list.Pop(), list.Size()));
-            Console.WriteLine(String.Format("NodeTest Pop() Before={0}, value poped {1} After={2}", list.Size(), list.Pop(), list.Size()));
-            Console.WriteLine(String.Format("NodeTest Pop() Before={0}, value poped {1} After={2}", list.Size(), list.Pop(), list.Size()));
-            Console.WriteLine(String.Format("NodeTest Pop() Before={0}, value poped {1} After={2}", list.Size(), list.Pop(), list.Size()));
+            list.Nodes().ForEach(x => Console.WriteLine(String.Format("NodeTest Pop() Size before={0}, value poped {1} Size after={2}", list.Size(), list.Pop(), list.Size())));
+
 
         }
     }
@@ -141,17 +134,13 @@ namespace ConsoleApp1.Lists
             }
 
             Console.WriteLine("Queue Contains:");
-            foreach (var item in list.Nodes())
-            {
-                Console.WriteLine(item.Data.ToString());
-            }
+            list.Nodes().ForEach(item => Console.WriteLine(item.Data.ToString()));
 
+            Console.WriteLine("Test Remove() on Queue:");
             while (!list.IsEmpty)
             {
                 Console.WriteLine(String.Format("Queue Count = {0} Removed = {1}, Now Count is {2}", list.Size, list.Remove(), list.Size));
             }
-
-            Console.WriteLine(String.Format("Queue Count = {0} Removed = {1}, Now Count is {2}", list.Size, list.Remove(), list.Size));
         }
     }
 
@@ -238,15 +227,11 @@ namespace ConsoleApp1.Lists
             }
 
             Console.WriteLine("LinkList Contains:");
-            foreach (var item in list.Nodes())
-            {
-                Console.WriteLine(item.Data.ToString());
-            }
+            list.Nodes().ForEach(item => Console.WriteLine(item.Data.ToString()));
 
             while (!list.IsEmpty)
             {
                 Console.WriteLine(String.Format("List Count = {0} RemovedLast = {1}, Now Count is {2}", list.Size, list.RemoveLast(), list.Size));
-                //Console.WriteLine(String.Format("List Count = {0} RemovedFirst = {1}, Now Count is {2}", list.Size, list.RemoveFirst(), list.Size));
             }
         }
     }
