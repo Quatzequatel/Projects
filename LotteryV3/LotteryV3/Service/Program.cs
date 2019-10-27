@@ -10,7 +10,7 @@ namespace LotteryV3
     {
         static void Main(string[] args)
         {
-            DrawingContext context = new DrawingContext(GameType.Lotto, new DateTime(2018, 4, 12), new DateTime(1984, 7, 21));
+            DrawingContext context = new DrawingContext(GameType.Lotto, new DateTime(2019, 8, 2), new DateTime(1984, 7, 21));
             var commands = (new CommandFactory().CreateCommands(context));
             (new CommandExecutor<DrawingContext>()).Execute(context, commands);
         }

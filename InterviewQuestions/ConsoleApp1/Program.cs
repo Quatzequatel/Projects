@@ -10,7 +10,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Codility.TestIt();
+            //Codility.TestIt();
 
             //Solution solution = new Solution();
             //int[] A = new int[] { 1,3,6,4,1,2 };
@@ -26,6 +26,20 @@ namespace ConsoleApp1
             ////Lists.Queue<int>.QueueUnitTest();
             ////Lists.LinkList<int>.LinkListUnitTest();
             ////LinkListBook.LinkListUnitTest();
+            ///StackQuestion
+            //StackQuestion.TestIt();
+            //LastMinuteStuding.TestStackSort();
+            //Sort.TestIt2( Sort.SortType.MergeSort);
+            //Sort.TestIt(Sort.SortType.MergeSort);
+            Sort.TestIt2(Sort.SortType.QuickSort);
+            //Sort.TestIt2(Sort.SortType.MergeSort);
+            //Sort.TestIt2(Sort.SortType.InsertionSort);
+            //Sort.TestIt2(Sort.SortType.HeapSort);
+            //Sort.TestIt(Sort.SortType.HeapSort);
+            Sort.TestIt(Sort.SortType.QuickSort);
+
+            //EasyArray1.TestIt();
+
             Console.ReadKey();
         }
 

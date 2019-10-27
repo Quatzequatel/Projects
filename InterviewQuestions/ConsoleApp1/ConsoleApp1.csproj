@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,13 +45,18 @@
   <ItemGroup>
     <Compile Include="ArrayQuestions.cs" />
     <Compile Include="Codility.cs" />
+    <Compile Include="EasyArray1.cs" />
     <Compile Include="fibinnacci.cs" />
+    <Compile Include="foo.cs" />
+    <Compile Include="LastMinuteStuding.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="LinkList2.cs" />
     <Compile Include="LinkListBook.cs" />
     <Compile Include="Permutation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sort.cs" />
+    <Compile Include="StackQuestion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

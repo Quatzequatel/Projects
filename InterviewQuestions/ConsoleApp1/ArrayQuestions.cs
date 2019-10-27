@@ -33,9 +33,9 @@ namespace ConsoleApp1
             int length = numbers.Length;
             int foo = numbers.Min();
             int sum1 = 0;
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
-                if(numbers[i] < 0 || numbers[i] > length - 2)
+                if (numbers[i] < 0 || numbers[i] > length - 2)
                 {
                     throw new ArgumentOutOfRangeException("Invalid numbers");
                 }
@@ -67,17 +67,17 @@ namespace ConsoleApp1
         {
             int length = numbers.Length;
             int firstValue = numbers[0];
-            int difference = (numbers[numbers.Length -1] - firstValue) / (length-1);
+            int difference = (numbers[numbers.Length - 1] - firstValue) / (length - 1);
             int sum1 = 0;
 
             for (int i = 0; i < length; i++)
             {
                 sum1 += numbers[i];
-                if(numbers[i] != firstValue + (i * difference) || i > 0 ? numbers[i] == numbers[i-1]: false)
+                if (numbers[i] != firstValue + (i * difference) || i > 0 ? numbers[i] == numbers[i - 1] : false)
                 {
                     return numbers[i];
                 }
-                
+
             }
 
             return -1;
@@ -88,7 +88,7 @@ namespace ConsoleApp1
             int Length = A.Length;
             int low = A.Min();
             int[] sorted = A.OrderBy(x => x).ToArray();
-            for (int i = 0; i < Length-1; i++)
+            for (int i = 0; i < Length - 1; i++)
             {
                 if (sorted[i] < 0 || sorted[i] == sorted[i + 1] || sorted[i] + 1 == sorted[i + 1]) { }
                 else
@@ -231,7 +231,7 @@ namespace ConsoleApp1
             {
                 panels[p] = new char[9];
             }
-            
+
             for (int row = 0, panel = 0, rowcolumn = 0; panel < 9; row += 3, panel++)
             {
                 if (panel % 3 == 0) { row = 0; rowcolumn = (panel / 3) * 3; }
@@ -253,7 +253,7 @@ namespace ConsoleApp1
 
             for (int panel = 0; panel < 9; panel++)
             {
-                if (IsValid(CharToInt(panels[panel]))== false) return false;
+                if (IsValid(CharToInt(panels[panel])) == false) return false;
             }
 
             return true;
@@ -304,6 +304,16 @@ namespace ConsoleApp1
             return result;
         }
 
+        public static string CharToString(this IOrderedEnumerable<char> source)
+        {
+            StringBuilder sb = new StringBuilder(source.Count());
+            foreach (var item in source)
+            {
+                sb.Append(item);
+            }
+            return sb.ToString();
+        }
+
         public static bool IsValid(this int[] values)
         {
             int flag = 0;
@@ -324,6 +334,11 @@ namespace ConsoleApp1
             return String.Join(", ", values);
         }
 
+        public static string PrintLines<T>(this T[] values)
+        {
+            return String.Join("\n", values);
+        }
+
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -333,6 +348,97 @@ namespace ConsoleApp1
             {
                 action(item);
             }
+        }
+
+        public static T MaxObject<T, U>(this IEnumerable<T> source, Func<T, U> selector)
+  where U : IComparable<U>
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            bool first = true;
+            T maxObj = default(T);
+            U maxKey = default(U);
+            foreach (var item in source)
+            {
+                if (first)
+                {
+                    maxObj = item;
+                    maxKey = selector(maxObj);
+                    first = false;
+                }
+                else
+                {
+                    U currentKey = selector(item);
+                    if (currentKey.CompareTo(maxKey) > 0)
+                    {
+                        maxKey = currentKey;
+                        maxObj = item;
+                    }
+                }
+            }
+            if (first) throw new InvalidOperationException("Sequence is empty.");
+            return maxObj;
+        }
+
+        public static IEnumerable<IEnumerable<T>> GetPermutations<T>(this IEnumerable<T> enumerable)
+        {
+            var array = enumerable as T[] ?? enumerable.ToArray();
+
+            var factorials = Enumerable.Range(0, array.Length + 1)
+                .Select(Factorial)
+                .ToArray();
+
+            for (var i = 0L; i < factorials[array.Length]; i++)
+            {
+                var sequence = GenerateSequence(i, array.Length - 1, factorials);
+
+                yield return GeneratePermutation(array, sequence);
+            }
+        }
+
+        private static IEnumerable<T> GeneratePermutation<T>(T[] array, IReadOnlyList<int> sequence)
+        {
+            var clone = (T[])array.Clone();
+
+            for (int i = 0; i < clone.Length - 1; i++)
+            {
+                Swap(ref clone[i], ref clone[i + sequence[i]]);
+            }
+
+            return clone;
+        }
+
+        private static int[] GenerateSequence(long number, int size, IReadOnlyList<long> factorials)
+        {
+            var sequence = new int[size];
+
+            for (var j = 0; j < sequence.Length; j++)
+            {
+                var facto = factorials[sequence.Length - j];
+
+                sequence[j] = (int)(number / facto);
+                number = (int)(number % facto);
+            }
+
+            return sequence;
+        }
+
+        static void Swap<T>(ref T a, ref T b)
+        {
+            T temp = a;
+            a = b;
+            b = temp;
+        }
+
+        private static long Factorial(int n)
+        {
+            long result = n;
+
+            for (int i = 1; i < n; i++)
+            {
+                result = result * i;
+            }
+
+            return result;
         }
     }
 }

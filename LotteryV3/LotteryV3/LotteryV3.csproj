@@ -64,6 +64,9 @@
     <Compile Include="Domain\Commands\CommandsBase.cs" />
     <Compile Include="Domain\Entities\Drawing.cs" />
     <Compile Include="Domain\Entities\DrawingContext.cs" />
+    <Compile Include="Domain\Entities\Number.cs" />
+    <Compile Include="Domain\Entities\NumberInfo.cs" />
+    <Compile Include="Domain\Entities\NumberModel.cs" />
     <Compile Include="Domain\Entities\PropabilityGroups.cs" />
     <Compile Include="Domain\Entities\TrendGroups.cs" />
     <Compile Include="Domain\Enums.cs" />

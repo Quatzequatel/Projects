@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using System.Windows.Documents;
 
 namespace ConsoleApp1
 {
@@ -30,8 +31,91 @@ namespace ConsoleApp1
             //Console.WriteLine(string.Format("input {1}, MissingInteger {0}", MissingInteger(A).ToString(), A.Print()));
             //A = new int[] {1,2,3};
             //Console.WriteLine(string.Format("input {1}, MissingInteger {0}", MissingInteger(A).ToString(), A.Print()));
-            A = new int[] { 9, 3, 9, 3, 9, 7, 9, 7, 8, 11, 0 };
-            Console.WriteLine(string.Format("input {1}, MissingInteger {0}", Distinct(A).ToString(), A.Print()));
+            A = new int[] { 9, 3, 9, 3, 9, 7, 9, 7, 8, 9, 0 };
+            //Console.WriteLine(string.Format("input {1}, MissingInteger {0}", Dominator(A).ToString(), A.Print()));
+            Console.WriteLine(string.Format("input {1}, Primes {0}", Primes(75).Print(), "75"));
+            Console.WriteLine(string.Format("input {1}, Primes {0}", PrimeDivisors(5).Print(), "5"));
+        }
+
+        public static int Dominator(int[] A)
+        {
+            //Find the value that is the most frequent in the array
+            if(A.Distinct().Count () == A.Length) { return 0; }
+
+            Dictionary<int, int> occurances = new Dictionary<int, int>();
+            foreach (var item in A.Distinct().OrderBy(a => a))
+            {
+                occurances.Add(item, A.Where(a => a == item).Count());
+            }
+
+            return occurances.MaxObject(a => a.Value).Key;
+        }
+
+        public static int[] Distinct(int[] Items)
+        {
+            Dictionary<int, int> results = new Dictionary<int, int>();
+            foreach (var item in Items)
+            {
+                if (!results.ContainsKey(item))
+                {
+                    results.Add(item, 1);
+                }
+                else
+                {
+                    results[item] += 1;
+                }
+            }
+
+            return results.Keys.ToArray();
+        }
+
+        public static int[] Primes(int max)
+        {
+            int minRange = 2;
+            int maxRange = max + 1;
+                        
+            List<int> primes = new List<int>();
+            if (max < minRange) return primes.ToArray();
+
+            for (int number = minRange; number < maxRange; number++)
+            {
+                int isNotPrime = 0;
+                int notPrime = 1;
+                for (int notSelf = 2; notSelf < number>>1; notSelf++)
+                {
+                    if(number % notSelf == 0)
+                    {
+                        //is not prime
+                        isNotPrime += notPrime;
+                        break;
+                    }
+                }
+                if(isNotPrime < notPrime)
+                {
+                    primes.Add(number);
+                }
+            }
+
+            return primes.ToArray();
+        }
+
+        public static int[] PrimeDivisors(int value)
+        {
+            int[] primes = Primes(value);
+            List<int> result = new List<int>();
+            foreach (var item in primes)
+            {
+                if (value < item)
+                {
+                    break;
+                }
+                if(value % item == 0)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result.ToArray();
         }
         /*
          * given a positive integer N, returns the length of its longest binary gap. 
@@ -114,7 +198,7 @@ namespace ConsoleApp1
             return B.Last() < 0 ? 1 : B.Last() + 1;
         }
 
-        public static int Distinct(int[] A)
+        public static int Distinct2(int[] A)
         {
             return A.Distinct().Count();
         }
