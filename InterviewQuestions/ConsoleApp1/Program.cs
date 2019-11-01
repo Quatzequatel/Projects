@@ -31,12 +31,13 @@ namespace ConsoleApp1
             //LastMinuteStuding.TestStackSort();
             //Sort.TestIt2( Sort.SortType.MergeSort);
             //Sort.TestIt(Sort.SortType.MergeSort);
-            Sort.TestIt2(Sort.SortType.QuickSort);
+            //Sort.TestIt2(Sort.SortType.QuickSort);
             //Sort.TestIt2(Sort.SortType.MergeSort);
             //Sort.TestIt2(Sort.SortType.InsertionSort);
             //Sort.TestIt2(Sort.SortType.HeapSort);
             //Sort.TestIt(Sort.SortType.HeapSort);
-            Sort.TestIt(Sort.SortType.QuickSort);
+            //Sort.TestIt(Sort.SortType.QuickSort);
+            BinaryTree<int>.testMe();
 
             //EasyArray1.TestIt();
 

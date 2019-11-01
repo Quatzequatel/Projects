@@ -146,27 +146,15 @@ namespace ConsoleApp1
          */
         private static void QuickSort(this IList<int> values, int low, int high) //where T : IComparable
         {
-            //Console.WriteLine(String.Format("low = {0}, high = {1}", low, high));
-            int i, j;
-            int pivot, temp;
-
             if (low < high)
             {
-                for (i = low, j = high, pivot = values[low]; i < j;)
-                {
-                    while (i < j && values[i] < pivot) { i++; }
-                    while (j > i && values[j] >= pivot) { j--; }
-                    if (i < j) { values.Swap(i, j); }
-
-                }
-                if (values[low] > values[j]) { values.Swap(low, j); }
-
-                values.QuickSort(low, i - 1);
-                values.QuickSort(i + 1, high);
+                int pivot = values.Partition(low, high);
+                values.QuickSort(low, pivot - 1);
+                values.QuickSort(pivot + 1, high);
             }
         }
 
-        private static int Partition2(this IList<int> values, int low, int high)
+        private static int Partition(this IList<int> values, int low, int high)
         {
             int pivot = values[high];
             int i = low - 1;
@@ -180,55 +168,9 @@ namespace ConsoleApp1
                 }
             }
             values.Swap(i+1, high);
-            return i + 1;
+            return i +1 ;
         }
 
-        private static int Partition(this IList<int> values, int low, int high)
-        {
-            int pivotIndex = low + (high - low) >> 1; //pick pivot point index
-            //List<int> sample = new List<int>();
-            int sampleIncrement = (high - low) >> 2; //get a sample of 4.
-            int pivotValue = 0;
-            if (high - low >= 2)
-            {
-                sampleIncrement = sampleIncrement < 1 ? 1 : sampleIncrement;
-                int min = values[low];
-                int max = min;
-                for (int i = low; i < high; i += sampleIncrement)
-                {
-                    min = values[i] < min ? values[i] : min;
-                    max = values[i] > max ? values[i] : max;
-                }
-                pivotValue = min + ((max - min) >> 1);
-            }
-            else
-            {
-                //pivotValue = values[low+1];
-                if (values[low].CompareTo(values[high]) > 0)
-                {
-                    values.Swap(low, high);
-                    low++; high--;
-                }
-            }
-
-
-            //T pivotValue = values[pivotIndex]; //cache pivot value;
-
-            while (low <= pivotIndex && pivotIndex <= high)
-            {
-                //find low item that should be in high partition.
-                while (low <= pivotIndex && values[low].CompareTo(pivotValue) <= 0) { low++; }
-                //find high item that should be in low partition.
-                while (high >= pivotIndex && values[high].CompareTo(pivotValue) > 0) { high--; }
-                if (low < high && values[low].CompareTo(values[high]) > 0)
-                {
-                    values.Swap(low, high);
-                    low++; high--;
-                }
-            }
-
-            return low + 1;
-        }
 
         private static int GetPivotValue(this IList<int> values, int low, int high)
         {
